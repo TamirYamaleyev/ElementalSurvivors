@@ -50,7 +50,7 @@ public class PlayerEXP : MonoBehaviour
         RecalculateExpThreshold();
 
         OnLevelUp?.Invoke(level);
-        Debug.Log("Leveled Up");
+        Debug.Log($"Leveled Up!\nLevel: {level}");
     }
 
     private void RecalculateExpThreshold()
@@ -63,7 +63,6 @@ public class PlayerEXP : MonoBehaviour
         if (other.TryGetComponent<EXPOrb>(out var orb))
         {
             AddExp(orb.expToGive);
-            Debug.Log($"+{orb.expToGive} EXP");
             Destroy(orb.gameObject);
         }
     }

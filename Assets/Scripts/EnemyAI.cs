@@ -5,7 +5,6 @@ public class EnemyAI : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private PlayerHealth playerRef;
     [SerializeField] private GameObject expOrb;
 
     [Header("Settings")]
@@ -13,6 +12,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private float damage = 10f;
     [SerializeField] private float moveSpeed = 5f;
 
+    private PlayerHealth playerRef;
     private Transform player;
     private Vector2 direction;
     private float currentHealth;
@@ -43,7 +43,7 @@ public class EnemyAI : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             if (playerRef != null)
-            playerRef.TakeDamage(damage);
+                playerRef.TakeDamage(damage);
         }
     }
 
@@ -63,6 +63,8 @@ public class EnemyAI : MonoBehaviour
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
+
+        Debug.Log($"Took {amount} damage\nNew HP: {currentHealth}");
 
         if (currentHealth <= 0f)
             Die();
