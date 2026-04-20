@@ -6,6 +6,7 @@ public class EnemyAI : MonoBehaviour
     [Header("References")]
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private PlayerHealth playerRef;
+    [SerializeField] private GameObject expOrb;
 
     [Header("Settings")]
     [SerializeField] private float maxHealth = 25f;
@@ -21,15 +22,15 @@ public class EnemyAI : MonoBehaviour
         if (rb == null)
             rb = GetComponent<Rigidbody2D>();
 
-        if (playerRef == null)
-            playerRef = GetComponent<PlayerHealth>();
-
         currentHealth = maxHealth;
     }
 
     void Start()
     {
         player = PlayerController.Instance;
+
+        if (playerRef == null)
+            playerRef = player.GetComponent<PlayerHealth>();
     }
 
     void FixedUpdate()
@@ -69,6 +70,7 @@ public class EnemyAI : MonoBehaviour
 
     private void Die()
     {
+        Instantiate(expOrb, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 }
