@@ -6,7 +6,6 @@ public class HealthbarUIController : MonoBehaviour
     [SerializeField] private PlayerHealth healthRef;
     [SerializeField] private Image fillImage;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         UpdateHealth(100, 100);
