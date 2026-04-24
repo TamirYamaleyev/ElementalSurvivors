@@ -171,8 +171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   rb: {fileID: 7393697305678196746}
-  playerRef: {fileID: 0}
   expOrb: {fileID: 8359288981196373192, guid: 237375f8a132ffe4da9816fb912d8237, type: 3}
   maxHealth: 10
-  damage: 10
   moveSpeed: 3
+  aggroRadius: 6
