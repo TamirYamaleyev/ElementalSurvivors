@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5498626285167473815}
   - component: {fileID: 805279636442495647}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: Level2Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -85,7 +85,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
-  m_Color: {r: 0.7169812, g: 0.037201855, b: 0.037201855, a: 1}
+  m_Color: {r: 1, g: 0.5490196, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -171,8 +171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   rb: {fileID: 7393697305678196746}
-  playerRef: {fileID: 0}
   expOrb: {fileID: 8359288981196373192, guid: 237375f8a132ffe4da9816fb912d8237, type: 3}
-  maxHealth: 10
+  maxHealth: 15
   damage: 10
   moveSpeed: 3

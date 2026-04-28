@@ -9,6 +9,7 @@ public class BoomerangWeapon : MonoBehaviour
 
     [Header("Combat")]
     [SerializeField] private float damage = 1f;
+    [SerializeField] private float fearDuration = 1.5f;
 
     private Transform owner;
     private Vector3 startPosition;
@@ -58,6 +59,7 @@ public class BoomerangWeapon : MonoBehaviour
     {
         if (other.TryGetComponent<EnemyAI>(out var enemy))
         {
+            enemy.ApplyFear(fearDuration);
             enemy.TakeDamage(damage);
         }
     }

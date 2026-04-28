@@ -12,6 +12,17 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private float damage = 10f;
     [SerializeField] private float moveSpeed = 5f;
 
+    private float slowMultiplier = 0.5f;
+    private float slowTimer;
+
+    private float dotDuration;
+    private float dotTickTimer;
+    private float dotDamage = 1f;
+    private float dotTickInterval = 0.5f;
+
+    private float fearTimer;
+    private float fearStrength = 0.4f;
+
     private PlayerHealth playerRef;
     private Transform player;
     private Vector2 direction;
@@ -32,6 +43,41 @@ public class EnemyAI : MonoBehaviour
         if (playerRef == null)
             playerRef = player.GetComponent<PlayerHealth>();
     }
+    void Update()
+    {
+        if (dotDuration > 0f)
+            DealDoT();
+    }
+
+    public void ApplyFear(float duration)
+    {
+        fearTimer = duration;
+    }
+
+    public void ApplySlow(float duration, float multiplier)
+    {
+        slowTimer = duration;
+        slowMultiplier = multiplier;
+    }
+
+    public void ApplyDoT(float duration, float damagePerTick)
+    {
+        dotDuration = duration;
+        dotDamage = damagePerTick;
+        dotTickTimer = 0f;
+    }
+
+    private void DealDoT()
+    {
+        dotDuration -= Time.deltaTime;
+        dotTickTimer += Time.deltaTime;
+
+        if (dotTickTimer >= dotTickInterval)
+        {
+            TakeDamage(dotDamage);
+            dotTickTimer = 0f;
+        }
+    }
 
     void FixedUpdate()
     {
@@ -50,14 +96,34 @@ public class EnemyAI : MonoBehaviour
     private void SetDirection()
     {
         if (player == null) return;
-        direction = (player.position - transform.position).normalized;
+
+        Vector2 baseDir = (player.position - transform.position).normalized;
+
+        if (fearTimer > 0f)
+        {
+            direction = -baseDir;
+
+            fearTimer -= Time.deltaTime;
+        }
+        else
+        {
+            direction = baseDir;
+        }
     }
 
     private void FollowPlayer()
     {
         SetDirection();
 
-        rb.linearVelocity = direction * moveSpeed;
+        float currentSpeed = moveSpeed;
+
+        if (slowTimer > 0f)
+        {
+            currentSpeed *= slowMultiplier;
+            slowTimer -= Time.deltaTime;
+        }
+
+        rb.linearVelocity = direction * currentSpeed;
     }
 
     public void TakeDamage(float amount)

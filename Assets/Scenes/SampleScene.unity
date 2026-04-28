@@ -2380,14 +2380,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6620634bd2273d044b8c1d3f26ae36ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  enemyPrefab: {fileID: 3651129979494247448, guid: 77c68128e80259940a8a7848e64cca13, type: 3}
+  levelOneEnemyPrefab: {fileID: 3651129979494247448, guid: 77c68128e80259940a8a7848e64cca13, type: 3}
+  levelTwoEnemyPrefab: {fileID: 3651129979494247448, guid: c82025751f6fd1642b6cc22facad5fa8, type: 3}
+  levelThreeEnemyPrefab: {fileID: 3651129979494247448, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
   startSpawnInterval: 1
-  minSpawnInterval: 0.1
-  rampSpeed: 0.01
-  spawnRadius: 8
+  minSpawnInterval: 0.2
+  rampSpeed: 0.04
+  spawnRadius: 10
   spawnJitter: 0.5
-  amountToSpawnAtHalfwayPoint: 3
-  amountToSpawnAtMax: 4
+  amountToSpawnAtHalfwayPoint: 2
+  amountToSpawnAtMax: 3
 --- !u!1 &1701264380
 GameObject:
   m_ObjectHideFlags: 0

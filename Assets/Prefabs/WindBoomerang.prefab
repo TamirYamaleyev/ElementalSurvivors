@@ -85,7 +85,7 @@ SpriteShapeRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Color: {r: 0.11259551, g: 0.9528302, b: 0, a: 1}
+  m_Color: {r: 0.13879174, g: 0.071956225, b: 0.31132078, a: 1}
   m_ShapeTexture: {fileID: 2800000, guid: b281b91a70a624a0da1c43adc1c30c7b, type: 3}
   m_Sprites:
   - {fileID: 21300000, guid: 0ae2b74b1edd14bb18dd7b65ae916a54, type: 3}
@@ -327,6 +327,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoomerangWeapon
   speed: 12
-  maxDistance: 6
+  maxDistance: 10
   returnSpeedMultiplier: 1.4
   damage: 5
+  fearDuration: 1.5

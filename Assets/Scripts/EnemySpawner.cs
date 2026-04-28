@@ -3,7 +3,9 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private GameObject enemyPrefab;
+    [SerializeField] private GameObject levelOneEnemyPrefab;
+    [SerializeField] private GameObject levelTwoEnemyPrefab;
+    [SerializeField] private GameObject levelThreeEnemyPrefab;
 
     [Header("Settings")]
     [SerializeField] private float startSpawnInterval = 1f;
@@ -30,6 +32,17 @@ public class EnemySpawner : MonoBehaviour
         timer = currentInterval;
     }
 
+    private GameObject GetEnemyPrefab(float t)
+    {
+        if (t >= 0.9f)
+            return levelThreeEnemyPrefab;
+
+        if (t >= 0.5f)
+            return levelTwoEnemyPrefab;
+
+        return levelOneEnemyPrefab;
+    }
+
     void Update()
     {
         elapsedTime += Time.deltaTime;
@@ -43,7 +56,7 @@ public class EnemySpawner : MonoBehaviour
         if (timer <= 0f)
         {
             int spawnCount = GetSpawnCount(t);
-            SpawnEnemies(spawnCount);
+            SpawnEnemies(spawnCount, t);
 
             timer = currentInterval;
         }
@@ -56,8 +69,10 @@ public class EnemySpawner : MonoBehaviour
         return 1;
     }
 
-    void SpawnEnemies(int count)
+    void SpawnEnemies(int count, float t)
     {
+        GameObject prefab = GetEnemyPrefab(t);
+
         for (int i = 0; i < count; i++)
         {
             Vector2 baseOffset = Random.insideUnitCircle * spawnRadius;
@@ -69,7 +84,7 @@ public class EnemySpawner : MonoBehaviour
                 0f
             );
 
-            Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
+            Instantiate(prefab, spawnPos, Quaternion.identity);
         }
     }
 }
