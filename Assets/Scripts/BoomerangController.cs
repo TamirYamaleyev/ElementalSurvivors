@@ -8,6 +8,12 @@ public class BoomerangController : MonoBehaviour
     [SerializeField] private float cooldown = 1f;
     [SerializeField] private float spawnOffset = 1f;
 
+    [SerializeField] private int[] boomerangsPerLevel = { 1, 2, 3 };
+    [SerializeField] private float spreadAngle = 25f;
+
+    private int currentLevel = 0;
+    private int BoomerangCount => boomerangsPerLevel[currentLevel];
+
     private float timer;
     private Transform player;
 
@@ -17,6 +23,14 @@ public class BoomerangController : MonoBehaviour
     {
         player = PlayerController.Instance;
         timer = 0f;
+    }
+
+    public void LevelUp()
+    {
+        if (currentLevel >= boomerangsPerLevel.Length - 1) return;
+        currentLevel++;
+
+        spreadAngle = 20f + currentLevel * 10f;
     }
 
     void Update()
@@ -49,9 +63,27 @@ public class BoomerangController : MonoBehaviour
 
     private void Fire()
     {
-        Vector3 spawnPos = player.position + (Vector3)(lastDirection * spawnOffset);
+        int count = BoomerangCount;
 
-        BoomerangWeapon b = Instantiate(boomerangPrefab, spawnPos, Quaternion.identity);
-        b.Init(player, lastDirection);
+        float baseAngle = Mathf.Atan2(lastDirection.y, lastDirection.x) * Mathf.Rad2Deg;
+
+        for (int i = 0; i < count; i++)
+        {
+            float t = count == 1 ? 0.5f : (float)i / (count - 1);
+            float angleOffset = Mathf.Lerp(-spreadAngle / 2f, spreadAngle / 2f, t);
+            angleOffset += Random.Range(-2f, 2f);
+
+            float finalAngle = baseAngle + angleOffset;
+
+            Vector2 dir = new Vector2(
+                Mathf.Cos(finalAngle * Mathf.Deg2Rad),
+                Mathf.Sin(finalAngle * Mathf.Deg2Rad)
+            );
+
+            Vector3 spawnPos = player.position + (Vector3)(dir * spawnOffset);
+
+            BoomerangWeapon b = Instantiate(boomerangPrefab, spawnPos, Quaternion.identity);
+            b.Init(player, dir);
+        }
     }
 }

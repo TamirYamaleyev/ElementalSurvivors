@@ -15,13 +15,13 @@ public class ExpbarUIController : MonoBehaviour
         UpdateExp(0f, 100f);
 
         if (expRef != null)
-            Bind(expRef);
+            Bind();
     }
 
-    private void Bind(PlayerEXP exp)
+    private void Bind()
     {
-        exp.OnExpChanged += UpdateExp;
-        exp.OnLevelUp += UpdateLevel;
+        expRef.OnExpChanged += UpdateExp;
+        expRef.OnLevelUp += UpdateLevel;
     }
 
     private void UpdateExp(float current, float max)

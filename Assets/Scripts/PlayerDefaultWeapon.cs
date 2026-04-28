@@ -11,9 +11,19 @@ public class PlayerDefaultWeapon : MonoBehaviour
     [SerializeField] private float attackRadius = 2f;
     [SerializeField] private float activeTime = 0.12f;
 
+    [SerializeField] private float thrustInterval = 0.05f;
+    [SerializeField] private int[] thrustsPerLevel = { 1, 2, 3 };
+    private int currentLevel = 0;
+    private int ThrustCount => thrustsPerLevel[currentLevel];
+
     private float timer;
 
     private Vector2 lastDirection = Vector2.right;
+
+    void Start()
+    {
+        currentLevel = 0;    
+    }
 
     void Update()
     {
@@ -26,6 +36,12 @@ public class PlayerDefaultWeapon : MonoBehaviour
             timer = 0f;
             StartCoroutine(Attack());
         }
+    }
+
+    public void LevelUp()
+    {
+        if (currentLevel >= thrustsPerLevel.Length - 1) return;
+        currentLevel++;
     }
 
     private void UpdateDirection()
@@ -44,17 +60,22 @@ public class PlayerDefaultWeapon : MonoBehaviour
 
     private IEnumerator Attack()
     {
-        Vector2 dir = lastDirection;
+        for (int t = 0; t < ThrustCount; t++)
+        {
+            Vector2 dir = lastDirection;
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            spear.localPosition = dir * attackRadius;
+            spear.localRotation = Quaternion.Euler(0, 0, angle);
 
-        spear.localPosition = dir * attackRadius;
-        spear.localRotation = Quaternion.Euler(0, 0, angle);
+            spear.gameObject.SetActive(true);
 
-        spear.gameObject.SetActive(true);
+            yield return new WaitForSeconds(activeTime);
 
-        yield return new WaitForSeconds(activeTime);
+            spear.gameObject.SetActive(false);
 
-        spear.gameObject.SetActive(false);
+            if (t < ThrustCount - 1)
+                yield return new WaitForSeconds(thrustInterval);
+        }
     }
 }
