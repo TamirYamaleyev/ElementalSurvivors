@@ -21,7 +21,6 @@ public class EnemyAI : MonoBehaviour
     private float dotTickInterval = 0.5f;
 
     private float fearTimer;
-    private float fearStrength = 0.4f;
 
     private PlayerHealth playerRef;
     private Transform player;

@@ -8,7 +8,6 @@ public class WeaponBase : MonoBehaviour
     [SerializeField] private float cooldown = 1f;
     [SerializeField] private float activeTime = 0.15f;
     [SerializeField] private float radius = 1.5f;
-    [SerializeField] private float damage = 1f;
 
     [Header("Refs")]
     [SerializeField] private Transform visual;

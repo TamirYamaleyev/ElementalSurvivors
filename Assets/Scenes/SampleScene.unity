@@ -2381,10 +2381,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   runProfile: {fileID: 11400000, guid: d6c5b4a39281706f5e4d3c2b1a09e080, type: 2}
-  levelOneEnemyPrefab: {fileID: 3651129979494247448, guid: 77c68128e80259940a8a7848e64cca13, type: 3}
-  levelTwoEnemyPrefab: {fileID: 3651129979494247448, guid: c82025751f6fd1642b6cc22facad5fa8, type: 3}
-  levelThreeEnemyPrefab: {fileID: 3651129979494247448, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
-  bossEnemyPrefab: {fileID: 0}
+  levelOneEnemy: {fileID: 805279636442495647, guid: 77c68128e80259940a8a7848e64cca13, type: 3}
+  levelTwoEnemy: {fileID: 805279636442495647, guid: c82025751f6fd1642b6cc22facad5fa8, type: 3}
+  levelThreeEnemy: {fileID: 805279636442495647, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+  bossEnemy: {fileID: 0}
   spawnInterval: 1
   spawnRadius: 10
   spawnJitter: 0.5
