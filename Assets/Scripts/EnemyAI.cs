@@ -126,6 +126,16 @@ public class EnemyAI : MonoBehaviour
         rb.linearVelocity = direction * currentSpeed;
     }
 
+    public float BaselineMaxHealth => maxHealth;
+    public float BaselineContactDamage => damage;
+
+    public void ApplyScaledStats(float maxHp, float contactDamage)
+    {
+        maxHealth = maxHp;
+        currentHealth = maxHp;
+        damage = contactDamage;
+    }
+
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;

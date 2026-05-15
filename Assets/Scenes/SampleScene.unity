@@ -2380,16 +2380,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6620634bd2273d044b8c1d3f26ae36ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  runProfile: {fileID: 11400000, guid: d6c5b4a39281706f5e4d3c2b1a09e080, type: 2}
   levelOneEnemyPrefab: {fileID: 3651129979494247448, guid: 77c68128e80259940a8a7848e64cca13, type: 3}
   levelTwoEnemyPrefab: {fileID: 3651129979494247448, guid: c82025751f6fd1642b6cc22facad5fa8, type: 3}
   levelThreeEnemyPrefab: {fileID: 3651129979494247448, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
-  startSpawnInterval: 1
-  minSpawnInterval: 0.5
-  rampSpeed: 0.04
+  bossEnemyPrefab: {fileID: 0}
+  spawnInterval: 1
   spawnRadius: 10
   spawnJitter: 0.5
-  amountToSpawnAtHalfwayPoint: 1
-  amountToSpawnAtMax: 2
 --- !u!1 &1701264380
 GameObject:
   m_ObjectHideFlags: 0
