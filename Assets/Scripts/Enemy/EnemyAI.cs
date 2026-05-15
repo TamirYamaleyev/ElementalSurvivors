@@ -1,3 +1,4 @@
+
 using UnityEngine;
 
 [RequireComponent (typeof(Rigidbody2D))]
@@ -5,7 +6,6 @@ public class EnemyAI : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private GameObject expOrb;
 
     [Header("Settings")]
     [SerializeField] private float maxHealth = 25f;
@@ -42,11 +42,6 @@ public class EnemyAI : MonoBehaviour
         if (playerRef == null)
             playerRef = player.GetComponent<PlayerHealth>();
     }
-    void Update()
-    {
-        if (dotDuration > 0f)
-            DealDoT();
-    }
 
     public void ApplyFear(float duration)
     {
@@ -64,18 +59,6 @@ public class EnemyAI : MonoBehaviour
         dotDuration = duration;
         dotDamage = damagePerTick;
         dotTickTimer = 0f;
-    }
-
-    private void DealDoT()
-    {
-        dotDuration -= Time.deltaTime;
-        dotTickTimer += Time.deltaTime;
-
-        if (dotTickTimer >= dotTickInterval)
-        {
-            TakeDamage(dotDamage);
-            dotTickTimer = 0f;
-        }
     }
 
     void FixedUpdate()
@@ -133,21 +116,5 @@ public class EnemyAI : MonoBehaviour
         maxHealth = maxHp;
         currentHealth = maxHp;
         damage = contactDamage;
-    }
-
-    public void TakeDamage(float amount)
-    {
-        currentHealth -= amount;
-
-        Debug.Log($"Took {amount} damage\nNew HP: {currentHealth}");
-
-        if (currentHealth <= 0f)
-            Die();
-    }
-
-    private void Die()
-    {
-        Instantiate(expOrb, transform.position, Quaternion.identity);
-        Destroy(gameObject);
     }
 }
