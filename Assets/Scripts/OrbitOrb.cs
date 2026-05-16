@@ -8,10 +8,12 @@ public class OrbitOrb : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.TryGetComponent<EnemyAI>(out var enemy))
-        {
-            enemy.TakeDamage(damage);
-            enemy.ApplyDoT(dotDuration, dotDamage);
-        }
+        if (!other.TryGetComponent<IDamageable>(out var damageable))
+            return;
+
+        damageable.TakeDamage(damage);
+
+        if (other.TryGetComponent<IStatusEffectTarget>(out var effects))
+            effects.ApplyDoT(dotDuration, dotDamage);
     }
 }

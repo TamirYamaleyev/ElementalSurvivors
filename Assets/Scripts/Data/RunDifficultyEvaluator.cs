@@ -18,18 +18,18 @@ public static class RunDifficultyEvaluator
         return Mathf.Pow(profile.difficultyMultiplierPerTick, ticks);
     }
 
-    public static int GetPrefabIndex(RunDifficultyProfileSO profile, float elapsedSeconds)
+    public static EnemyTier GetEnemyTier(RunDifficultyProfileSO profile, float elapsedSeconds)
     {
         if (profile == null)
-            return 0;
+            return EnemyTier.Level1;
 
         if (elapsedSeconds < profile.tier2StartSeconds)
-            return 0;
+            return EnemyTier.Level1;
 
         if (elapsedSeconds < profile.tier3StartSeconds)
-            return 1;
+            return EnemyTier.Level2;
 
-        return 2;
+        return EnemyTier.Level3;
     }
 
     public static bool ShouldSpawnBoss(RunDifficultyProfileSO profile, float elapsedSeconds, ref float nextBossAt)

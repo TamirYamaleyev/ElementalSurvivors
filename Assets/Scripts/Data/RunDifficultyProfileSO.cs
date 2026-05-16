@@ -18,6 +18,7 @@ public class RunDifficultyProfileSO : ScriptableObject
     public float tier3StartSeconds = 400f;
 
     [Header("Boss")]
+    public EnemyTier bossTier = EnemyTier.Level3;
     public float firstBossDelaySeconds = 198f;
     public float bossSpawnIntervalSeconds = 198f;
     public float bossExtraStatMultiplier = 10f;

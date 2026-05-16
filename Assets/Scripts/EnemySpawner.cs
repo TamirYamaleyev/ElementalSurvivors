@@ -4,10 +4,8 @@ public class EnemySpawner : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private RunDifficultyProfileSO runProfile;
-    [SerializeField] private EnemyAI levelOneEnemy;
-    [SerializeField] private EnemyAI levelTwoEnemy;
-    [SerializeField] private EnemyAI levelThreeEnemy;
-    [SerializeField] private EnemyAI bossEnemy;
+    [SerializeField] private EnemyTierCatalogSO tierCatalog;
+    [SerializeField] private EnemyPool enemyPool;
 
     [Header("Settings")]
     [SerializeField] private float spawnInterval = 1f;
@@ -31,7 +29,7 @@ public class EnemySpawner : MonoBehaviour
 
     void Update()
     {
-        if (runProfile == null || player == null)
+        if (runProfile == null || tierCatalog == null || enemyPool == null || player == null)
             return;
 
         elapsedTime += Time.deltaTime;
@@ -41,40 +39,22 @@ public class EnemySpawner : MonoBehaviour
             return;
 
         if (RunDifficultyEvaluator.ShouldSpawnBoss(runProfile, elapsedTime, ref nextBossAt))
-            SpawnEnemy(GetBossEnemy(), isBoss: true);
+            SpawnEnemy(runProfile.bossTier, isBoss: true);
 
         timer -= Time.deltaTime;
 
         if (timer <= 0f)
         {
-            SpawnEnemy(GetTierEnemy(), isBoss: false);
+            EnemyTier tier = RunDifficultyEvaluator.GetEnemyTier(runProfile, elapsedTime);
+            SpawnEnemy(tier, isBoss: false);
             timer = spawnInterval;
         }
     }
 
-    private EnemyAI GetTierEnemy()
+    private void SpawnEnemy(EnemyTier tier, bool isBoss)
     {
-        int index = RunDifficultyEvaluator.GetPrefabIndex(runProfile, elapsedTime);
-
-        return index switch
-        {
-            1 => levelTwoEnemy,
-            2 => levelThreeEnemy,
-            _ => levelOneEnemy,
-        };
-    }
-
-    private EnemyAI GetBossEnemy()
-    {
-        if (bossEnemy != null)
-            return bossEnemy;
-
-        return levelThreeEnemy != null ? levelThreeEnemy : levelOneEnemy;
-    }
-
-    private void SpawnEnemy(EnemyAI prefab, bool isBoss)
-    {
-        if (prefab == null)
+        Enemy enemy = enemyPool.Acquire(tier);
+        if (enemy == null)
             return;
 
         Vector2 baseOffset = Random.insideUnitCircle * spawnRadius;
@@ -86,18 +66,13 @@ public class EnemySpawner : MonoBehaviour
             0f
         );
 
-        EnemyAI instance = Instantiate(prefab, spawnPos, Quaternion.identity);
+        EnemySpawnContext context = EnemySpawnContextBuilder.Build(
+            runProfile,
+            tierCatalog,
+            elapsedTime,
+            tier,
+            isBoss);
 
-        float multiplier = RunDifficultyEvaluator.GetDifficultyMultiplier(runProfile, elapsedTime);
-        if (isBoss)
-            multiplier *= runProfile.bossExtraStatMultiplier;
-
-        float scaledHp = prefab.BaselineMaxHealth * multiplier;
-        float scaledDamage = prefab.BaselineContactDamage * multiplier;
-
-        instance.ApplyScaledStats(scaledHp, scaledDamage);
-
-        if (isBoss && runProfile.bossVisualScale > 0f)
-            instance.transform.localScale *= runProfile.bossVisualScale;
+        enemy.ConfigureSpawn(context, spawnPos);
     }
 }

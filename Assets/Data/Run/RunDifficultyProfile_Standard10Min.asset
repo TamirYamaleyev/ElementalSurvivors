@@ -19,6 +19,7 @@ MonoBehaviour:
   maxDifficultyTicks: 0
   tier2StartSeconds: 200
   tier3StartSeconds: 400
+  bossTier: 2
   firstBossDelaySeconds: 198
   bossSpawnIntervalSeconds: 198
   bossExtraStatMultiplier: 10
