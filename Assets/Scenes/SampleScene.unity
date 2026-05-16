@@ -2382,8 +2382,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   runProfile: {fileID: 11400000, guid: d6c5b4a39281706f5e4d3c2b1a09e080, type: 2}
-  tierCatalog: {fileID: 11400000, guid: d3c2d3e4f5a6472890b1c2d3e4f5a622, type: 2}
   enemyPool: {fileID: 1627141333}
+  levelOneEnemy: {fileID: 805279636442495647, guid: 77c68128e80259940a8a7848e64cca13, type: 3}
+  levelTwoEnemy: {fileID: 805279636442495647, guid: c82025751f6fd1642b6cc22facad5fa8, type: 3}
+  levelThreeEnemy: {fileID: 805279636442495647, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+  bossEnemy: {fileID: 0}
   spawnInterval: 1
   spawnRadius: 10
   spawnJitter: 0.5
@@ -2399,7 +2402,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c2d3e4f5a6472890b1c2d3e4f5a605, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  catalog: {fileID: 11400000, guid: d3c2d3e4f5a6472890b1c2d3e4f5a622, type: 2}
+  levelOne:
+    prototype: {fileID: 805279636442495647, guid: 77c68128e80259940a8a7848e64cca13, type: 3}
+    prewarmCount: 16
+  levelTwo:
+    prototype: {fileID: 805279636442495647, guid: c82025751f6fd1642b6cc22facad5fa8, type: 3}
+    prewarmCount: 16
+  levelThree:
+    prototype: {fileID: 805279636442495647, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+    prewarmCount: 16
   poolRoot: {fileID: 0}
 --- !u!1 &1701264380
 GameObject:

@@ -38,9 +38,9 @@ public class DefaultWeaponProjectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.TryGetComponent<IDamageable>(out var damageable))
+        if (other.TryGetComponent<EnemyAI>(out var enemy))
         {
-            damageable.TakeDamage(damage);
+            enemy.TakeDamage(damage);
             Destroy(gameObject);
         }
     }

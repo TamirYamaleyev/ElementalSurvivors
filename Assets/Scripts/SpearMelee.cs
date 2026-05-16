@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SpearMelee : MonoBehaviour
@@ -8,12 +10,10 @@ public class SpearMelee : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.TryGetComponent<IDamageable>(out var damageable))
-            return;
-
-        damageable.TakeDamage(damage);
-
-        if (other.TryGetComponent<IStatusEffectTarget>(out var effects))
-            effects.ApplySlow(slowDuration, slowMultiplier);
+        if (other.TryGetComponent<EnemyAI>(out var enemy))
+        {
+            enemy.ApplySlow(slowDuration, slowMultiplier);
+            enemy.TakeDamage(damage);
+        }
     }
 }
