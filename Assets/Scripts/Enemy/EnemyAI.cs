@@ -1,12 +1,11 @@
-using System;
+
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent (typeof(Rigidbody2D))]
 public class EnemyAI : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private GameObject expOrb;
 
     [Header("Settings")]
     [SerializeField] private float maxHealth = 25f;
@@ -28,20 +27,12 @@ public class EnemyAI : MonoBehaviour
     private Vector2 direction;
     private float currentHealth;
 
-    // --- Pooling (do not modify above without AI owner) ---
-    private Action<EnemyAI> poolReturn;
-    private Vector3 defaultLocalScale;
-    private int poolTierIndex = -1;
-
-    public int PoolTierIndex => poolTierIndex;
-
     void Awake()
     {
         if (rb == null)
             rb = GetComponent<Rigidbody2D>();
 
         currentHealth = maxHealth;
-        defaultLocalScale = transform.localScale;
     }
 
     void Start()
@@ -50,12 +41,6 @@ public class EnemyAI : MonoBehaviour
 
         if (playerRef == null)
             playerRef = player.GetComponent<PlayerHealth>();
-    }
-
-    void Update()
-    {
-        if (dotDuration > 0f)
-            DealDoT();
     }
 
     public void ApplyFear(float duration)
@@ -74,18 +59,6 @@ public class EnemyAI : MonoBehaviour
         dotDuration = duration;
         dotDamage = damagePerTick;
         dotTickTimer = 0f;
-    }
-
-    private void DealDoT()
-    {
-        dotDuration -= Time.deltaTime;
-        dotTickTimer += Time.deltaTime;
-
-        if (dotTickTimer >= dotTickInterval)
-        {
-            TakeDamage(dotDamage);
-            dotTickTimer = 0f;
-        }
     }
 
     void FixedUpdate()
@@ -143,45 +116,5 @@ public class EnemyAI : MonoBehaviour
         maxHealth = maxHp;
         currentHealth = maxHp;
         damage = contactDamage;
-    }
-
-    public void TakeDamage(float amount)
-    {
-        currentHealth -= amount;
-
-        Debug.Log($"Took {amount} damage\nNew HP: {currentHealth}");
-
-        if (currentHealth <= 0f)
-            Die();
-    }
-
-    private void Die()
-    {
-        Instantiate(expOrb, transform.position, Quaternion.identity);
-
-        if (poolReturn != null)
-            poolReturn(this);
-        else
-            Destroy(gameObject);
-    }
-
-    public void BindPoolReturn(Action<EnemyAI> release, int tierIndex)
-    {
-        poolReturn = release;
-        poolTierIndex = tierIndex;
-    }
-
-    public void ResetForPool()
-    {
-        slowTimer = 0f;
-        fearTimer = 0f;
-        dotDuration = 0f;
-        dotTickTimer = 0f;
-
-        if (rb != null)
-            rb.linearVelocity = Vector2.zero;
-
-        transform.localScale = defaultLocalScale;
-        gameObject.SetActive(false);
     }
 }

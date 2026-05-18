@@ -10,9 +10,8 @@ public class SpearMelee : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.TryGetComponent<EnemyAI>(out var enemy))
+        if (other.TryGetComponent<Enemy>(out var enemy))
         {
-            enemy.ApplySlow(slowDuration, slowMultiplier);
             enemy.TakeDamage(damage);
         }
     }
