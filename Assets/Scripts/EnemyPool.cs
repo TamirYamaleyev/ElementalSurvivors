@@ -1,98 +1,64 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyPool : MonoBehaviour
 {
-    [System.Serializable]
-    public struct TierPool
-    {
-        public EnemyAI prototype;
-        public int prewarmCount;
-    }
-
-    [SerializeField] private TierPool levelOne;
-    [SerializeField] private TierPool levelTwo;
-    [SerializeField] private TierPool levelThree;
+    [SerializeField] private EnemyTierSetSO tierSet;
     [SerializeField] private Transform poolRoot;
 
-    private readonly Stack<EnemyAI>[] pools = new Stack<EnemyAI>[3];
+    private TierObjectPool[] pools;
 
     private void Awake()
     {
-        for (int i = 0; i < pools.Length; i++)
-            pools[i] = new Stack<EnemyAI>();
-
         if (poolRoot == null)
         {
             var root = new GameObject("EnemyPoolRoot");
             root.transform.SetParent(transform);
             poolRoot = root.transform;
         }
+
+        if (tierSet == null || tierSet.tiers == null)
+        {
+            pools = System.Array.Empty<TierObjectPool>();
+            return;
+        }
+
+        pools = new TierObjectPool[tierSet.tiers.Length];
+        for (int i = 0; i < tierSet.tiers.Length; i++)
+        {
+            Enemy prototype = tierSet.tiers[i].prototype;
+            pools[i] = new TierObjectPool(prototype, poolRoot, i, BindOnCreate);
+        }
     }
 
     private void Start()
     {
-        Prewarm(0, levelOne);
-        Prewarm(1, levelTwo);
-        Prewarm(2, levelThree);
-    }
-
-    private void Prewarm(int tierIndex, TierPool tier)
-    {
-        if (tier.prototype == null || tier.prewarmCount <= 0)
+        if (tierSet == null || tierSet.tiers == null)
             return;
 
-        for (int i = 0; i < tier.prewarmCount; i++)
-        {
-            EnemyAI instance = CreateInstance(tier.prototype, tierIndex);
-            Release(instance);
-        }
+        for (int i = 0; i < tierSet.tiers.Length && i < pools.Length; i++)
+            pools[i].Prewarm(tierSet.tiers[i].prewarmCount);
     }
 
-    public EnemyAI Acquire(int tierIndex)
+    public Enemy Acquire(int tierIndex)
     {
-        if (tierIndex < 0 || tierIndex >= pools.Length)
+        if (pools == null || tierIndex < 0 || tierIndex >= pools.Length)
             return null;
 
-        EnemyAI prototype = GetPrototype(tierIndex);
-        if (prototype == null)
-            return null;
-
-        EnemyAI enemy = pools[tierIndex].Count > 0
-            ? pools[tierIndex].Pop()
-            : CreateInstance(prototype, tierIndex);
-
-        return enemy;
+        return pools[tierIndex].Acquire();
     }
 
-    public void Release(EnemyAI enemy)
+    public void Release(Enemy enemy)
     {
-        if (enemy == null)
+        if (enemy == null || pools == null)
             return;
 
         int tier = enemy.PoolTierIndex;
-        enemy.ResetForPool();
-        enemy.transform.SetParent(poolRoot, false);
-
         if (tier >= 0 && tier < pools.Length)
-            pools[tier].Push(enemy);
+            pools[tier].Release(enemy);
     }
 
-    private EnemyAI GetPrototype(int tierIndex)
+    private void BindOnCreate(Enemy instance, int tierIndex)
     {
-        return tierIndex switch
-        {
-            1 => levelTwo.prototype,
-            2 => levelThree.prototype,
-            _ => levelOne.prototype,
-        };
-    }
-
-    private EnemyAI CreateInstance(EnemyAI prototype, int tierIndex)
-    {
-        EnemyAI instance = Instantiate(prototype, poolRoot);
-        instance.BindPoolReturn(Release, tierIndex);
-        instance.ResetForPool();
-        return instance;
+        instance.BindPool(Release, tierIndex);
     }
 }
