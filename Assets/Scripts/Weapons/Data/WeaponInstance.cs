@@ -25,12 +25,26 @@ public class WeaponInstance
         {
             var data = Current;
             Execute(target, ctx, data);
-            cooldownTimer = data.cooldown;
+
+            float baseCooldown = data.cooldown;
+            cooldownTimer = ctx.PlayerStats != null
+                ? CombatStatResolver.ScaleCooldown(baseCooldown, ctx.PlayerStats.Current)
+                : baseCooldown;
         }
     }
 
     public void Execute(Enemy target, WeaponSystemContext ctx, WeaponLevelData data)
     {
+        var stats = ctx.PlayerStats != null ? ctx.PlayerStats.Current : default;
+
+        float damage = ctx.PlayerStats != null
+            ? CombatStatResolver.ScaleDamage(data.damage, stats)
+            : data.damage;
+
+        float speed = ctx.PlayerStats != null
+            ? CombatStatResolver.ScaleProjectileSpeed(data.speed, stats)
+            : data.speed;
+
         switch (definition.behaviorType)
         {
             case WeaponBehaviorType.Projectile:
@@ -41,8 +55,8 @@ public class WeaponInstance
                     definition.projectilePrefab,
                     pos,
                     rot,
-                    data.damage,
-                    data.speed,
+                    damage,
+                    speed,
                     definition.appliedStatus,
                     data.statusDuration,
                     ctx.StatusSystem
@@ -56,7 +70,7 @@ public class WeaponInstance
                 ctx.AreaSystem.Cast(
                     target.transform.position,
                     data.range,
-                    data.damage,
+                    damage,
                     definition.appliedStatus,
                     data.statusDuration,
                     ctx.StatusSystem
@@ -69,15 +83,13 @@ public class WeaponInstance
                     ctx.OrbitCenter,
                     data.projectileCount,
                     data.range,
-                    data.speed,
-                    data.damage,
+                    speed,
+                    damage,
                     definition.appliedStatus,
                     data.statusDuration,
                     ctx.StatusSystem
                     );
                 break;
         }
-
-        //ctx.StatusSystem.Apply(target, definition.appliedStatus, Current.damage);
     }
 }

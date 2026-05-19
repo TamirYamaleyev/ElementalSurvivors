@@ -7,6 +7,7 @@ public class GameInstaller : MonoBehaviour
     [SerializeField] private AreaSystem area;
     [SerializeField] private OrbitSystem orbit;
     [SerializeField] private StatusSystem status;
+    [SerializeField] private PlayerStats playerStats;
 
     public WeaponSystemContext BuildWeaponContext()
     {
@@ -16,7 +17,8 @@ public class GameInstaller : MonoBehaviour
             ProjectileSystem = projectile,
             AreaSystem = area,
             OrbitSystem = orbit,
-            StatusSystem = status
+            StatusSystem = status,
+            PlayerStats = playerStats
         };
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerEXP : MonoBehaviour
@@ -32,7 +31,7 @@ public class PlayerEXP : MonoBehaviour
     public void AddExp(float amount)
     {
         if (amount <= 0) return;
-        
+
         currentExp += amount;
 
         while (currentExp >= expToNextCache)
@@ -56,14 +55,5 @@ public class PlayerEXP : MonoBehaviour
     private void RecalculateExpThreshold()
     {
         expToNextCache = MathF.Ceiling(baseExpToNext * MathF.Pow(growthFactor, level - 1));
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.TryGetComponent<EXPOrb>(out var orb))
-        {
-            AddExp(orb.expToGive);
-            Destroy(orb.gameObject);
-        }
     }
 }

@@ -7,6 +7,7 @@ public class WeaponSystemContext
     public AreaSystem AreaSystem;
     public OrbitSystem OrbitSystem;
     public StatusSystem StatusSystem;
+    public IPlayerStatsProvider PlayerStats;
 
     public Transform ProjectileSpawnPoint;
     public Transform OrbitCenter;
