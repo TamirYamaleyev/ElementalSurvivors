@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(CircleCollider2D))]
 public class CollectRadiusController : MonoBehaviour
 {
-    [SerializeField] private PlayerEXP playerExp;
+    [SerializeField] private PlayerPickupFacade pickupFacade;
     [SerializeField] private MonoBehaviour statsProviderBehaviour;
 
     private IPlayerStatsProvider _statsProvider;
@@ -19,8 +19,8 @@ public class CollectRadiusController : MonoBehaviour
         else if (statsProviderBehaviour != null)
             Debug.LogError($"{nameof(CollectRadiusController)}: assigned stats provider does not implement {nameof(IPlayerStatsProvider)}.", this);
 
-        if (playerExp == null)
-            playerExp = GetComponentInParent<PlayerEXP>();
+        if (pickupFacade == null)
+            pickupFacade = GetComponentInParent<PlayerPickupFacade>();
     }
 
     void OnEnable()
@@ -50,13 +50,13 @@ public class CollectRadiusController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (playerExp == null)
+        if (pickupFacade == null)
             return;
 
-        if (other.TryGetComponent<EXPOrb>(out var orb))
+        if (other.TryGetComponent<ICollectible>(out var collectible))
         {
-            playerExp.AddExp(orb.expToGive);
-            Destroy(orb.gameObject);
+            collectible.Collect(pickupFacade);
+            Destroy(other.gameObject);
         }
     }
 }

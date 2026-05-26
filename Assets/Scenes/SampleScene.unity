@@ -418,6 +418,7 @@ GameObject:
   - component: {fileID: 181845791}
   - component: {fileID: 181845792}
   - component: {fileID: 181845793}
+  - component: {fileID: 181845794}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -751,6 +752,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
   baseStats: {fileID: 11400000, guid: 6f892ff6e6cc440ba66c4125d16844cb, type: 2}
+--- !u!114 &181845794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181845783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f3e2894d0bd47a8aebab6645513ee4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerPickupFacade
+  playerExp: {fileID: 181845791}
+  playerHealth: {fileID: 181845790}
 --- !u!1 &990010001
 GameObject:
   m_ObjectHideFlags: 0
@@ -832,7 +847,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba64043b78cc4431a7386c0217f69482, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollectRadiusController
-  playerExp: {fileID: 181845791}
+  pickupFacade: {fileID: 181845794}
   statsProviderBehaviour: {fileID: 181845793}
 --- !u!1 &191866787
 GameObject:

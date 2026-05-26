@@ -82,6 +82,22 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             Die();
     }
 
+    /// <summary>
+    /// Heals a fraction of current max health. Does not trigger i-frames.
+    /// </summary>
+    public void HealFractionOfMax(float fraction)
+    {
+        if (fraction <= 0f)
+            return;
+
+        float max = MaxHealth;
+        if (max <= 0f)
+            return;
+
+        currentHealth = Mathf.Min(currentHealth + max * fraction, max);
+        NotifyHealthChanged();
+    }
+
     private void NotifyHealthChanged()
     {
         OnHealthChanged?.Invoke(currentHealth, MaxHealth);

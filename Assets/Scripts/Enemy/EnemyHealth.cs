@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour, IDamageable
 {
-    [SerializeField] private GameObject expOrb;
+    [SerializeField] private EnemyLootProfileSO lootProfile;
     [SerializeField] private float maxHealth = 10f;
     [SerializeField] private float contactDamage = 10f;
 
@@ -40,8 +40,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     public void SpawnDeathLoot()
     {
-        if (expOrb != null)
-            Instantiate(expOrb, transform.position, Quaternion.identity);
+        if (lootProfile != null)
+            lootProfile.SpawnLoot(transform.position);
     }
 
     public void EnsureInitialized()
