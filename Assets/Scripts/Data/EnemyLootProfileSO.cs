@@ -8,23 +8,25 @@ public class EnemyLootProfileSO : ScriptableObject
     public GameObject healthOrbPrefab;
 
     [Header("Roll")]
-    [Tooltip("Chance to drop health orb instead of EXP (single drop per death).")]
+    [Tooltip("EXP orb is always dropped when assigned. This is the chance for an extra health orb on the same kill.")]
     [Range(0f, 1f)]
     public float healthOrbChance = 0.5f;
 
+    [Tooltip("Horizontal offset for the health orb when both EXP and health spawn, so they do not overlap.")]
+    [SerializeField] private float bonusHealthOrbOffset = 0.35f;
+
     public void SpawnLoot(Vector3 position)
     {
-        bool wantHealth = Random.value < healthOrbChance;
-
-        if (wantHealth && healthOrbPrefab != null)
-        {
-            Instantiate(healthOrbPrefab, position, Quaternion.identity);
-            return;
-        }
-
-        if (expOrbPrefab != null)
+        bool spawnedExp = expOrbPrefab != null;
+        if (spawnedExp)
             Instantiate(expOrbPrefab, position, Quaternion.identity);
-        else if (healthOrbPrefab != null)
-            Instantiate(healthOrbPrefab, position, Quaternion.identity);
+
+        if (healthOrbPrefab != null && Random.value < healthOrbChance)
+        {
+            Vector3 healthPos = spawnedExp
+                ? position + new Vector3(bonusHealthOrbOffset, 0f, 0f)
+                : position;
+            Instantiate(healthOrbPrefab, healthPos, Quaternion.identity);
+        }
     }
 }
