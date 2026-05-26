@@ -28,4 +28,12 @@ public class PlayerPickupFacade : MonoBehaviour
 
         playerHealth.HealFractionOfMax(fraction);
     }
+
+    public void HealFlat(float amount)
+    {
+        if (playerHealth == null)
+            return;
+
+        playerHealth.HealFlat(amount);
+    }
 }

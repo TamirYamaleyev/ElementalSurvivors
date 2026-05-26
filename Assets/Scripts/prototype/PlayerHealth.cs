@@ -98,6 +98,22 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         NotifyHealthChanged();
     }
 
+    /// <summary>
+    /// Heals a flat amount of HP. Does not trigger i-frames.
+    /// </summary>
+    public void HealFlat(float amount)
+    {
+        if (amount <= 0f)
+            return;
+
+        float max = MaxHealth;
+        if (max <= 0f)
+            return;
+
+        currentHealth = Mathf.Min(currentHealth + amount, max);
+        NotifyHealthChanged();
+    }
+
     private void NotifyHealthChanged()
     {
         OnHealthChanged?.Invoke(currentHealth, MaxHealth);
