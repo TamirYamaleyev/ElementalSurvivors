@@ -3,7 +3,7 @@ guid: ed22bb1180c04b8c9f2c4d0e8a3b9c01
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 9876543210987654321
+      213: 2800000000123456789
     second: health_cross_0
   externalObjects: {}
   serializedVersion: 13
@@ -103,7 +103,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: 5e97eb03825dee720800000000000001
-      internalID: 9876543210987654321
+      internalID: 2800000000123456789
       vertices: []
       indices: 
       edges: []
@@ -122,7 +122,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      health_cross_0: 9876543210987654321
+      health_cross_0: 2800000000123456789
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
