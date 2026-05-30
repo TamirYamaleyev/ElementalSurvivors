@@ -12,7 +12,10 @@ GameObject:
   - component: {fileID: 1823828621787274538}
   - component: {fileID: 7393697305678196746}
   - component: {fileID: 5498626285167473815}
+  - component: {fileID: 1111111111111111101}
   - component: {fileID: 805279636442495647}
+  - component: {fileID: 1111111111111111102}
+  - component: {fileID: 1111111111111111103}
   m_Layer: 0
   m_Name: Level3Enemy
   m_TagString: Enemy
@@ -158,6 +161,21 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.5, y: 0.5}
   m_Direction: 0
+--- !u!114 &1111111111111111101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3651129979494247448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 748d8e95bccaa504aa8734c3dd38b51e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  ai: {fileID: 805279636442495647}
+  status: {fileID: 1111111111111111103}
+  health: {fileID: 1111111111111111102}
 --- !u!114 &805279636442495647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,9 +187,33 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7fa6ff12894bbd043802c2e9fecd932b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
   rb: {fileID: 7393697305678196746}
+  moveSpeed: 2
+--- !u!114 &1111111111111111102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3651129979494247448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0360d4c1bcd70d643b8cfd541059a9b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   expOrb: {fileID: 8359288981196373192, guid: 237375f8a132ffe4da9816fb912d8237, type: 3}
   maxHealth: 20
-  damage: 10
-  moveSpeed: 2
+  contactDamage: 10
+--- !u!114 &1111111111111111103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3651129979494247448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce97d9aec75d63842b55cda3499f28ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStatusController

@@ -13,6 +13,7 @@ public class Projectile : MonoBehaviour
     public void Init(float damage, float speed, StatusType status, float statusDuration, StatusSystem statusSystem)
     {
         this.damage = damage;
+        this.speed = speed;
         this.status = status;
         this.statusDuration = statusDuration;
         this.statusSystem = statusSystem;

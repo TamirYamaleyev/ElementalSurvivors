@@ -4,10 +4,10 @@ public class EnemySpawner : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private RunDifficultyProfileSO runProfile;
-    [SerializeField] private EnemyAI levelOneEnemy;
-    [SerializeField] private EnemyAI levelTwoEnemy;
-    [SerializeField] private EnemyAI levelThreeEnemy;
-    [SerializeField] private EnemyAI bossEnemy;
+    [SerializeField] private EnemyPool enemyPool;
+    [SerializeField] private EnemyTierSetSO tierSet;
+    [SerializeField] private StatusSystem statusSystem;
+    [SerializeField] private EnemyRegistry enemyRegistry;
 
     [Header("Settings")]
     [SerializeField] private float spawnInterval = 1f;
@@ -20,7 +20,7 @@ public class EnemySpawner : MonoBehaviour
 
     private Transform player;
 
-    void Start()
+    private void Start()
     {
         player = PlayerController.Instance;
         timer = spawnInterval;
@@ -29,9 +29,9 @@ public class EnemySpawner : MonoBehaviour
             nextBossAt = runProfile.firstBossDelaySeconds;
     }
 
-    void Update()
+    private void Update()
     {
-        if (runProfile == null || player == null)
+        if (runProfile == null || enemyPool == null || tierSet == null || player == null)
             return;
 
         elapsedTime += Time.deltaTime;
@@ -41,41 +41,32 @@ public class EnemySpawner : MonoBehaviour
             return;
 
         if (RunDifficultyEvaluator.ShouldSpawnBoss(runProfile, elapsedTime, ref nextBossAt))
-            SpawnEnemy(GetBossEnemy(), isBoss: true);
+        {
+            int bossPoolTier = Mathf.Max(0, tierSet.tiers.Length - 1);
+            SpawnEnemy(bossPoolTier, isBoss: true);
+        }
 
         timer -= Time.deltaTime;
 
         if (timer <= 0f)
         {
-            SpawnEnemy(GetTierEnemy(), isBoss: false);
+            int tierIndex = RunDifficultyEvaluator.GetPrefabIndex(runProfile, elapsedTime);
+            SpawnEnemy(tierIndex, isBoss: false);
             timer = spawnInterval;
         }
     }
 
-    private EnemyAI GetTierEnemy()
+    private void SpawnEnemy(int tierIndex, bool isBoss)
     {
-        int index = RunDifficultyEvaluator.GetPrefabIndex(runProfile, elapsedTime);
-
-        return index switch
-        {
-            1 => levelTwoEnemy,
-            2 => levelThreeEnemy,
-            _ => levelOneEnemy,
-        };
-    }
-
-    private EnemyAI GetBossEnemy()
-    {
-        if (bossEnemy != null)
-            return bossEnemy;
-
-        return levelThreeEnemy != null ? levelThreeEnemy : levelOneEnemy;
-    }
-
-    private void SpawnEnemy(EnemyAI prefab, bool isBoss)
-    {
-        if (prefab == null)
+        Enemy prefabRef = isBoss ? tierSet.GetBossPrototype() : tierSet.GetTierPrototype(tierIndex);
+        if (prefabRef == null)
             return;
+
+        Enemy instance = enemyPool.Acquire(tierIndex);
+        if (instance == null)
+            return;
+
+        instance.ConfigureSystems(statusSystem, enemyRegistry);
 
         Vector2 baseOffset = Random.insideUnitCircle * spawnRadius;
         Vector2 jitter = Random.insideUnitCircle * spawnJitter;
@@ -86,18 +77,20 @@ public class EnemySpawner : MonoBehaviour
             0f
         );
 
-        EnemyAI instance = Instantiate(prefab, spawnPos, Quaternion.identity);
-
         float multiplier = RunDifficultyEvaluator.GetDifficultyMultiplier(runProfile, elapsedTime);
         if (isBoss)
             multiplier *= runProfile.bossExtraStatMultiplier;
 
-        float scaledHp = prefab.BaselineMaxHealth * multiplier;
-        float scaledDamage = prefab.BaselineContactDamage * multiplier;
-
-        instance.ApplyScaledStats(scaledHp, scaledDamage);
-
+        float visualScale = 1f;
         if (isBoss && runProfile.bossVisualScale > 0f)
-            instance.transform.localScale *= runProfile.bossVisualScale;
+            visualScale = runProfile.bossVisualScale;
+
+        instance.OnAcquire(new SpawnContext
+        {
+            Position = spawnPos,
+            ScaledMaxHealth = prefabRef.BaselineMaxHealth * multiplier,
+            ScaledContactDamage = prefabRef.BaselineContactDamage * multiplier,
+            VisualScaleMultiplier = visualScale,
+        });
     }
 }
