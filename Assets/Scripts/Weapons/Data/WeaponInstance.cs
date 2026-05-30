@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[System.Serializable]
 public class WeaponInstance
 {
     public WeaponDefinition definition;
@@ -34,6 +35,7 @@ public class WeaponInstance
         switch (definition.behaviorType)
         {
             case WeaponBehaviorType.Projectile:
+            {
                 Vector2 pos = ctx.ProjectileSpawnPoint.position;
                 Quaternion rot = ctx.ProjectileSpawnPoint.rotation;
 
@@ -47,23 +49,32 @@ public class WeaponInstance
                     data.statusDuration,
                     ctx.StatusSystem
                     );
+
                 break;
+            }
 
             case WeaponBehaviorType.Area:
-                if (target == null)
-                    return;
+            {
+                //if (target == null)
+                //    return;
+
+                Vector2 pos = ctx.AreaSpawnPoint.position;
 
                 ctx.AreaSystem.Cast(
-                    target.transform.position,
+                    pos,
                     data.range,
                     data.damage,
                     definition.appliedStatus,
                     data.statusDuration,
                     ctx.StatusSystem
                     );
+
                 break;
+            }
+
 
             case WeaponBehaviorType.Orbit:
+            {
                 ctx.OrbitSystem.Spawn(
                     definition.orbitPrefab,
                     ctx.OrbitCenter,
@@ -75,9 +86,10 @@ public class WeaponInstance
                     data.statusDuration,
                     ctx.StatusSystem
                     );
-                break;
-        }
 
-        //ctx.StatusSystem.Apply(target, definition.appliedStatus, Current.damage);
+                break;
+            }
+
+        }
     }
 }

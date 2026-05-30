@@ -30,7 +30,7 @@ public class Projectile : MonoBehaviour
             enemy.TakeDamage(damage);
             statusSystem.Apply(enemy, status, statusDuration);
 
-            // replace with pooling
+            // replace with pooling(?)
             Destroy(gameObject);
         }
     }

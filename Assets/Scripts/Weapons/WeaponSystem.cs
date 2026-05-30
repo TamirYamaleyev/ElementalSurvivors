@@ -7,6 +7,11 @@ public class WeaponSystem : MonoBehaviour
     [SerializeField] private List<WeaponInstance> weapons;
 
     [SerializeField] private WeaponSystemContext context;
+    [SerializeField] private TargetingSystem targetingSys;
+    [SerializeField] private StatusSystem statusSys;
+    [SerializeField] private ProjectileSystem projectileSys;
+    [SerializeField] private AreaSystem areaSys;
+    [SerializeField] private OrbitSystem orbitSys;
 
     [SerializeField] private Transform projectileSpawnPoint;
     [SerializeField] private Transform orbitCenter;
@@ -18,6 +23,14 @@ public class WeaponSystem : MonoBehaviour
 
     public void Initialize()
     {
+        context = new WeaponSystemContext();
+
+        context.Targeting = targetingSys;
+        context.StatusSystem = statusSys;
+        context.ProjectileSystem = projectileSys;
+        context.AreaSystem = areaSys;
+        context.OrbitSystem = orbitSys;
+
         context.ProjectileSpawnPoint = projectileSpawnPoint;
         context.OrbitCenter = orbitCenter;
     }
