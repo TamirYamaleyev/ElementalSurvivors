@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
-{
+{   
     [Header("References")]
     [SerializeField] private RunDifficultyProfileSO runProfile;
     [SerializeField] private EnemyPool enemyPool;

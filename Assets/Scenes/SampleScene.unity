@@ -418,6 +418,7 @@ GameObject:
   - component: {fileID: 181845790}
   - component: {fileID: 181845791}
   - component: {fileID: 181845792}
+  - component: {fileID: 181845794}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -624,7 +625,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   playerInput: {fileID: 181845786}
   rb: {fileID: 181845788}
-  moveSpeed: 8
+  statsProviderBehaviour: {fileID: 0}
 --- !u!50 &181845788
 Rigidbody2D:
   serializedVersion: 5
@@ -701,8 +702,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7898a078512bc9c4f8ea839dab34f02f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  maxHealth: 100
   iFrameDuration: 0.5
+  statsProviderBehaviour: {fileID: 0}
 --- !u!114 &181845791
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -738,6 +739,7 @@ MonoBehaviour:
   activeTime: 0.12
   thrustInterval: 0.05
   thrustsPerLevel: 010000000200000003000000
+  statsProviderBehaviour: {fileID: 0}
 --- !u!114 &181845793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -760,6 +762,19 @@ MonoBehaviour:
   orbitSys: {fileID: 1859789189}
   projectileSpawnPoint: {fileID: 405520221}
   orbitCenter: {fileID: 1969635670}
+--- !u!114 &181845794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181845783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8caeb6a70d0b463d9661837806d216bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
+  baseStats: {fileID: 0}
 --- !u!1 &191866787
 GameObject:
   m_ObjectHideFlags: 0
@@ -2479,6 +2494,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1627141331}
   - component: {fileID: 1627141332}
+  - component: {fileID: 1627141333}
   m_Layer: 0
   m_Name: EnemySpawner
   m_TagString: Untagged
@@ -2514,13 +2530,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   runProfile: {fileID: 11400000, guid: d6c5b4a39281706f5e4d3c2b1a09e080, type: 2}
-  levelOneEnemy: {fileID: 805279636442495647, guid: 77c68128e80259940a8a7848e64cca13, type: 3}
-  levelTwoEnemy: {fileID: 805279636442495647, guid: c82025751f6fd1642b6cc22facad5fa8, type: 3}
-  levelThreeEnemy: {fileID: 805279636442495647, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
-  bossEnemy: {fileID: 0}
+  enemyPool: {fileID: 0}
+  tierSet: {fileID: 11400000, guid: e1e2e3e4f5a6472890e1e2e3e4f5a606, type: 2}
+  statusSystem: {fileID: 1859789187}
+  enemyRegistry: {fileID: 1627141333}
   spawnInterval: 1
   spawnRadius: 10
   spawnJitter: 0.5
+--- !u!114 &1627141333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1627141330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cbccda30ee622845ba1fbfa4277646d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyRegistry
 --- !u!1 &1701264380
 GameObject:
   m_ObjectHideFlags: 0

@@ -18,7 +18,7 @@ public class GameInstaller : MonoBehaviour
             AreaSystem = area,
             OrbitSystem = orbit,
             StatusSystem = status,
-            PlayerStats = playerStats
+            //PlayerStats = playerStats
         };
     }
 }
