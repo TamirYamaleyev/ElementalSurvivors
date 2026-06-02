@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22571cfb24cc461cada5c56404123cf8, type: 3}
+  m_Name: EnemyLootProfile_Default
+  m_EditorClassIdentifier: 
+  expOrbPrefab: {fileID: 8359288981196373192, guid: 237375f8a132ffe4da9816fb912d8237, type: 3}
+  healthOrbPrefab: {fileID: 9001001001001001, guid: b143504a5a844d9087043ca4195cedf0, type: 3}
+  healthOrbChance: 0.5

@@ -202,7 +202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0360d4c1bcd70d643b8cfd541059a9b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  expOrb: {fileID: 8359288981196373192, guid: 237375f8a132ffe4da9816fb912d8237, type: 3}
+  lootProfile: {fileID: 11400000, guid: 65f2499499d64ca9ae8c9a5f59a47b6d, type: 2}
   maxHealth: 15
   contactDamage: 10
 --- !u!114 &1111111111111111103
