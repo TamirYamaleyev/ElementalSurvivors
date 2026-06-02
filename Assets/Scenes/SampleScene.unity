@@ -2530,7 +2530,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   runProfile: {fileID: 11400000, guid: d6c5b4a39281706f5e4d3c2b1a09e080, type: 2}
-  enemyPool: {fileID: 0}
+  enemyPool: {fileID: 1736064099}
   tierSet: {fileID: 11400000, guid: e1e2e3e4f5a6472890e1e2e3e4f5a606, type: 2}
   statusSystem: {fileID: 1859789187}
   enemyRegistry: {fileID: 1627141333}
@@ -2777,6 +2777,74 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1724173329}
   m_CullTransparentMesh: 1
+--- !u!1001 &1736064098
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 8002001001001001, guid: 2355e8cc4e6444eba133dcb526242368, type: 3}
+      propertyPath: m_Name
+      value: EnemyPool
+      objectReference: {fileID: 0}
+    - target: {fileID: 8002001001001002, guid: 2355e8cc4e6444eba133dcb526242368, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.81078
+      objectReference: {fileID: 0}
+    - target: {fileID: 8002001001001002, guid: 2355e8cc4e6444eba133dcb526242368, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.25031
+      objectReference: {fileID: 0}
+    - target: {fileID: 8002001001001002, guid: 2355e8cc4e6444eba133dcb526242368, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8002001001001002, guid: 2355e8cc4e6444eba133dcb526242368, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8002001001001002, guid: 2355e8cc4e6444eba133dcb526242368, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8002001001001002, guid: 2355e8cc4e6444eba133dcb526242368, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8002001001001002, guid: 2355e8cc4e6444eba133dcb526242368, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8002001001001002, guid: 2355e8cc4e6444eba133dcb526242368, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8002001001001002, guid: 2355e8cc4e6444eba133dcb526242368, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8002001001001002, guid: 2355e8cc4e6444eba133dcb526242368, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2355e8cc4e6444eba133dcb526242368, type: 3}
+--- !u!114 &1736064099 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8002001001001003, guid: 2355e8cc4e6444eba133dcb526242368, type: 3}
+  m_PrefabInstance: {fileID: 1736064098}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c2d3e4f5a6472890b1c2d3e4f5a605, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyPool
 --- !u!1001 &1766721897
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3506,3 +3574,4 @@ SceneRoots:
   - {fileID: 1627141331}
   - {fileID: 65705789}
   - {fileID: 1859789191}
+  - {fileID: 1736064098}

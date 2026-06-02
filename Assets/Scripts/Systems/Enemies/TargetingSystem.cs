@@ -9,7 +9,7 @@ public class TargetingSystem : MonoBehaviour
         registry = enemyRegistry;
     }
 
-    public Enemy GetNearest(Vector3 position, float maxRange)
+    public Vector2 GetNearest(Vector3 position, float maxRange)
     {
         Enemy best = null;
         float bestDist = float.MaxValue;
@@ -25,6 +25,6 @@ public class TargetingSystem : MonoBehaviour
             }
         }
 
-        return best;
+        return best.transform.position;
     }
 }

@@ -18,19 +18,19 @@ public class WeaponInstance
         cooldownTimer = Current.cooldown;
     }
 
-    public void Tick(float deltaTime, Enemy target, WeaponSystemContext ctx)
+    public void Tick(float deltaTime, Vector2 targetPos, Transform spawnPoint, WeaponSystemContext ctx)
     {
         cooldownTimer -= deltaTime;
 
         if (cooldownTimer <= 0f)
         {
             var data = Current;
-            Execute(target, ctx, data);
+            Execute(targetPos, spawnPoint, ctx, data);
             cooldownTimer = data.cooldown;
         }
     }
 
-    public void Execute(Enemy target, WeaponSystemContext ctx, WeaponLevelData data)
+    public void Execute(Vector2 targetPos, Transform spawnPoint, WeaponSystemContext ctx, WeaponLevelData data)
     {
         switch (definition.behaviorType)
         {
@@ -42,6 +42,8 @@ public class WeaponInstance
                 ctx.ProjectileSystem.Fire(
                     definition.projectilePrefab,
                     pos,
+                    targetPos,
+                    spawnPoint,
                     rot,
                     data.damage,
                     data.speed,

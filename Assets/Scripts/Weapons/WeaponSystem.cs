@@ -40,7 +40,7 @@ public class WeaponSystem : MonoBehaviour
         foreach (var w in weapons)
         {
             var target = context.Targeting.GetNearest(transform.position, w.Current.range);
-            w.Tick(Time.deltaTime, target, context);
+            w.Tick(Time.deltaTime, target, projectileSpawnPoint, context);
         }
     }
 }
