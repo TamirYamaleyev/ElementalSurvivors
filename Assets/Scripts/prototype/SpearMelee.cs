@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class SpearMelee : MonoBehaviour
@@ -13,6 +11,8 @@ public class SpearMelee : MonoBehaviour
         if (other.TryGetComponent<Enemy>(out var enemy))
         {
             enemy.TakeDamage(damage);
+            if (enemy.TryGetComponent<EnemyAI>(out var ai))
+                ai.ApplySlow(slowDuration, slowMultiplier);
         }
     }
 }

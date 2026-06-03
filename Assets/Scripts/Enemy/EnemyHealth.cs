@@ -14,6 +14,9 @@ public class EnemyHealth : MonoBehaviour
 
     public void Initialize(Enemy enemy)
     {
+        if (owner != null)
+            return;
+
         owner = enemy;
         currentHealth = maxHealth;
     }

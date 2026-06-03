@@ -13,6 +13,10 @@ GameObject:
   - component: {fileID: 7393697305678196746}
   - component: {fileID: 5498626285167473815}
   - component: {fileID: 805279636442495647}
+  - component: {fileID: 112233445566778801}
+  - component: {fileID: 112233445566778802}
+  - component: {fileID: 112233445566778803}
+  - component: {fileID: 112233445566778804}
   m_Layer: 0
   m_Name: Level1Enemy
   m_TagString: Enemy
@@ -175,3 +179,60 @@ MonoBehaviour:
   maxHealth: 10
   damage: 10
   moveSpeed: 3
+--- !u!114 &112233445566778801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3651129979494247448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 748d8e95bccaa504aa8734c3dd38b51e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ai: {fileID: 805279636442495647}
+  status: {fileID: 112233445566778803}
+  health: {fileID: 112233445566778802}
+--- !u!114 &112233445566778802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3651129979494247448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0360d4c1bcd70d643b8cfd541059a9b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TEMPORARYEXPORB: {fileID: 8359288981196373192, guid: 237375f8a132ffe4da9816fb912d8237, type: 3}
+  maxHealth: 10
+--- !u!114 &112233445566778803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3651129979494247448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce97d9aec75d63842b55cda3499f28ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &112233445566778804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3651129979494247448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a8e587a981f4003868d555c22188bde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  statusController: {fileID: 112233445566778803}
+  visualSet: {fileID: 11400000, guid: f35d235ba9ba488a8df8184f8fce829c, type: 2}
+  dotParticles: {fileID: 0}
+  bodySprite: {fileID: 1823828621787274538}

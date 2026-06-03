@@ -60,6 +60,8 @@ public class BoomerangWeapon : MonoBehaviour
         if (other.TryGetComponent<Enemy>(out var enemy))
         {
             enemy.TakeDamage(damage);
+            if (enemy.TryGetComponent<EnemyAI>(out var ai))
+                ai.ApplyFear(fearDuration);
         }
     }
 }

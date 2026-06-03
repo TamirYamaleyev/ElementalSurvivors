@@ -9,10 +9,34 @@ public class Enemy : MonoBehaviour
 
     public EnemyStatusController StatusController => status;
 
+    private void Awake()
+    {
+        if (status == null)
+            status = GetComponent<EnemyStatusController>();
+        if (health == null)
+            health = GetComponent<EnemyHealth>();
+
+        if (status == null || health == null)
+            return;
+
+        var sys = FindAnyObjectByType<StatusSystem>();
+        if (sys != null)
+            status.Initialize(sys, this);
+
+        health.Initialize(this);
+    }
+
     public void Initialize(StatusSystem statusSystem, EnemyRegistry registry)
     {
-        status.Initialize(statusSystem, this);
-        health.Initialize(this);
+        if (status == null)
+            status = GetComponent<EnemyStatusController>();
+        if (health == null)
+            health = GetComponent<EnemyHealth>();
+
+        if (status != null)
+            status.Initialize(statusSystem, this);
+        if (health != null)
+            health.Initialize(this);
 
         registry.Register(this);
     }

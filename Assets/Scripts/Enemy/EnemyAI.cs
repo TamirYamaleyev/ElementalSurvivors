@@ -15,11 +15,6 @@ public class EnemyAI : MonoBehaviour
     private float slowMultiplier = 0.5f;
     private float slowTimer;
 
-    private float dotDuration;
-    private float dotTickTimer;
-    private float dotDamage = 1f;
-    private float dotTickInterval = 0.5f;
-
     private float fearTimer;
 
     private PlayerHealth playerRef;
@@ -52,13 +47,6 @@ public class EnemyAI : MonoBehaviour
     {
         slowTimer = duration;
         slowMultiplier = multiplier;
-    }
-
-    public void ApplyDoT(float duration, float damagePerTick)
-    {
-        dotDuration = duration;
-        dotDamage = damagePerTick;
-        dotTickTimer = 0f;
     }
 
     void FixedUpdate()
