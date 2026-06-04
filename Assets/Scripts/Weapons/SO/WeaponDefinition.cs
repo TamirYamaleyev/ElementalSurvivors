@@ -4,7 +4,8 @@ public enum WeaponBehaviorType
 {
     Projectile,
     Area,
-    Orbit
+    Orbit,
+    Custom
 }
 
 [CreateAssetMenu(fileName = "WeaponDefinition", menuName = "Scriptable Objects/WeaponDefinition")]
@@ -16,6 +17,7 @@ public class WeaponDefinition : ScriptableObject
 
     public Projectile projectilePrefab;
     public OrbitingObject orbitPrefab;
+    public WeaponBehavior customWeaponPrefab;
 
     public WeaponLevelData[] levels = new WeaponLevelData[5];
 }

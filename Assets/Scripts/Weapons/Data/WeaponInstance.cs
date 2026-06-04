@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using UnityEngine;
 
 [System.Serializable]
@@ -22,22 +23,28 @@ public class WeaponInstance
     {
         cooldownTimer -= deltaTime;
 
-        if (cooldownTimer <= 0f)
-        {
-            var data = Current;
-            Execute(target, ctx, data);
+        if (cooldownTimer > 0f)
+            return;
+
+        var data = Current;
+
+        bool fired = Execute(target, ctx, data);
+
+        if (fired)
             cooldownTimer = data.cooldown;
-        }
     }
 
-    public void Execute(Enemy target, WeaponSystemContext ctx, WeaponLevelData data)
+    public bool Execute(Enemy target, WeaponSystemContext ctx, WeaponLevelData data)
     {
-        Vector2 spawnPos = ctx.ProjectileSpawnPoint.position;
+        bool fired = false;
+
+        Vector2 spawnPos = ctx.PlayerTransformPoint.position;
 
         switch (definition.behaviorType)
         {
             case WeaponBehaviorType.Projectile:
             {
+                spawnPos = ctx.ProjectileSpawnPoint.position;
                 Vector2 dir = ResolveDirection(target, spawnPos, ctx);
 
                 ctx.ProjectileSystem.Fire(
@@ -49,7 +56,9 @@ public class WeaponInstance
                     definition.appliedStatus,
                     data.statusDuration,
                     ctx.StatusSystem
-                    );
+                );
+
+                fired = true;
                 break;
             }
 
@@ -65,7 +74,9 @@ public class WeaponInstance
                     definition.appliedStatus,
                     data.statusDuration,
                     ctx.StatusSystem
-                    );
+                );
+
+                fired = true;
                 break;
             }
 
@@ -81,10 +92,20 @@ public class WeaponInstance
                     definition.appliedStatus,
                     data.statusDuration,
                     ctx.StatusSystem
-                    );
+                );
+
+                fired = true;
+                break;
+            }
+
+            case WeaponBehaviorType.Custom:
+            {
+                fired = definition.customWeaponPrefab.Execute(target, data, ctx, definition);
                 break;
             }
         }
+
+        return fired;
     }
 
     private Vector2 ResolveDirection(Enemy target, Vector2 origin, WeaponSystemContext ctx)

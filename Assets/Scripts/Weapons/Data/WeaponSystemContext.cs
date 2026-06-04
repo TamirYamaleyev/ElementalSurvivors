@@ -15,4 +15,5 @@ public class WeaponSystemContext
     public Transform ProjectileSpawnPoint;
     public Transform OrbitCenter;
     public Transform AreaSpawnPoint;
+    public Transform PlayerTransformPoint;
 }
