@@ -1,39 +1,70 @@
-using System.Security.Cryptography;
-using Unity.VisualScripting;
+using System;
 using UnityEngine;
 
-public class EnemyHealth : MonoBehaviour
+public class EnemyHealth : MonoBehaviour, IDamageable
 {
-    [Header("TEMPORARY SHIT TO REMOVE")]
-    [SerializeField] private GameObject TEMPORARYEXPORB;
-
+    [SerializeField] private EnemyLootProfileSO lootProfile;
     [SerializeField] private float maxHealth = 10f;
-    private float currentHealth;
+    [SerializeField] private float contactDamage = 10f;
 
-    private Enemy owner;
+    private float currentHealth;
+    private PlayerHealth playerRef;
+
+    public event Action OnDied;
+
+    public float BaselineMaxHealth => maxHealth;
+    public float BaselineContactDamage => contactDamage;
 
     public void Initialize(Enemy enemy)
     {
-        if (owner != null)
-            return;
-
-        owner = enemy;
         currentHealth = maxHealth;
+    }
+
+    public void ApplyScaledStats(float maxHp, float contactDmg)
+    {
+        maxHealth = maxHp;
+        currentHealth = maxHp;
+        contactDamage = contactDmg;
     }
 
     public void TakeDamage(float amount)
     {
+        if (currentHealth <= 0f)
+            return;
+
         currentHealth -= amount;
 
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
+        if (currentHealth <= 0f)
+            OnDied?.Invoke();
     }
 
-    private void Die()
+    public void SpawnDeathLoot()
     {
-        Instantiate(TEMPORARYEXPORB, transform.position, Quaternion.identity);
-        Destroy(gameObject);
+        if (lootProfile != null)
+            lootProfile.SpawnLoot(transform.position);
+    }
+
+    public void EnsureInitialized()
+    {
+        if (playerRef != null)
+            return;
+
+        Transform player = PlayerController.Instance;
+        if (player != null)
+            playerRef = player.GetComponent<PlayerHealth>();
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (!other.CompareTag("Player"))
+            return;
+
+        if (playerRef != null)
+            playerRef.TakeDamage(contactDamage);
+    }
+
+    public void ResetState()
+    {
+        currentHealth = maxHealth;
     }
 }

@@ -1,41 +1,46 @@
-
 using UnityEngine;
 
-[RequireComponent (typeof(Rigidbody2D))]
+[RequireComponent(typeof(Rigidbody2D))]
 public class EnemyAI : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Rigidbody2D rb;
 
     [Header("Settings")]
-    [SerializeField] private float maxHealth = 25f;
-    [SerializeField] private float damage = 10f;
     [SerializeField] private float moveSpeed = 5f;
 
+    private EnemyHealth health;
     private float slowMultiplier = 0.5f;
     private float slowTimer;
-
+    private float dotDuration;
+    private float dotTickTimer;
+    private float dotDamage = 1f;
+    private float dotTickInterval = 0.5f;
     private float fearTimer;
-
-    private PlayerHealth playerRef;
     private Transform player;
     private Vector2 direction;
-    private float currentHealth;
+    private bool gameplayEnabled = true;
 
-    void Awake()
+    private void Awake()
     {
         if (rb == null)
             rb = GetComponent<Rigidbody2D>();
 
-        currentHealth = maxHealth;
+        health = GetComponent<EnemyHealth>();
     }
 
-    void Start()
+    public void EnsureInitialized()
     {
-        player = PlayerController.Instance;
+        if (player == null)
+            player = PlayerController.Instance;
+    }
 
-        if (playerRef == null)
-            playerRef = player.GetComponent<PlayerHealth>();
+    private void Update()
+    {
+        if (!gameplayEnabled || dotDuration <= 0f)
+            return;
+
+        DealDoT();
     }
 
     public void ApplyFear(float duration)
@@ -49,30 +54,43 @@ public class EnemyAI : MonoBehaviour
         slowMultiplier = multiplier;
     }
 
-    void FixedUpdate()
+    public void ApplyDoT(float duration, float damagePerTick)
     {
-        FollowPlayer();
+        dotDuration = duration;
+        dotDamage = damagePerTick;
+        dotTickTimer = 0f;
     }
 
-    private void OnTriggerStay2D(Collider2D other)
+    private void DealDoT()
     {
-        if (other.CompareTag("Player"))
+        dotDuration -= Time.deltaTime;
+        dotTickTimer += Time.deltaTime;
+
+        if (dotTickTimer >= dotTickInterval)
         {
-            if (playerRef != null)
-                playerRef.TakeDamage(damage);
+            health?.TakeDamage(dotDamage);
+            dotTickTimer = 0f;
         }
+    }
+
+    private void FixedUpdate()
+    {
+        if (!gameplayEnabled)
+            return;
+
+        FollowPlayer();
     }
 
     private void SetDirection()
     {
-        if (player == null) return;
+        if (player == null)
+            return;
 
         Vector2 baseDir = (player.position - transform.position).normalized;
 
         if (fearTimer > 0f)
         {
             direction = -baseDir;
-
             fearTimer -= Time.deltaTime;
         }
         else
@@ -93,16 +111,27 @@ public class EnemyAI : MonoBehaviour
             slowTimer -= Time.deltaTime;
         }
 
-        rb.linearVelocity = direction * currentSpeed;
+        if (rb != null)
+            rb.linearVelocity = direction * currentSpeed;
     }
 
-    public float BaselineMaxHealth => maxHealth;
-    public float BaselineContactDamage => damage;
-
-    public void ApplyScaledStats(float maxHp, float contactDamage)
+    public void ResetState()
     {
-        maxHealth = maxHp;
-        currentHealth = maxHp;
-        damage = contactDamage;
+        slowTimer = 0f;
+        fearTimer = 0f;
+        dotDuration = 0f;
+        dotTickTimer = 0f;
+        gameplayEnabled = true;
+
+        if (rb != null)
+            rb.linearVelocity = Vector2.zero;
+    }
+
+    public void SetGameplayEnabled(bool enabled)
+    {
+        gameplayEnabled = enabled;
+
+        if (!enabled && rb != null)
+            rb.linearVelocity = Vector2.zero;
     }
 }

@@ -1,10 +1,9 @@
+using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class StatusSystem : MonoBehaviour
 {
-    [SerializeField] private MonoBehaviour reactionDispatcherBehaviour;
-
     public void Apply(Enemy enemy, StatusType type, float duration)
     {
         enemy.StatusController.AddStatus(type, duration);
