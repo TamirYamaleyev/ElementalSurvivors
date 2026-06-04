@@ -91,7 +91,6 @@ public class WeaponInstance
     {
         if (target != null)
         {
-            Debug.Log("Found enemy");
             return ((Vector2)target.transform.position - origin).normalized;
         }
 

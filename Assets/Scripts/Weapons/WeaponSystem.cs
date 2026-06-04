@@ -11,6 +11,8 @@ public class WeaponSystem : MonoBehaviour
     public void Initialize(WeaponSystemContext ctx)
     {
         context = ctx;
+
+        ctx.Targeting.Initialize(ctx.EnemyRegistry);
     }
 
     void Update()

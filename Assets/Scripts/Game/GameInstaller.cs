@@ -26,7 +26,7 @@ public class GameInstaller : MonoBehaviour
 
     void Awake()
     {
-        weaponSystem.Initialize(BuildWeaponContext());    
+        weaponSystem.Initialize(BuildWeaponContext());
     }
 
     public WeaponSystemContext BuildWeaponContext()

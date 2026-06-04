@@ -20,21 +20,21 @@ MonoBehaviour:
   levels:
   - damage: 10
     cooldown: 1
-    range: 0
+    range: 100
     speed: 10
     projectileCount: 1
     statusDuration: 5
     visualSprite: {fileID: 21300000, guid: 97e6bb718f8833641aeec084a4d5f4cf, type: 3}
   - damage: 20
     cooldown: 0.8
-    range: 0
+    range: 100
     speed: 10
     projectileCount: 1
     statusDuration: 5
     visualSprite: {fileID: 21300000, guid: 97e6bb718f8833641aeec084a4d5f4cf, type: 3}
   - damage: 30
     cooldown: 0.5
-    range: 0
+    range: 100
     speed: 10
     projectileCount: 1
     statusDuration: 5
