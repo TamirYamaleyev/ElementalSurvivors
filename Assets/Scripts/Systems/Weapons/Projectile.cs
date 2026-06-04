@@ -12,12 +12,10 @@ public class Projectile : MonoBehaviour
     private StatusSystem statusSystem;
     private Transform projectileSpawnPoint;
 
-    public void Init(float damage, float speed, Vector2 targetPos, Transform projectileSpawnPoint, StatusType status, float statusDuration, StatusSystem statusSystem)
+    public void Init(float damage, float speed, StatusType status, float statusDuration, StatusSystem statusSystem)
     {
         this.damage = damage;
         this.speed = speed;
-        this.targetPos = targetPos;
-        this.projectileSpawnPoint = projectileSpawnPoint;
         this.status = status;
         this.statusDuration = statusDuration;
         this.statusSystem = statusSystem;
@@ -25,7 +23,7 @@ public class Projectile : MonoBehaviour
 
     void Update()
     {
-        targetPos != Vector2.zero ? Chase() : FlyDefault();
+        //targetPos != Vector2.zero ? Chase() : FlyDefault();
         
     }
 

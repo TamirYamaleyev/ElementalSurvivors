@@ -18,47 +18,43 @@ public class WeaponInstance
         cooldownTimer = Current.cooldown;
     }
 
-    public void Tick(float deltaTime, Vector2 targetPos, Transform spawnPoint, WeaponSystemContext ctx)
+    public void Tick(float deltaTime, Enemy target, WeaponSystemContext ctx)
     {
         cooldownTimer -= deltaTime;
 
         if (cooldownTimer <= 0f)
         {
             var data = Current;
-            Execute(targetPos, spawnPoint, ctx, data);
+            Execute(target, ctx, data);
             cooldownTimer = data.cooldown;
         }
     }
 
-    public void Execute(Vector2 targetPos, Transform spawnPoint, WeaponSystemContext ctx, WeaponLevelData data)
+    public void Execute(Enemy target, WeaponSystemContext ctx, WeaponLevelData data)
     {
+        Vector2 spawnPos = ctx.ProjectileSpawnPoint.position;
+
         switch (definition.behaviorType)
         {
             case WeaponBehaviorType.Projectile:
             {
-                Vector2 pos = ctx.ProjectileSpawnPoint.position;
-                Quaternion rot = ctx.ProjectileSpawnPoint.rotation;
+                Vector2 dir = ResolveDirection(target, spawnPos, ctx);
 
                 ctx.ProjectileSystem.Fire(
                     definition.projectilePrefab,
-                    pos,
-                    targetPos,
-                    spawnPoint,
-                    rot,
+                    spawnPos,
+                    dir,
                     data.damage,
                     data.speed,
                     definition.appliedStatus,
                     data.statusDuration,
                     ctx.StatusSystem
                     );
-
                 break;
             }
 
             case WeaponBehaviorType.Area:
             {
-                //if (target == null)
-                //    return;
 
                 Vector2 pos = ctx.AreaSpawnPoint.position;
 
@@ -70,10 +66,8 @@ public class WeaponInstance
                     data.statusDuration,
                     ctx.StatusSystem
                     );
-
                 break;
             }
-
 
             case WeaponBehaviorType.Orbit:
             {
@@ -88,10 +82,16 @@ public class WeaponInstance
                     data.statusDuration,
                     ctx.StatusSystem
                     );
-
                 break;
             }
-
         }
+    }
+
+    private Vector2 ResolveDirection(Enemy target, Vector2 origin, WeaponSystemContext ctx)
+    {
+        if (target != null)
+            return ((Vector2)target.transform.position - origin).normalized;
+
+        return ctx.AimDirection.LastDirection;
     }
 }

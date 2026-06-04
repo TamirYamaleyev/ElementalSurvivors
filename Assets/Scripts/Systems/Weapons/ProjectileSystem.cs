@@ -6,8 +6,6 @@ public class ProjectileSystem : MonoBehaviour
         Projectile prefab,
         Vector2 position,
         Vector2 targetPos,
-        Transform projectileSpawnPoint,
-        Quaternion rotation,
         float damage,
         float speed,
         StatusType status,
@@ -15,9 +13,9 @@ public class ProjectileSystem : MonoBehaviour
         StatusSystem statusSystem)
     {
         // replace with pooling
-        Projectile proj = Instantiate(prefab, position, rotation);
+        Projectile proj = Instantiate(prefab, position, Quaternion.identity);
 
-        proj.Init(damage, speed, targetPos, projectileSpawnPoint, status, statusDuration, statusSystem);
+        proj.Init(damage, speed, status, statusDuration, statusSystem);
 
         return proj;
     }

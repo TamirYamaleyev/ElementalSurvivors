@@ -9,22 +9,33 @@ public class TargetingSystem : MonoBehaviour
         registry = enemyRegistry;
     }
 
-    public Vector2 GetNearest(Vector3 position, float maxRange)
+    public Enemy GetNearest(Vector3 position, float maxRange)
     {
+        if (registry == null || registry.ActiveEnemies == null)
+            return null;
+
         Enemy best = null;
-        float bestDist = float.MaxValue;
+        float bestDistSqr = float.MaxValue * maxRange;
 
-        foreach (var enemy in registry.ActiveEnemies)
+        Vector3 pos = position;
+
+        for (int i = 0; i < registry.ActiveEnemies.Count; i++)
         {
-            float d = Vector3.SqrMagnitude(enemy.transform.position - position);
+            Enemy e = registry.ActiveEnemies[i];
 
-            if (d < bestDist && d <= maxRange * maxRange)
+            if (e == null) 
+                continue;
+
+            Vector3 diff = e.transform.position - pos;
+            float distSqr = diff.sqrMagnitude;
+
+            if (distSqr <= bestDistSqr)
             {
-                bestDist = d;
-                best = enemy;
+                bestDistSqr = distSqr;
+                best = e;
             }
         }
 
-        return best.transform.position;
+        return best;
     }
 }

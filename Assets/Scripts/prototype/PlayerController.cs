@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private PlayerInput playerInput;
+    [SerializeField] private PlayerAimDirection playerAimDirection;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private MonoBehaviour statsProviderBehaviour;
 
@@ -41,6 +42,8 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
+        playerAimDirection.SetDirection(moveInput);
+
     }
 
     private void Move()

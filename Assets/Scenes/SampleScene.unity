@@ -419,6 +419,7 @@ GameObject:
   - component: {fileID: 181845791}
   - component: {fileID: 181845792}
   - component: {fileID: 181845794}
+  - component: {fileID: 181845795}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -624,8 +625,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   playerInput: {fileID: 181845786}
+  playerAimDirection: {fileID: 181845795}
   rb: {fileID: 181845788}
-  statsProviderBehaviour: {fileID: 0}
+  statsProviderBehaviour: {fileID: 181845794}
 --- !u!50 &181845788
 Rigidbody2D:
   serializedVersion: 5
@@ -703,7 +705,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   iFrameDuration: 0.5
-  statsProviderBehaviour: {fileID: 0}
+  statsProviderBehaviour: {fileID: 181845794}
 --- !u!114 &181845791
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -755,13 +757,6 @@ MonoBehaviour:
   weapons:
   - definition: {fileID: 11400000, guid: 344e53ba47462cd45a6057741e8baac5, type: 2}
     level: 1
-  targetingSys: {fileID: 1437271813}
-  statusSys: {fileID: 1859789187}
-  projectileSys: {fileID: 1859789190}
-  areaSys: {fileID: 1859789188}
-  orbitSys: {fileID: 1859789189}
-  projectileSpawnPoint: {fileID: 405520221}
-  orbitCenter: {fileID: 1969635670}
 --- !u!114 &181845794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -774,7 +769,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8caeb6a70d0b463d9661837806d216bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
-  baseStats: {fileID: 0}
+  baseStats: {fileID: 11400000, guid: 6f892ff6e6cc440ba66c4125d16844cb, type: 2}
+--- !u!114 &181845795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181845783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55778fa03fdf22c4b8106c69ac131445, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &191866787
 GameObject:
   m_ObjectHideFlags: 0
@@ -3000,6 +3007,7 @@ GameObject:
   - component: {fileID: 1859789189}
   - component: {fileID: 1859789188}
   - component: {fileID: 1859789187}
+  - component: {fileID: 1859789192}
   m_Layer: 0
   m_Name: CombatManager
   m_TagString: Untagged
@@ -3073,6 +3081,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1859789192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1859789186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4a81b347671d1b44a2acddb9b36de61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameInstaller
+  targeting: {fileID: 1437271813}
+  projectile: {fileID: 1859789190}
+  area: {fileID: 1859789188}
+  orbit: {fileID: 1859789189}
+  status: {fileID: 1859789187}
+  projectileSpawnPoint: {fileID: 405520221}
+  orbitCenter: {fileID: 1969635670}
+  playerStats: {fileID: 181845794}
+  playerAimDirection: {fileID: 181845795}
+  weaponSystem: {fileID: 181845793}
 --- !u!1 &1929810247
 GameObject:
   m_ObjectHideFlags: 0

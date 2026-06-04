@@ -8,6 +8,9 @@ public class WeaponSystemContext
     public OrbitSystem OrbitSystem;
     public StatusSystem StatusSystem;
 
+    public PlayerStats PlayerStats;
+    public PlayerAimDirection AimDirection;
+
     public Transform ProjectileSpawnPoint;
     public Transform OrbitCenter;
     public Transform AreaSpawnPoint;
