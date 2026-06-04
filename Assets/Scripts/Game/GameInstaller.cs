@@ -9,11 +9,17 @@ public class GameInstaller : MonoBehaviour
     [SerializeField] private OrbitSystem orbit;
     [SerializeField] private StatusSystem status;
 
+    [Header("World State")]
+    [SerializeField] private EnemyRegistry registry;
+
     [Header("Player")]
-    [SerializeField] private Transform projectileSpawnPoint;
-    [SerializeField] private Transform orbitCenter;
     [SerializeField] private PlayerStats playerStats;
     [SerializeField] private PlayerAimDirection playerAimDirection;
+
+    [Header("Transforms")]
+    [SerializeField] private Transform projectileSpawnPoint;
+    [SerializeField] private Transform orbitCenter;
+    [SerializeField] private Transform areaSpawnPoint;
 
     [Header("Runtime")]
     [SerializeField] private WeaponSystem weaponSystem;
@@ -27,6 +33,8 @@ public class GameInstaller : MonoBehaviour
     {
         return new WeaponSystemContext
         {
+            EnemyRegistry = registry,
+
             Targeting = targeting,
             ProjectileSystem = projectile,
             AreaSystem = area,
@@ -35,6 +43,8 @@ public class GameInstaller : MonoBehaviour
 
             ProjectileSpawnPoint = projectileSpawnPoint,
             OrbitCenter = orbitCenter,
+            AreaSpawnPoint = areaSpawnPoint,
+
             PlayerStats = playerStats,
             AimDirection = playerAimDirection
         };

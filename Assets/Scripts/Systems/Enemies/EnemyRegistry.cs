@@ -11,7 +11,10 @@ public class EnemyRegistry : MonoBehaviour
     public void Register(Enemy e) /*=> ActiveEnemies.Add(e);*/
     {
         ActiveEnemies.Add(e);
-        Debug.Log("Registered enemy");
+        Debug.Log($"Registered {e.name}");
+
+        foreach (Enemy enemy in ActiveEnemies)
+            Debug.Log($"{enemy.name}");
     }
     public void Unregister(Enemy e) => ActiveEnemies.Remove(e);
 }

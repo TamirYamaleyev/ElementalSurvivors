@@ -90,7 +90,10 @@ public class WeaponInstance
     private Vector2 ResolveDirection(Enemy target, Vector2 origin, WeaponSystemContext ctx)
     {
         if (target != null)
+        {
+            Debug.Log("Found enemy");
             return ((Vector2)target.transform.position - origin).normalized;
+        }
 
         return ctx.AimDirection.LastDirection;
     }

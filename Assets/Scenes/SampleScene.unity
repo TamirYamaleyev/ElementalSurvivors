@@ -3098,10 +3098,12 @@ MonoBehaviour:
   area: {fileID: 1859789188}
   orbit: {fileID: 1859789189}
   status: {fileID: 1859789187}
-  projectileSpawnPoint: {fileID: 405520221}
-  orbitCenter: {fileID: 1969635670}
+  registry: {fileID: 1627141333}
   playerStats: {fileID: 181845794}
   playerAimDirection: {fileID: 181845795}
+  projectileSpawnPoint: {fileID: 405520221}
+  orbitCenter: {fileID: 1969635670}
+  areaSpawnPoint: {fileID: 0}
   weaponSystem: {fileID: 181845793}
 --- !u!1 &1929810247
 GameObject:

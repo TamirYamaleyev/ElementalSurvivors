@@ -189,7 +189,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
   rb: {fileID: 7393697305678196746}
-  moveSpeed: 3
+  moveSpeed: 1
 --- !u!114 &1111111111111111102
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -10,6 +10,7 @@ public class WeaponSystemContext
 
     public PlayerStats PlayerStats;
     public PlayerAimDirection AimDirection;
+    public EnemyRegistry EnemyRegistry;
 
     public Transform ProjectileSpawnPoint;
     public Transform OrbitCenter;
