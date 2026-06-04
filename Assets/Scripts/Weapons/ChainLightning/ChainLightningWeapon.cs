@@ -5,10 +5,8 @@ public class ChainLightningWeapon : WeaponBehavior
     [SerializeField] private ChaingLightningVisual visualPrefab;
     [SerializeField] private float visualLifetime = 0.1f;
 
-    public override bool Execute(Enemy target, WeaponLevelData data, WeaponSystemContext ctx, WeaponDefinition definition)
+    public override bool TryExecute(Enemy target, WeaponLevelData data, WeaponSystemContext ctx, WeaponDefinition definition)
     {
-        Debug.Log("Zap");
-
         Vector2 origin = ctx.ProjectileSpawnPoint.position;
 
         var targets = ctx.Targeting.GetChainTargets(origin, data.projectileCount, data.range);
@@ -20,7 +18,7 @@ public class ChainLightningWeapon : WeaponBehavior
 
         foreach (var enemy in targets)
         {
-            if (enemy == null) 
+            if (enemy == null)
                 continue;
 
             Vector2 hitPoint = enemy.transform.position;
@@ -34,6 +32,7 @@ public class ChainLightningWeapon : WeaponBehavior
 
             previousPoint = hitPoint;
         }
+        Debug.Log("Zap");
 
         return true;
     }

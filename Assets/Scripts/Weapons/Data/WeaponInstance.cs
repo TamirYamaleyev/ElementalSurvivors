@@ -28,13 +28,13 @@ public class WeaponInstance
 
         var data = Current;
 
-        bool fired = Execute(target, ctx, data);
+        bool fired = TryExecute(target, ctx, data);
 
         if (fired)
             cooldownTimer = data.cooldown;
     }
 
-    public bool Execute(Enemy target, WeaponSystemContext ctx, WeaponLevelData data)
+    public bool TryExecute(Enemy target, WeaponSystemContext ctx, WeaponLevelData data)
     {
         bool fired = false;
 
@@ -100,11 +100,10 @@ public class WeaponInstance
 
             case WeaponBehaviorType.Custom:
             {
-                fired = definition.customWeaponPrefab.Execute(target, data, ctx, definition);
+                fired = definition.customWeaponPrefab.TryExecute(target, data, ctx, definition);
                 break;
             }
         }
-
         return fired;
     }
 
