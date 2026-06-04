@@ -26,6 +26,8 @@ public class SpearMelee : MonoBehaviour
         {
             float damage = ResolveDamage();
             enemy.TakeDamage(damage);
+            if (enemy.TryGetComponent<EnemyAI>(out var ai))
+                ai.ApplySlow(slowDuration, slowMultiplier);
         }
     }
 

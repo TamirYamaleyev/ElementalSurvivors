@@ -1,70 +1,39 @@
-using System;
+using System.Security.Cryptography;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class EnemyHealth : MonoBehaviour, IDamageable
+public class EnemyHealth : MonoBehaviour
 {
-    [SerializeField] private EnemyLootProfileSO lootProfile;
+    [Header("TEMPORARY SHIT TO REMOVE")]
+    [SerializeField] private GameObject TEMPORARYEXPORB;
+
     [SerializeField] private float maxHealth = 10f;
-    [SerializeField] private float contactDamage = 10f;
-
     private float currentHealth;
-    private PlayerHealth playerRef;
 
-    public event Action OnDied;
-
-    public float BaselineMaxHealth => maxHealth;
-    public float BaselineContactDamage => contactDamage;
+    private Enemy owner;
 
     public void Initialize(Enemy enemy)
     {
-        currentHealth = maxHealth;
-    }
+        if (owner != null)
+            return;
 
-    public void ApplyScaledStats(float maxHp, float contactDmg)
-    {
-        maxHealth = maxHp;
-        currentHealth = maxHp;
-        contactDamage = contactDmg;
+        owner = enemy;
+        currentHealth = maxHealth;
     }
 
     public void TakeDamage(float amount)
     {
-        if (currentHealth <= 0f)
-            return;
-
         currentHealth -= amount;
 
-        if (currentHealth <= 0f)
-            OnDied?.Invoke();
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
     }
 
-    public void SpawnDeathLoot()
+    private void Die()
     {
-        if (lootProfile != null)
-            lootProfile.SpawnLoot(transform.position);
-    }
-
-    public void EnsureInitialized()
-    {
-        if (playerRef != null)
-            return;
-
-        Transform player = PlayerController.Instance;
-        if (player != null)
-            playerRef = player.GetComponent<PlayerHealth>();
-    }
-
-    private void OnTriggerStay2D(Collider2D other)
-    {
-        if (!other.CompareTag("Player"))
-            return;
-
-        if (playerRef != null)
-            playerRef.TakeDamage(contactDamage);
-    }
-
-    public void ResetState()
-    {
-        currentHealth = maxHealth;
+        Instantiate(TEMPORARYEXPORB, transform.position, Quaternion.identity);
+        Destroy(gameObject);
     }
 }
