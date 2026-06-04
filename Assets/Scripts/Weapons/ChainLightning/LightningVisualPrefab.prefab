@@ -105,3 +105,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChaingLightningVisual
   sr: {fileID: 2974912281853799423}
+  offset: 0.4
+  thickness: 0.5
