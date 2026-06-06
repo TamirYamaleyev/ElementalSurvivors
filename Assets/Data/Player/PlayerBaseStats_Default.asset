@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlayerBaseStats_Default
   m_EditorClassIdentifier: 
   baseMaxHealth: 100
-  baseMoveSpeed: 4
+  baseMoveSpeed: 3
   baseDamageMultiplier: 1
   baseAttackSpeed: 1
   baseProjectileSpeedMultiplier: 1
