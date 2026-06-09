@@ -1,13 +1,28 @@
 fileFormatVersion: 2
-guid: 3413cdcdbd3d2d04d9bda4a1e9a170a9
+guid: 6c192cce7684f6c40b7016c687be9ea4
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4231841698198183022
-    second: IMG_0600_0
+      213: -3215410960346549969
+    second: IMG_0639_0
   - first:
-      213: -2924963780405810735
-    second: IMG_0600_1
+      213: -922986686405217085
+    second: IMG_0639_1
+  - first:
+      213: -58092236501324974
+    second: IMG_0639_2
+  - first:
+      213: -3571261070917754630
+    second: IMG_0639_3
+  - first:
+      213: 1384300933146113489
+    second: IMG_0639_4
+  - first:
+      213: 2146632706178217174
+    second: IMG_0639_5
+  - first:
+      213: 4999575203456381744
+    second: IMG_0639_6
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,10 +66,10 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 0
+  spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 600
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -75,7 +90,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -101,7 +116,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: WebGL
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -114,7 +129,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: WindowsStoreApps
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -129,13 +144,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: IMG_0600_0
+      name: IMG_0639_0
       rect:
         serializedVersion: 2
-        x: 354
-        y: 424
-        width: 424
-        height: 917
+        x: 457
+        y: 5640
+        width: 2727
+        height: 3777
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -144,20 +159,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e6cd9ce6a958aba30800000000000000
-      internalID: 4231841698198183022
+      spriteID: f2175ad74c09063d0800000000000000
+      internalID: -3215410960346549969
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: IMG_0600_1
+      name: IMG_0639_1
       rect:
         serializedVersion: 2
-        x: 1254
-        y: 312
-        width: 423
-        height: 1019
+        x: 4463
+        y: 5674
+        width: 2727
+        height: 3777
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -166,8 +181,118 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1d9270850f07867d0800000000000000
-      internalID: -2924963780405810735
+      spriteID: 3c4f668bf74e033f0800000000000000
+      internalID: -922986686405217085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IMG_0639_2
+      rect:
+        serializedVersion: 2
+        x: 8331
+        y: 5877
+        width: 2682
+        height: 3557
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25b612f2b6d913ff0800000000000000
+      internalID: -58092236501324974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IMG_0639_3
+      rect:
+        serializedVersion: 2
+        x: 2032
+        y: 1227
+        width: 2939
+        height: 3569
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af024c33af4507ec0800000000000000
+      internalID: -3571261070917754630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IMG_0639_4
+      rect:
+        serializedVersion: 2
+        x: 6773
+        y: 1121
+        width: 2682
+        height: 3726
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d57a664d56063310800000000000000
+      internalID: 1384300933146113489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IMG_0639_5
+      rect:
+        serializedVersion: 2
+        x: 3299
+        y: 1192
+        width: 30
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d4fcfaa21f5acd10800000000000000
+      internalID: 2146632706178217174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IMG_0639_6
+      rect:
+        serializedVersion: 2
+        x: 3263
+        y: 1019
+        width: 50
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0337edd982f026540800000000000000
+      internalID: 4999575203456381744
       vertices: []
       indices: 
       edges: []
@@ -186,8 +311,13 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      IMG_0600_0: 4231841698198183022
-      IMG_0600_1: -2924963780405810735
+      IMG_0639_0: -3215410960346549969
+      IMG_0639_1: -922986686405217085
+      IMG_0639_2: -58092236501324974
+      IMG_0639_3: -3571261070917754630
+      IMG_0639_4: 1384300933146113489
+      IMG_0639_5: 2146632706178217174
+      IMG_0639_6: 4999575203456381744
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
