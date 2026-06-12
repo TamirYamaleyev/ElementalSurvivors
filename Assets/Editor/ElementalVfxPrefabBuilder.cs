@@ -26,10 +26,11 @@ public static class ElementalVfxPrefabBuilder
         SaveOne($"{OutputDir}/VFX_Status_Wind.prefab", "VFX_Status_Wind", ElementalParticleBootstrap.PresetKind.Wind, sprite);
         SaveOne($"{OutputDir}/VFX_Status_Earth.prefab", "VFX_Status_Earth", ElementalParticleBootstrap.PresetKind.Earth, sprite);
         SaveOne($"{OutputDir}/VFX_Status_Lightning.prefab", "VFX_Status_Lightning", ElementalParticleBootstrap.PresetKind.Lightning, sprite);
+        SaveOne("Assets/Prefabs/VFX/VFX_Boss_ElementalCone.prefab", "VFX_Boss_ElementalCone", ElementalParticleBootstrap.PresetKind.BossRisingCone, sprite);
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log("[ElementalVfxPrefabBuilder] Regenerated 5 elemental VFX prefabs.");
+        Debug.Log("[ElementalVfxPrefabBuilder] Regenerated 5 elemental status prefabs + boss cone.");
     }
 
     /// <summary>Unity -batchmode -executeMethod ElementalVfxPrefabBuilder.RegenerateFromCli</summary>
