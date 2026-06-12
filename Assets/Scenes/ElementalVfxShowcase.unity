@@ -3098,6 +3098,7 @@ MonoBehaviour:
   area: {fileID: 1859789188}
   orbit: {fileID: 1859789189}
   status: {fileID: 1859789187}
+  reactionVfxCatalog: {fileID: 11400000, guid: cafecafe111111111111111111111101, type: 2}
   registry: {fileID: 1627141333}
   playerStats: {fileID: 181845794}
   playerAimDirection: {fileID: 181845795}
@@ -3641,6 +3642,53 @@ MonoBehaviour:
   enemyPrefab: {fileID: 1111111111111111101, guid: 77c68128e80259940a8a7848e64cca13, type: 3}
   horizontalSpacing: 2.2
   statusDurationSeconds: 9999
+--- !u!1 &888777666555011
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 888777666555012}
+  - component: {fileID: 888777666555013}
+  m_Layer: 0
+  m_Name: ReactionVfxShowcase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &888777666555012
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888777666555011}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -6, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &888777666555013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888777666555011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0e0f0a0b0c0d0e0f0a0b0c0d0e0f0a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ReactionVfxShowcaseBootstrap
+  enemyPrefab: {fileID: 1111111111111111101, guid: 77c68128e80259940a8a7848e64cca13, type: 3}
+  horizontalSpacing: 1.55
+  statusDurationSeconds: 9999
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -3655,3 +3703,4 @@ SceneRoots:
   - {fileID: 1859789191}
   - {fileID: 1736064098}
   - {fileID: 888777666555002}
+  - {fileID: 888777666555012}

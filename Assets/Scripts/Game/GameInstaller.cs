@@ -8,6 +8,7 @@ public class GameInstaller : MonoBehaviour
     [SerializeField] private AreaSystem area;
     [SerializeField] private OrbitSystem orbit;
     [SerializeField] private StatusSystem status;
+    [SerializeField] private ReactionVfxCatalogSO reactionVfxCatalog;
 
     [Header("World State")]
     [SerializeField] private EnemyRegistry registry;
@@ -26,6 +27,9 @@ public class GameInstaller : MonoBehaviour
 
     void Awake()
     {
+        if (status != null)
+            status.SetReactionVfxCatalog(reactionVfxCatalog);
+
         weaponSystem.Initialize(BuildWeaponContext());
     }
 
