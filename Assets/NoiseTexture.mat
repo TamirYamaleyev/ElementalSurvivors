@@ -28,9 +28,9 @@ Material:
     m_Floats:
     - _Brightness: -3.3
     - _ColorScale: 6.78
-    - _Density: 0.7
+    - _Density: 0.15
     - _MinHue: 0
-    - _Offset: -2.6
+    - _Offset: -3
     - _Saturation: 0
     m_Colors:
     - _Color: {r: 0.589, g: 0.3915703, b: 0.133703, a: 1}
