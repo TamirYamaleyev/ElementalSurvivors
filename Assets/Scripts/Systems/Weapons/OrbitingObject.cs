@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class OrbitingObject : MonoBehaviour
 {
+    [SerializeField] private SpriteRenderer sr;
     [SerializeField] private float spinSpeed = 50f;
 
     private float angleOffset;
@@ -24,7 +25,8 @@ public class OrbitingObject : MonoBehaviour
         StatusType status,
         float statusDuration,
         StatusSystem statusSystem,
-        Transform center
+        Transform center,
+        Sprite visualSprite
         )
 
     {
@@ -39,6 +41,8 @@ public class OrbitingObject : MonoBehaviour
         this.statusSystem = statusSystem;
 
         this.center = center;
+
+        sr.sprite = visualSprite;
     }
 
     void Update()

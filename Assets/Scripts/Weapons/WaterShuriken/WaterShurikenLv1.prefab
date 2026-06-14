@@ -83,7 +83,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -1165734940388465037, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
+  m_Sprite: {fileID: -357020787402876534, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
   m_Color: {r: 0, g: 0.8092718, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -131,7 +131,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.784, y: 0.82}
+    oldSize: {x: 0.71, y: 0.707}
     newSize: {x: 0.25, y: 0.26}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -151,4 +151,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63cc22b4e91316c45bbb544d17cde807, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OrbitingObject
+  sr: {fileID: 6823907168155030958}
   spinSpeed: 720

@@ -10,12 +10,13 @@ public class ProjectileSystem : MonoBehaviour
         float speed,
         StatusType status,
         float statusDuration,
-        StatusSystem statusSystem)
+        StatusSystem statusSystem,
+        Sprite sprite)
     {
         // replace with pooling
         Projectile proj = Instantiate(prefab, position, Quaternion.identity);
 
-        proj.Init(targetPos, damage, speed, status, statusDuration, statusSystem);
+        proj.Init(targetPos, damage, speed, status, statusDuration, statusSystem, sprite);
 
         return proj;
     }

@@ -3,6 +3,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [SerializeField] private LayerMask enemyLayer;
+    [SerializeField] private SpriteRenderer sr;
 
     private Vector2 direction;
     private float damage;
@@ -12,7 +13,7 @@ public class Projectile : MonoBehaviour
     private float statusDuration;
     private StatusSystem statusSystem;
 
-    public void Init(Vector2 direction, float damage, float speed, StatusType status, float statusDuration, StatusSystem statusSystem)
+    public void Init(Vector2 direction, float damage, float speed, StatusType status, float statusDuration, StatusSystem statusSystem, Sprite visualSprite)
     {
         this.damage = damage;
         this.speed = speed;
@@ -21,6 +22,8 @@ public class Projectile : MonoBehaviour
         this.status = status;
         this.statusDuration = statusDuration;
         this.statusSystem = statusSystem;
+
+        sr.sprite = visualSprite;
     }
 
     void Update()
