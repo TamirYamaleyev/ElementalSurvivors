@@ -11,7 +11,8 @@ public class OrbitSystem : MonoBehaviour
         float damage,
         StatusType status,
         float statusDuration,
-        StatusSystem statusSystem
+        StatusSystem statusSystem,
+        Sprite sprite
         )
 
     {
@@ -29,7 +30,8 @@ public class OrbitSystem : MonoBehaviour
                 status,
                 statusDuration,
                 statusSystem,
-                center
+                center,
+                sprite
                 );
         }
     }

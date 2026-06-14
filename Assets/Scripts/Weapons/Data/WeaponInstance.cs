@@ -55,7 +55,8 @@ public class WeaponInstance
                     data.speed,
                     definition.appliedStatus,
                     data.statusDuration,
-                    ctx.StatusSystem
+                    ctx.StatusSystem,
+                    data.visualSprite
                 );
 
                 fired = true;
@@ -73,7 +74,8 @@ public class WeaponInstance
                     data.damage,
                     definition.appliedStatus,
                     data.statusDuration,
-                    ctx.StatusSystem
+                    ctx.StatusSystem,
+                    data.visualSprite
                 );
 
                 fired = true;
@@ -91,7 +93,8 @@ public class WeaponInstance
                     data.damage,
                     definition.appliedStatus,
                     data.statusDuration,
-                    ctx.StatusSystem
+                    ctx.StatusSystem,
+                    data.visualSprite
                 );
 
                 fired = true;
