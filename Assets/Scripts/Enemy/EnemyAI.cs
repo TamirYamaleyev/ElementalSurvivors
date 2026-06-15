@@ -6,6 +6,7 @@ public class EnemyAI : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private EnemyCharacterAnimation characterAnimation;
 
     [Header("Settings")]
     [SerializeField] private float maxHealth = 25f;
@@ -15,24 +16,19 @@ public class EnemyAI : MonoBehaviour
     private float slowMultiplier = 0.5f;
     private float slowTimer;
 
-    private float dotDuration;
-    private float dotTickTimer;
-    private float dotDamage = 1f;
-    private float dotTickInterval = 0.5f;
-
     private float fearTimer;
 
     private PlayerHealth playerRef;
     private Transform player;
     private Vector2 direction;
-    private float currentHealth;
 
     void Awake()
     {
         if (rb == null)
             rb = GetComponent<Rigidbody2D>();
 
-        currentHealth = maxHealth;
+        if (characterAnimation == null)
+            characterAnimation = GetComponent<EnemyCharacterAnimation>();
     }
 
     void Start()
@@ -54,13 +50,6 @@ public class EnemyAI : MonoBehaviour
         slowMultiplier = multiplier;
     }
 
-    public void ApplyDoT(float duration, float damagePerTick)
-    {
-        dotDuration = duration;
-        dotDamage = damagePerTick;
-        dotTickTimer = 0f;
-    }
-
     void FixedUpdate()
     {
         FollowPlayer();
@@ -70,6 +59,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            characterAnimation?.NotifyAttack();
             if (playerRef != null)
                 playerRef.TakeDamage(damage);
         }
@@ -114,7 +104,7 @@ public class EnemyAI : MonoBehaviour
     public void ApplyScaledStats(float maxHp, float contactDamage)
     {
         maxHealth = maxHp;
-        currentHealth = maxHp;
         damage = contactDamage;
+        GetComponent<EnemyHealth>()?.ApplySpawnScaling(maxHp);
     }
 }

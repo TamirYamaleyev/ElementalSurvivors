@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
@@ -11,6 +9,18 @@ public class EnemyHealth : MonoBehaviour
     private float currentHealth;
 
     private Enemy owner;
+
+    void Awake()
+    {
+        currentHealth = maxHealth;
+    }
+
+    /// <summary>Called after spawn when <see cref="EnemyAI.ApplyScaledStats"/> scales difficulty.</summary>
+    public void ApplySpawnScaling(float maxHp)
+    {
+        maxHealth = maxHp;
+        currentHealth = maxHp;
+    }
 
     public void Initialize(Enemy enemy)
     {
@@ -31,6 +41,14 @@ public class EnemyHealth : MonoBehaviour
     private void Die()
     {
         Instantiate(TEMPORARYEXPORB, transform.position, Quaternion.identity);
+
+        var driver = GetComponentInChildren<EnemyCharacterAnimation>();
+        if (driver != null)
+        {
+            driver.BeginDeathSequence();
+            return;
+        }
+
         Destroy(gameObject);
     }
 }

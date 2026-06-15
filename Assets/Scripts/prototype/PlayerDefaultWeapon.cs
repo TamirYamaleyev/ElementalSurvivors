@@ -6,6 +6,7 @@ public class PlayerDefaultWeapon : MonoBehaviour
 {
     [SerializeField] private Transform spear;
     [SerializeField] private Camera cam;
+    [SerializeField] private PlayerCharacterAnimation characterAnimation;
 
     [SerializeField] private float attackCooldown = 1.5f;
     [SerializeField] private float attackRadius = 2f;
@@ -19,6 +20,12 @@ public class PlayerDefaultWeapon : MonoBehaviour
     private float timer;
 
     private Vector2 lastDirection = Vector2.right;
+
+    void Awake()
+    {
+        if (characterAnimation == null)
+            characterAnimation = GetComponent<PlayerCharacterAnimation>();
+    }
 
     void Start()
     {
@@ -60,6 +67,8 @@ public class PlayerDefaultWeapon : MonoBehaviour
 
     private IEnumerator Attack()
     {
+        characterAnimation?.NotifyAttack();
+
         for (int t = 0; t < ThrustCount; t++)
         {
             Vector2 dir = lastDirection;
