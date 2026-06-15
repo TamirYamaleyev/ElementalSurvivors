@@ -12,7 +12,23 @@ public class CollectRadiusController : MonoBehaviour
     void Awake()
     {
         _collider = GetComponent<CircleCollider2D>();
+        if (_collider == null)
+            _collider = gameObject.AddComponent<CircleCollider2D>();
         _collider.isTrigger = true;
+
+        if (statsProviderBehaviour == null)
+        {
+            foreach (var mb in transform.root.GetComponentsInChildren<MonoBehaviour>(true))
+            {
+                if (mb == null || mb == this)
+                    continue;
+                if (mb is IPlayerStatsProvider)
+                {
+                    statsProviderBehaviour = mb;
+                    break;
+                }
+            }
+        }
 
         if (statsProviderBehaviour is IPlayerStatsProvider provider)
             _statsProvider = provider;
@@ -21,6 +37,10 @@ public class CollectRadiusController : MonoBehaviour
 
         if (pickupFacade == null)
             pickupFacade = GetComponentInParent<PlayerPickupFacade>();
+        if (pickupFacade == null)
+            pickupFacade = transform.root.GetComponent<PlayerPickupFacade>();
+        if (pickupFacade == null)
+            pickupFacade = transform.root.gameObject.AddComponent<PlayerPickupFacade>();
     }
 
     void OnEnable()

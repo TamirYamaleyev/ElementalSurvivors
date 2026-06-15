@@ -10,6 +10,12 @@ public class ExpbarUIController : MonoBehaviour
     [SerializeField] private TMP_Text levelText;
     [SerializeField] private string levelPrefix = "LV: ";
 
+    private void Awake()
+    {
+        if (levelText != null && levelText.font == null && TMP_Settings.defaultFontAsset != null)
+            levelText.font = TMP_Settings.defaultFontAsset;
+    }
+
     void Start()
     {
         UpdateExp(0f, 100f);

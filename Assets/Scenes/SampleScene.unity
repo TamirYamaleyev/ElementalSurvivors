@@ -3595,6 +3595,71 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2923133445809161551, guid: 6d89700316818dc45a88c9c0d5952ced, type: 3}
   m_PrefabInstance: {fileID: 4385793726486163026}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &940000001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 940000002}
+  - component: {fileID: 940000003}
+  m_Layer: 0
+  m_Name: EnvironmentObstacleGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &940000002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 940000001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &940000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 940000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec08135c8b7d49bf89b65decca03ddae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnvironmentObstacleGenerator
+  floorRenderer: {fileID: 1701264381}
+  obstaclePrefabs:
+  - {fileID: 431000001, guid: 4021b1895561419382d746bd97508993, type: 3}
+  - {fileID: 432000001, guid: 25088721223243bfae2245a64948d27f, type: 3}
+  spawnCount: 55
+  edgePadding: 4
+  scaleMin: 0.9
+  scaleMax: 1.1
+  randomSeed: 0
+  limitSpawnToAreaAroundPlayer: 1
+  spawnHalfExtents: {x: 20, y: 12}
+  playerClearRadius: 3.5
+  playerClearMaxAttempts: 48
+  minSeparation: 0
+  separationCheckRadius: 0.5
+  separationMaxAttempts: 20
+  separationLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  sortingOrderOffset: 30
+  randomizeRotation: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -3608,3 +3673,4 @@ SceneRoots:
   - {fileID: 65705789}
   - {fileID: 1859789191}
   - {fileID: 1736064098}
+  - {fileID: 940000002}

@@ -32,6 +32,8 @@ public class PlayerController : MonoBehaviour
             _statsProvider = provider;
         else
             _statsProvider = GetComponent<IPlayerStatsProvider>();
+
+        PlayerPickupRuntimeSetup.Ensure(transform);
     }
 
     void FixedUpdate()
