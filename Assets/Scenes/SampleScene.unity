@@ -659,7 +659,7 @@ SpriteRenderer:
   m_MaskInteraction: 0
   m_Sprite: {fileID: -2924963780405810735, guid: 3413cdcdbd3d2d04d9bda4a1e9a170a9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 2}
@@ -921,6 +921,8 @@ MonoBehaviour:
     level: 1
   - definition: {fileID: 11400000, guid: 6f519e1c2b660154ba9d8e6fa4a4ea1a, type: 2}
     level: 2
+  - definition: {fileID: 11400000, guid: 344e53ba47462cd45a6057741e8baac5, type: 2}
+    level: 1
 --- !u!114 &181845794
 MonoBehaviour:
   m_ObjectHideFlags: 0
