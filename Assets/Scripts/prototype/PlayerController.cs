@@ -3,16 +3,17 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent (typeof(PlayerHealth))]
+[RequireComponent(typeof(PlayerHealth))]
+[RequireComponent(typeof(PlayerStats))]
 public class PlayerController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private PlayerInput playerInput;
+    [SerializeField] private PlayerAimDirection playerAimDirection;
     [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private MonoBehaviour statsProviderBehaviour;
 
-    [Header("Settings")]
-    [SerializeField] private float moveSpeed = 8f;
-
+    private IPlayerStatsProvider _statsProvider;
     private Vector2 moveInput;
 
     public static Transform Instance { get; private set; }
@@ -26,20 +27,30 @@ public class PlayerController : MonoBehaviour
 
         if (playerInput == null)
             playerInput = GetComponent<PlayerInput>();
+
+        if (statsProviderBehaviour is IPlayerStatsProvider provider)
+            _statsProvider = provider;
+        else
+            _statsProvider = GetComponent<IPlayerStatsProvider>();
+
+        PlayerPickupRuntimeSetup.Ensure(transform);
     }
 
     void FixedUpdate()
     {
-        Move();    
+        Move();
     }
 
     public void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
+        if (playerAimDirection != null)
+            playerAimDirection.SetDirection(moveInput);
     }
 
     private void Move()
     {
-        rb.linearVelocity = moveInput.normalized * moveSpeed;
+        float speed = _statsProvider != null ? _statsProvider.Current.MoveSpeed : 0f;
+        rb.linearVelocity = moveInput.normalized * speed;
     }
 }

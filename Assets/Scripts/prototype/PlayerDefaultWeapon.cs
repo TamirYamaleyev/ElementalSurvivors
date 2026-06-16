@@ -14,22 +14,29 @@ public class PlayerDefaultWeapon : MonoBehaviour
 
     [SerializeField] private float thrustInterval = 0.05f;
     [SerializeField] private int[] thrustsPerLevel = { 1, 2, 3 };
-    private int currentLevel = 0;
+    [SerializeField] private MonoBehaviour statsProviderBehaviour;
+
+    private IPlayerStatsProvider _statsProvider;
+    private int currentLevel;
     private int ThrustCount => thrustsPerLevel[currentLevel];
 
     private float timer;
-
     private Vector2 lastDirection = Vector2.right;
 
     void Awake()
     {
+        if (statsProviderBehaviour is IPlayerStatsProvider provider)
+            _statsProvider = provider;
+        else
+            _statsProvider = GetComponentInParent<IPlayerStatsProvider>();
+
         if (characterAnimation == null)
             characterAnimation = GetComponent<PlayerCharacterAnimation>();
     }
 
     void Start()
     {
-        currentLevel = 0;    
+        currentLevel = 0;
     }
 
     void Update()
@@ -37,8 +44,9 @@ public class PlayerDefaultWeapon : MonoBehaviour
         UpdateDirection();
 
         timer += Time.deltaTime;
-        
-        if (timer >= attackCooldown)
+
+        float effectiveCooldown = ResolveCooldown();
+        if (timer >= effectiveCooldown)
         {
             timer = 0f;
             StartCoroutine(Attack());
@@ -49,6 +57,14 @@ public class PlayerDefaultWeapon : MonoBehaviour
     {
         if (currentLevel >= thrustsPerLevel.Length - 1) return;
         currentLevel++;
+    }
+
+    private float ResolveCooldown()
+    {
+        if (_statsProvider == null)
+            return attackCooldown;
+
+        return CombatStatResolver.ScaleCooldown(attackCooldown, _statsProvider.Current);
     }
 
     private void UpdateDirection()
