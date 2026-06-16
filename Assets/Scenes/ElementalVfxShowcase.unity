@@ -3642,6 +3642,10 @@ MonoBehaviour:
   enemyPrefab: {fileID: 1111111111111111101, guid: 77c68128e80259940a8a7848e64cca13, type: 3}
   horizontalSpacing: 2.2
   statusDurationSeconds: 9999
+  bossVfxPrefab: {fileID: 5634336729478383400, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
+  bossSpawnOffset: {x: 6.5, y: 0, z: 0}
+  bossScale: 1.5
+  bossVfxLocalOffset: {x: 0, y: -0.15, z: 0}
 --- !u!1 &888777666555011
 GameObject:
   m_ObjectHideFlags: 0
