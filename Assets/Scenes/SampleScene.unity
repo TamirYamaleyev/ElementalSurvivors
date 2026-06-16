@@ -420,6 +420,7 @@ GameObject:
   - component: {fileID: 181845792}
   - component: {fileID: 181845794}
   - component: {fileID: 181845795}
+  - component: {fileID: 181845796}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -736,6 +737,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDefaultWeapon
   spear: {fileID: 4385793726486163027}
   cam: {fileID: 519420031}
+  characterAnimation: {fileID: 181845796}
   attackCooldown: 1
   attackRadius: 5
   activeTime: 0.12
@@ -782,6 +784,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55778fa03fdf22c4b8106c69ac131445, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+--- !u!114 &181845796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181845783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5f4279b7cdf46298bdb45d88e2a30b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacterAnimation
+  rb: {fileID: 181845788}
+  animator: {fileID: 535814480}
+  spriteRenderer: {fileID: 535814478}
+  flipDeadzone: 0.02
 --- !u!1 &191866787
 GameObject:
   m_ObjectHideFlags: 0
