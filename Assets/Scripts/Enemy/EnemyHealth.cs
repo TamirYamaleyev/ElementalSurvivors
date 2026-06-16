@@ -20,6 +20,13 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         currentHealth = maxHealth;
     }
 
+    /// <summary>Called after spawn when difficulty scaling sets max HP before full stats are applied.</summary>
+    public void ApplySpawnScaling(float maxHp)
+    {
+        maxHealth = maxHp;
+        currentHealth = maxHp;
+    }
+
     public void ApplyScaledStats(float maxHp, float contactDmg)
     {
         maxHealth = maxHp;
@@ -58,6 +65,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         if (!other.CompareTag("Player"))
             return;
+
+        GetComponent<EnemyCharacterAnimation>()?.NotifyAttack();
 
         if (playerRef != null)
             playerRef.TakeDamage(contactDamage);

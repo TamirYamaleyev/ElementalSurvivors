@@ -5,6 +5,7 @@ public class EnemyAI : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private EnemyCharacterAnimation characterAnimation;
 
     [Header("Settings")]
     [SerializeField] private float moveSpeed = 5f;
@@ -27,6 +28,9 @@ public class EnemyAI : MonoBehaviour
             rb = GetComponent<Rigidbody2D>();
 
         health = GetComponent<EnemyHealth>();
+
+        if (characterAnimation == null)
+            characterAnimation = GetComponent<EnemyCharacterAnimation>();
     }
 
     public void EnsureInitialized()
