@@ -1,54 +1,70 @@
+using System;
 using UnityEngine;
 
-public class EnemyHealth : MonoBehaviour
+public class EnemyHealth : MonoBehaviour, IDamageable
 {
-    [Header("TEMPORARY SHIT TO REMOVE")]
-    [SerializeField] private GameObject TEMPORARYEXPORB;
-
+    [SerializeField] private EnemyLootProfileSO lootProfile;
     [SerializeField] private float maxHealth = 10f;
+    [SerializeField] private float contactDamage = 10f;
+
     private float currentHealth;
+    private PlayerHealth playerRef;
 
-    private Enemy owner;
+    public event Action OnDied;
 
-    void Awake()
-    {
-        currentHealth = maxHealth;
-    }
-
-    /// <summary>Called after spawn when <see cref="EnemyAI.ApplyScaledStats"/> scales difficulty.</summary>
-    public void ApplySpawnScaling(float maxHp)
-    {
-        maxHealth = maxHp;
-        currentHealth = maxHp;
-    }
+    public float BaselineMaxHealth => maxHealth;
+    public float BaselineContactDamage => contactDamage;
 
     public void Initialize(Enemy enemy)
     {
-        owner = enemy;
         currentHealth = maxHealth;
+    }
+
+    public void ApplyScaledStats(float maxHp, float contactDmg)
+    {
+        maxHealth = maxHp;
+        currentHealth = maxHp;
+        contactDamage = contactDmg;
     }
 
     public void TakeDamage(float amount)
     {
+        if (currentHealth <= 0f)
+            return;
+
         currentHealth -= amount;
 
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
+        if (currentHealth <= 0f)
+            OnDied?.Invoke();
     }
 
-    private void Die()
+    public void SpawnDeathLoot()
     {
-        Instantiate(TEMPORARYEXPORB, transform.position, Quaternion.identity);
+        if (lootProfile != null)
+            lootProfile.SpawnLoot(transform.position);
+    }
 
-        var driver = GetComponentInChildren<EnemyCharacterAnimation>();
-        if (driver != null)
-        {
-            driver.BeginDeathSequence();
+    public void EnsureInitialized()
+    {
+        if (playerRef != null)
             return;
-        }
 
-        Destroy(gameObject);
+        Transform player = PlayerController.Instance;
+        if (player != null)
+            playerRef = player.GetComponent<PlayerHealth>();
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (!other.CompareTag("Player"))
+            return;
+
+        if (playerRef != null)
+            playerRef.TakeDamage(contactDamage);
+    }
+
+    public void ResetState()
+    {
+        currentHealth = maxHealth;
     }
 }
