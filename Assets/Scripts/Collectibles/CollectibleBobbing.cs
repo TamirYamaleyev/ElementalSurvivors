@@ -1,0 +1,23 @@
+using UnityEngine;
+
+public class CollectibleBobbing : MonoBehaviour
+{
+    [SerializeField] private float height = 0.25f;
+    [SerializeField] private float frequency = 2f;
+
+    private Vector3 startPos;
+    private float offset;
+
+    void Awake()
+    {
+        startPos = transform.position;
+        offset = Random.Range(0f, Mathf.PI * 2f);
+    }
+
+    void Update()
+    {
+        float bob = (Mathf.Sin(Time.time * frequency + offset) + 1f) * 0.5f;
+
+        transform.position = startPos + Vector3.up * (bob * height);
+    }
+}
