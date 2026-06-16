@@ -2,9 +2,14 @@ using UnityEngine;
 
 public class ChaingLightningVisual : MonoBehaviour
 {
+    [SerializeField] private Sprite[] frames;
     [SerializeField] private SpriteRenderer sr;
     [SerializeField] private float offset = 0.4f;
     [SerializeField] private float thickness = 1f;
+
+    [SerializeField] private float frameRate = 60f;
+
+    private float frameTimer;
 
     public void Initialize(Vector2 start, Vector2 end, Sprite sprite, float lifetime)
     {
@@ -20,6 +25,9 @@ public class ChaingLightningVisual : MonoBehaviour
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
         transform.rotation = Quaternion.Euler(0, 0, angle);
 
+        if (frames != null && frames.Length > 0)
+            sr.sprite = frames[Random.Range(0, frames.Length)];
+
         float distance = Vector2.Distance(start, end);
         float spriteHeight = sr.sprite.bounds.size.y;
 
@@ -28,8 +36,21 @@ public class ChaingLightningVisual : MonoBehaviour
         // Stretch between enemies
         transform.localScale = new Vector3(thickness, distance / spriteHeight, 1f);
 
-        sr.sprite = sprite;
-
         Destroy(gameObject, lifetime);
+    }
+
+    void Update()
+    {
+        if (frames == null || frames.Length == 0)
+            return;
+
+        frameTimer += Time.deltaTime;
+
+        if (frameTimer >= 1f / frameRate)
+        {
+            frameTimer = 0f;
+
+            sr.sprite = frames[Random.Range(0, frames.Length)];
+        }
     }
 }
