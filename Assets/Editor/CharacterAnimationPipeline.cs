@@ -622,6 +622,15 @@ public static class CharacterAnimationPipeline
             so.FindProperty("spriteRenderer").objectReferenceValue = sr;
             so.ApplyModifiedPropertiesWithoutUndo();
         }
+
+        var vfxPresenter = root.GetComponent<ElementalStatusVfxPresenter>();
+        if (vfxPresenter != null)
+        {
+            var vfxSo = new SerializedObject(vfxPresenter);
+            vfxSo.FindProperty("optionalAnchor").objectReferenceValue = visualGo.transform;
+            vfxSo.FindProperty("vfxLocalOffset").vector3Value = new Vector3(0f, -0.6f, 0f);
+            vfxSo.ApplyModifiedPropertiesWithoutUndo();
+        }
     }
 }
 #endif

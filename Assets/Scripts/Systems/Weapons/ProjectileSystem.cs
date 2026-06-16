@@ -12,10 +12,18 @@ public class ProjectileSystem : MonoBehaviour
         float statusDuration,
         StatusSystem statusSystem)
     {
-        // replace with pooling
         Projectile proj = Instantiate(prefab, position, Quaternion.identity);
 
-        proj.Init(targetPos, damage, speed, status, statusDuration, statusSystem);
+        Vector2 dir = targetPos - position;
+        if (dir.sqrMagnitude < 1e-6f)
+            dir = Vector2.right;
+        else
+            dir.Normalize();
+
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        proj.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+
+        proj.Init(damage, speed, status, statusDuration, statusSystem);
 
         return proj;
     }

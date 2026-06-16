@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[System.Serializable]
 public class WeaponInstance
 {
     public WeaponDefinition definition;
@@ -10,11 +9,10 @@ public class WeaponInstance
 
     public WeaponLevelData Current => definition.levels[level - 1];
 
-    public WeaponInstance(WeaponDefinition def)
+    public WeaponInstance(WeaponDefinition def, int startLevel = 1)
     {
         definition = def;
-        level = 1;
-
+        level = Mathf.Max(1, startLevel);
         cooldownTimer = Current.cooldown;
     }
 
@@ -32,18 +30,18 @@ public class WeaponInstance
 
     public void Execute(Enemy target, WeaponSystemContext ctx, WeaponLevelData data)
     {
-        Vector2 spawnPos = ctx.ProjectileSpawnPoint.position;
-
         switch (definition.behaviorType)
         {
             case WeaponBehaviorType.Projectile:
-            {
-                Vector2 dir = ResolveDirection(target, spawnPos, ctx);
+                Vector2 pos = ctx.ProjectileSpawnPoint.position;
+                Vector2 targetPos = target != null
+                    ? (Vector2)target.transform.position
+                    : pos + (Vector2)ctx.ProjectileSpawnPoint.right * 5f;
 
                 ctx.ProjectileSystem.Fire(
                     definition.projectilePrefab,
-                    spawnPos,
-                    dir,
+                    pos,
+                    targetPos,
                     data.damage,
                     data.speed,
                     definition.appliedStatus,
@@ -51,15 +49,13 @@ public class WeaponInstance
                     ctx.StatusSystem
                     );
                 break;
-            }
 
             case WeaponBehaviorType.Area:
-            {
-
-                Vector2 pos = ctx.AreaSpawnPoint.position;
+                if (target == null)
+                    return;
 
                 ctx.AreaSystem.Cast(
-                    pos,
+                    target.transform.position,
                     data.range,
                     data.damage,
                     definition.appliedStatus,
@@ -67,10 +63,8 @@ public class WeaponInstance
                     ctx.StatusSystem
                     );
                 break;
-            }
 
             case WeaponBehaviorType.Orbit:
-            {
                 ctx.OrbitSystem.Spawn(
                     definition.orbitPrefab,
                     ctx.OrbitCenter,
@@ -83,17 +77,8 @@ public class WeaponInstance
                     ctx.StatusSystem
                     );
                 break;
-            }
-        }
-    }
-
-    private Vector2 ResolveDirection(Enemy target, Vector2 origin, WeaponSystemContext ctx)
-    {
-        if (target != null)
-        {
-            return ((Vector2)target.transform.position - origin).normalized;
         }
 
-        return ctx.AimDirection.LastDirection;
+        //ctx.StatusSystem.Apply(target, definition.appliedStatus, Current.damage);
     }
 }

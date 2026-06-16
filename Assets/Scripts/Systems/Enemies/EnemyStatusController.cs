@@ -45,6 +45,12 @@ public class EnemyStatusController : MonoBehaviour
                 VisualSink?.OnStatusRemoved(ended);
                 statuses.RemoveAt(i);
             }
-        }    
+        }
+    }
+
+    /// <summary>Clears active statuses without notifying the visual sink (call presenter reset separately).</summary>
+    public void ClearAllStatuses()
+    {
+        statuses.Clear();
     }
 }

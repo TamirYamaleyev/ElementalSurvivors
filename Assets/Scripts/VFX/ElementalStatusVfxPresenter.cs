@@ -6,8 +6,10 @@ using UnityEngine;
 /// </summary>
 public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
 {
+    private const int SortingOrderOffset = 1;
+
     [SerializeField] private Transform optionalAnchor;
-    [SerializeField] private Vector3 vfxLocalOffset = new(0f, -0.2f, 0f);
+    [SerializeField] private Vector3 vfxLocalOffset = new(0f, -0.6f, 0f);
 
     [Header("Status prefabs (root with ParticleSystem)")]
     [SerializeField] private GameObject fireStatusPrefab;
@@ -19,11 +21,34 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
     private readonly Dictionary<StatusType, int> refCounts = new();
     private readonly Dictionary<StatusType, GameObject> activeRoots = new();
 
+    private SpriteRenderer bodySprite;
+    private bool lastFlipX;
+
     private Transform Anchor => optionalAnchor != null ? optionalAnchor : transform;
 
-    private void OnDisable()
+    private void Awake()
+    {
+        bodySprite = Anchor.GetComponent<SpriteRenderer>();
+        if (bodySprite == null)
+            bodySprite = Anchor.GetComponentInChildren<SpriteRenderer>(true);
+    }
+
+    private void LateUpdate()
+    {
+        if (bodySprite == null || activeRoots.Count == 0)
+            return;
+
+        if (bodySprite.flipX == lastFlipX)
+            return;
+
+        lastFlipX = bodySprite.flipX;
+        SyncFlipMirror();
+    }
+
+    public void ResetForPool()
     {
         ClearAllInstances();
+        lastFlipX = bodySprite != null && bodySprite.flipX;
     }
 
     public void OnStatusApplied(StatusType type)
@@ -44,6 +69,8 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
         instance.transform.SetLocalPositionAndRotation(vfxLocalOffset, Quaternion.identity);
 
         activeRoots[type] = instance;
+        ApplySorting(instance);
+        SyncFlipMirror();
 
         foreach (var ps in instance.GetComponentsInChildren<ParticleSystem>())
         {
@@ -88,6 +115,36 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
 
         activeRoots.Clear();
         refCounts.Clear();
+    }
+
+    private void ApplySorting(GameObject vfxRoot)
+    {
+        if (bodySprite == null)
+            return;
+
+        foreach (var renderer in vfxRoot.GetComponentsInChildren<ParticleSystemRenderer>(true))
+        {
+            renderer.sortingLayerID = bodySprite.sortingLayerID;
+            renderer.sortingOrder = bodySprite.sortingOrder + SortingOrderOffset;
+        }
+    }
+
+    private void SyncFlipMirror()
+    {
+        if (bodySprite == null)
+            return;
+
+        var mirrorX = bodySprite.flipX ? -1f : 1f;
+        foreach (var kv in activeRoots)
+        {
+            if (kv.Value == null)
+                continue;
+
+            var t = kv.Value.transform;
+            var localScale = t.localScale;
+            localScale.x = Mathf.Abs(localScale.x) * mirrorX;
+            t.localScale = localScale;
+        }
     }
 
     private GameObject GetPrefab(StatusType type)

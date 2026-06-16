@@ -1,14 +1,14 @@
 using UnityEngine;
 
-public class EXPOrb : MonoBehaviour, ICollectible
+public class EXPOrb : MonoBehaviour
 {
     public float expToGive;
 
-    public void Collect(PlayerPickupFacade facade)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (facade == null)
-            return;
-
-        facade.AddExp(expToGive);
+        if (other.TryGetComponent<PlayerEXP>(out var playerEXP))
+        {
+            playerEXP.AddExp(expToGive);
+        }
     }
 }

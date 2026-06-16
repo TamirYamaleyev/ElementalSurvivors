@@ -94,6 +94,8 @@ public class Enemy : MonoBehaviour
         ai.SetGameplayEnabled(false);
         ai.ResetState();
         health.ResetState();
+        status?.ClearAllStatuses();
+        GetComponent<ElementalStatusVfxPresenter>()?.ResetForPool();
         transform.localScale = defaultLocalScale;
         gameObject.SetActive(false);
     }
