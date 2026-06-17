@@ -116,5 +116,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private void Die()
     {
         Debug.Log("Player died");
+        gameObject.SetActive(false);
     }
 }
