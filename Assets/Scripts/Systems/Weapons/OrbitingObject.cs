@@ -16,6 +16,12 @@ public class OrbitingObject : MonoBehaviour
 
     private Transform center;
 
+    private void Awake()
+    {
+        if (sr == null)
+            sr = GetComponent<SpriteRenderer>();
+    }
+
     public void Init(
         int index,
         int total,
@@ -42,7 +48,11 @@ public class OrbitingObject : MonoBehaviour
 
         this.center = center;
 
-        sr.sprite = visualSprite;
+        if (sr == null)
+            sr = GetComponent<SpriteRenderer>();
+
+        if (sr != null && visualSprite != null)
+            sr.sprite = visualSprite;
     }
 
     void Update()

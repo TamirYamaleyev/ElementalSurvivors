@@ -13,17 +13,27 @@ public class Projectile : MonoBehaviour
     private float statusDuration;
     private StatusSystem statusSystem;
 
+    private void Awake()
+    {
+        if (sr == null)
+            sr = GetComponent<SpriteRenderer>();
+    }
+
     public void Init(Vector2 direction, float damage, float speed, StatusType status, float statusDuration, StatusSystem statusSystem, Sprite visualSprite)
     {
+        if (sr == null)
+            sr = GetComponent<SpriteRenderer>();
+
         this.damage = damage;
         this.speed = speed;
-        this.direction = direction.normalized;
+        this.direction = direction.sqrMagnitude > 1e-6f ? direction.normalized : Vector2.right;
 
         this.status = status;
         this.statusDuration = statusDuration;
         this.statusSystem = statusSystem;
 
-        sr.sprite = visualSprite;
+        if (sr != null && visualSprite != null)
+            sr.sprite = visualSprite;
     }
 
     void Update()

@@ -24,8 +24,23 @@ public class WeaponInstance
             return;
 
         var data = Current;
-        if (!TryExecute(target, ctx, data))
+
+        bool fired;
+        try
+        {
+            fired = TryExecute(target, ctx, data);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogException(ex);
+            fired = false;
+        }
+
+        if (!fired)
+        {
+            cooldownTimer = Mathf.Min(data.cooldown, 0.25f);
             return;
+        }
 
         float baseCooldown = data.cooldown;
         cooldownTimer = ctx.PlayerStats != null
