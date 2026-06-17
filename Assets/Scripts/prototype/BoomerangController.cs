@@ -32,6 +32,8 @@ public class BoomerangController : MonoBehaviour
         spreadAngle = 20f + currentLevel * 10f;
     }
 
+    public bool IsMaxed => currentLevel >= boomerangsPerLevel.Length - 1;
+
     void Update()
     {
         if (player == null)

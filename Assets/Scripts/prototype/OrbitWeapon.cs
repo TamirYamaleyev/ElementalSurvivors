@@ -40,6 +40,8 @@ public class OrbitWeapon : MonoBehaviour
         }
     }
 
+    public bool IsMaxed => initialized && currentOrbCount >= levelFiveOrbCount;
+
     void Update()
     {
         if (!initialized || orbs == null || orbs.Count == 0)

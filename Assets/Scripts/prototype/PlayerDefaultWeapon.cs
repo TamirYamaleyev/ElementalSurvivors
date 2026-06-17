@@ -59,6 +59,8 @@ public class PlayerDefaultWeapon : MonoBehaviour
         currentLevel++;
     }
 
+    public bool IsMaxed => currentLevel >= thrustsPerLevel.Length - 1;
+
     private float ResolveCooldown()
     {
         if (_statsProvider == null)

@@ -56,9 +56,9 @@ public static class CharacterAnimationPipeline
                 deathClip: enemyDeath);
 
             SetupPlayerInSampleScene();
-            SetupEnemyPrefab("Assets/Prefabs/Level1Enemy.prefab");
-            SetupEnemyPrefab("Assets/Prefabs/Level2Enemy.prefab");
-            SetupEnemyPrefab("Assets/Prefabs/Level3Enemy.prefab");
+            SetupEnemyPrefab("Assets/Prefabs/Enemy/Level1Enemy.prefab");
+            SetupEnemyPrefab("Assets/Prefabs/Enemy/Level2Enemy.prefab");
+            SetupEnemyPrefab("Assets/Prefabs/Enemy/Level3Enemy.prefab");
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();

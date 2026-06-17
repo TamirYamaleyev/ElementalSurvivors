@@ -700,6 +700,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSystem
   weapons:
+  - definition: {fileID: 11400000, guid: f24871ee27bd4ec439a7598e3b81029a, type: 2}
+    level: 1
+  - definition: {fileID: 11400000, guid: 6f519e1c2b660154ba9d8e6fa4a4ea1a, type: 2}
+    level: 1
   - definition: {fileID: 11400000, guid: 344e53ba47462cd45a6057741e8baac5, type: 2}
     level: 1
 --- !u!114 &181845794
@@ -1795,6 +1799,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelUpUI
   levelUpPanel: {fileID: 376262324}
   expRef: {fileID: 181845791}
+  spearWeapon: {fileID: 181845792}
+  orbitWeapon: {fileID: 1766721900}
+  boomerangWeapon: {fileID: 657638102}
+  option1Button: {fileID: 1201057199}
+  option2Button: {fileID: 274742743}
+  option3Button: {fileID: 1599797109}
 --- !u!1 &819761847
 GameObject:
   m_ObjectHideFlags: 0
@@ -3277,6 +3287,7 @@ MonoBehaviour:
   projectileSpawnPoint: {fileID: 405520221}
   orbitCenter: {fileID: 1969635670}
   areaSpawnPoint: {fileID: 0}
+  playerTransformPoint: {fileID: 181845785}
   weaponSystem: {fileID: 181845793}
 --- !u!1 &1929810247
 GameObject:

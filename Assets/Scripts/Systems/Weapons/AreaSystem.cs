@@ -3,7 +3,15 @@ using UnityEngine;
 public class AreaSystem : MonoBehaviour
 {
     [SerializeField] private LayerMask enemyLayer;
-    public void Cast(Vector2 position, float radius, float damage, StatusType status, float duration, StatusSystem statusSystem)
+
+    public void Cast(
+        Vector2 position,
+        float radius,
+        float damage,
+        StatusType status,
+        float duration,
+        StatusSystem statusSystem,
+        Sprite sprite = null)
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(position, radius, enemyLayer);
 

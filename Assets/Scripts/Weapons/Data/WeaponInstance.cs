@@ -20,19 +20,20 @@ public class WeaponInstance
     {
         cooldownTimer -= deltaTime;
 
-        if (cooldownTimer <= 0f)
-        {
-            var data = Current;
-            Execute(target, ctx, data);
+        if (cooldownTimer > 0f)
+            return;
 
-            float baseCooldown = data.cooldown;
-            cooldownTimer = ctx.PlayerStats != null
-                ? CombatStatResolver.ScaleCooldown(baseCooldown, ctx.PlayerStats.Current)
-                : baseCooldown;
-        }
+        var data = Current;
+        if (!TryExecute(target, ctx, data))
+            return;
+
+        float baseCooldown = data.cooldown;
+        cooldownTimer = ctx.PlayerStats != null
+            ? CombatStatResolver.ScaleCooldown(baseCooldown, ctx.PlayerStats.Current)
+            : baseCooldown;
     }
 
-    public void Execute(Enemy target, WeaponSystemContext ctx, WeaponLevelData data)
+    public bool TryExecute(Enemy target, WeaponSystemContext ctx, WeaponLevelData data)
     {
         var stats = ctx.PlayerStats != null ? ctx.PlayerStats.Current : default;
 
@@ -44,41 +45,51 @@ public class WeaponInstance
             ? CombatStatResolver.ScaleProjectileSpeed(data.speed, stats)
             : data.speed;
 
+        Vector2 spawnPos = ctx.PlayerTransformPoint != null
+            ? ctx.PlayerTransformPoint.position
+            : transformFallback(ctx);
+
         switch (definition.behaviorType)
         {
             case WeaponBehaviorType.Projectile:
-                Vector2 pos = ctx.ProjectileSpawnPoint.position;
-                Vector2 targetPos = target != null
-                    ? (Vector2)target.transform.position
-                    : pos + (Vector2)ctx.ProjectileSpawnPoint.right * 5f;
+            {
+                spawnPos = ctx.ProjectileSpawnPoint.position;
+                Vector2 dir = ResolveDirection(target, spawnPos, ctx);
 
                 ctx.ProjectileSystem.Fire(
                     definition.projectilePrefab,
-                    pos,
-                    targetPos,
+                    spawnPos,
+                    dir,
                     damage,
                     speed,
                     definition.appliedStatus,
                     data.statusDuration,
-                    ctx.StatusSystem
-                    );
-                break;
+                    ctx.StatusSystem,
+                    data.visualSprite);
+
+                return true;
+            }
 
             case WeaponBehaviorType.Area:
-                if (target == null)
-                    return;
+            {
+                Vector2 pos = ctx.AreaSpawnPoint != null
+                    ? ctx.AreaSpawnPoint.position
+                    : spawnPos;
 
                 ctx.AreaSystem.Cast(
-                    target.transform.position,
+                    pos,
                     data.range,
                     damage,
                     definition.appliedStatus,
                     data.statusDuration,
-                    ctx.StatusSystem
-                    );
-                break;
+                    ctx.StatusSystem,
+                    data.visualSprite);
+
+                return true;
+            }
 
             case WeaponBehaviorType.Orbit:
+            {
                 ctx.OrbitSystem.Spawn(
                     definition.orbitPrefab,
                     ctx.OrbitCenter,
@@ -88,9 +99,40 @@ public class WeaponInstance
                     damage,
                     definition.appliedStatus,
                     data.statusDuration,
-                    ctx.StatusSystem
-                    );
-                break;
+                    ctx.StatusSystem,
+                    data.visualSprite);
+
+                return true;
+            }
+
+            case WeaponBehaviorType.Custom:
+            {
+                if (definition.customWeaponPrefab == null)
+                    return false;
+
+                return definition.customWeaponPrefab.TryExecute(target, data, ctx, definition);
+            }
         }
+
+        return false;
+    }
+
+    static Vector2 transformFallback(WeaponSystemContext ctx)
+    {
+        if (ctx.ProjectileSpawnPoint != null)
+            return ctx.ProjectileSpawnPoint.position;
+
+        return Vector2.zero;
+    }
+
+    static Vector2 ResolveDirection(Enemy target, Vector2 origin, WeaponSystemContext ctx)
+    {
+        if (target != null)
+            return ((Vector2)target.transform.position - origin).normalized;
+
+        if (ctx.AimDirection != null)
+            return ctx.AimDirection.LastDirection;
+
+        return Vector2.right;
     }
 }

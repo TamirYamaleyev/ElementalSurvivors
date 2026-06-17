@@ -21,6 +21,7 @@ public class GameInstaller : MonoBehaviour
     [SerializeField] private Transform projectileSpawnPoint;
     [SerializeField] private Transform orbitCenter;
     [SerializeField] private Transform areaSpawnPoint;
+    [SerializeField] private Transform playerTransformPoint;
 
     [Header("Runtime")]
     [SerializeField] private WeaponSystem weaponSystem;
@@ -48,6 +49,9 @@ public class GameInstaller : MonoBehaviour
             ProjectileSpawnPoint = projectileSpawnPoint,
             OrbitCenter = orbitCenter,
             AreaSpawnPoint = areaSpawnPoint,
+            PlayerTransformPoint = playerTransformPoint != null
+                ? playerTransformPoint
+                : projectileSpawnPoint,
 
             PlayerStats = playerStats,
             AimDirection = playerAimDirection
