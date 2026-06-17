@@ -14,11 +14,21 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float spawnRadius = 8f;
     [SerializeField] private float spawnJitter = 0.5f;
 
+    [Header("Obstacle Clearance")]
+    [SerializeField] private float spawnBodyRadius = 0.35f;
+    [SerializeField] private int spawnClearMaxAttempts = 24;
+
+    private LayerMask obstacleMask;
     private float timer;
     private float elapsedTime;
     private float nextBossAt;
 
     private Transform player;
+
+    private void Awake()
+    {
+        obstacleMask = LayerMask.GetMask("Obstacle");
+    }
 
     private void Start()
     {
@@ -71,11 +81,13 @@ public class EnemySpawner : MonoBehaviour
         Vector2 baseOffset = Random.insideUnitCircle * spawnRadius;
         Vector2 jitter = Random.insideUnitCircle * spawnJitter;
 
-        Vector3 spawnPos = player.position + new Vector3(
+        Vector3 desiredSpawn = player.position + new Vector3(
             baseOffset.x + jitter.x,
             baseOffset.y + jitter.y,
             0f
         );
+
+        Vector3 spawnPos = FindClearSpawnPosition(desiredSpawn);
 
         float multiplier = RunDifficultyEvaluator.GetDifficultyMultiplier(runProfile, elapsedTime);
         if (isBoss)
@@ -92,5 +104,37 @@ public class EnemySpawner : MonoBehaviour
             ScaledContactDamage = prefabRef.BaselineContactDamage * multiplier,
             VisualScaleMultiplier = visualScale,
         });
+    }
+
+    private Vector3 FindClearSpawnPosition(Vector3 desired)
+    {
+        if (!IsSpawnBlocked(desired))
+            return desired;
+
+        for (int i = 0; i < spawnClearMaxAttempts; i++)
+        {
+            Vector2 offset = Random.insideUnitCircle * spawnRadius;
+            Vector2 jitter = Random.insideUnitCircle * spawnJitter;
+            Vector3 candidate = player.position + new Vector3(offset.x + jitter.x, offset.y + jitter.y, 0f);
+            if (!IsSpawnBlocked(candidate))
+                return candidate;
+        }
+
+        float angleStep = 360f / Mathf.Max(spawnClearMaxAttempts, 1);
+        for (int i = 0; i < spawnClearMaxAttempts; i++)
+        {
+            float angle = angleStep * i * Mathf.Deg2Rad;
+            float radius = spawnRadius + spawnJitter;
+            Vector3 candidate = player.position + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * radius;
+            if (!IsSpawnBlocked(candidate))
+                return candidate;
+        }
+
+        return desired;
+    }
+
+    private bool IsSpawnBlocked(Vector3 position)
+    {
+        return Physics2D.OverlapCircle(position, spawnBodyRadius, obstacleMask) != null;
     }
 }

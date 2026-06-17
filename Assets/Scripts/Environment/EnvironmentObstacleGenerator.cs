@@ -160,6 +160,9 @@ public sealed class EnvironmentObstacleGenerator : MonoBehaviour
 
             var rot = randomizeRotation ? Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)) : Quaternion.identity;
             var inst = Instantiate(prefab, pos, rot, _spawnRoot);
+            var obstacleLayer = LayerMask.NameToLayer("Obstacle");
+            if (obstacleLayer >= 0)
+                inst.layer = obstacleLayer;
             var s = Random.Range(scaleMin, scaleMax);
             var ls = inst.transform.localScale;
             inst.transform.localScale = new Vector3(ls.x * s, ls.y * s, ls.z);

@@ -10,6 +10,12 @@ public class EnemyAI : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private float moveSpeed = 5f;
 
+    [Header("Obstacle Avoidance")]
+    [SerializeField] private LayerMask obstacleMask;
+    [SerializeField] private float bodyCastRadius = 0.24f;
+    [SerializeField] private float probeDistance = 1f;
+    [SerializeField] private float[] steerAnglesDeg = { 0f, -35f, 35f, -70f, 70f, -110f, 110f };
+
     private EnemyHealth health;
     private float slowMultiplier = 0.5f;
     private float slowTimer;
@@ -31,6 +37,9 @@ public class EnemyAI : MonoBehaviour
 
         if (characterAnimation == null)
             characterAnimation = GetComponent<EnemyCharacterAnimation>();
+
+        if (obstacleMask == 0)
+            obstacleMask = LayerMask.GetMask("Obstacle");
     }
 
     public void EnsureInitialized()
@@ -95,7 +104,7 @@ public class EnemyAI : MonoBehaviour
         if (fearTimer > 0f)
         {
             direction = -baseDir;
-            fearTimer -= Time.deltaTime;
+            fearTimer -= Time.fixedDeltaTime;
         }
         else
         {
@@ -107,16 +116,29 @@ public class EnemyAI : MonoBehaviour
     {
         SetDirection();
 
+        if (direction.sqrMagnitude < 1e-6f || rb == null)
+            return;
+
         float currentSpeed = moveSpeed;
 
         if (slowTimer > 0f)
         {
             currentSpeed *= slowMultiplier;
-            slowTimer -= Time.deltaTime;
+            slowTimer -= Time.fixedDeltaTime;
         }
 
-        if (rb != null)
-            rb.linearVelocity = direction * currentSpeed;
+        if (Physics2D.OverlapCircle(rb.position, bodyCastRadius, obstacleMask))
+            EnemyObstacleSteering.SeparateFromObstacles(rb, bodyCastRadius, obstacleMask);
+
+        Vector2 steerDir = EnemyObstacleSteering.ResolveSteerDirection(
+            rb.position,
+            bodyCastRadius,
+            direction,
+            probeDistance,
+            obstacleMask,
+            steerAnglesDeg);
+
+        EnemyObstacleSteering.MoveWithCollision(rb, bodyCastRadius, steerDir, currentSpeed, obstacleMask);
     }
 
     public void ResetState()
