@@ -54,7 +54,10 @@ public class GameInstaller : MonoBehaviour
                 : projectileSpawnPoint,
 
             PlayerStats = playerStats,
-            AimDirection = playerAimDirection
+            AimDirection = playerAimDirection,
+            PlayerAnimation = playerTransformPoint != null
+                ? playerTransformPoint.GetComponent<PlayerCharacterAnimation>()
+                : null
         };
     }
 }

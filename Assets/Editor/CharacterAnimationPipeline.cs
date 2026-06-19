@@ -20,6 +20,433 @@ public static class CharacterAnimationPipeline
     /// <summary>Uniform scale on child Visual (high-res sprites use large PPU).</summary>
     const float VisualDisplayScale = 0.24f;
 
+    /// <summary>
+    /// Rebuilds player clips from dev SampleScene art (Assets/Sprites/IMG_0600.png).
+    /// Unity -batchmode -quit -executeMethod CharacterAnimationPipeline.EnsureDevPlayerAnimationAssets
+    /// </summary>
+    public static void EnsureDevPlayerAnimationAssets()
+    {
+        try
+        {
+            EnsureFolders();
+            const string devTexturePath = "Assets/Sprites/IMG_0600.png";
+            var devSprites = LoadSpritesOrdered(devTexturePath);
+            if (devSprites.Count == 0)
+                throw new System.InvalidOperationException("No sprites in " + devTexturePath);
+
+            var idleFrames = devSprites.Count >= 2
+                ? new List<Sprite> { devSprites[0], devSprites[1] }
+                : new List<Sprite> { devSprites[0] };
+            var walkFrames = devSprites.Count >= 2
+                ? new List<Sprite> { devSprites[0], devSprites[1] }
+                : new List<Sprite> { devSprites[0] };
+            var attackFrames = new List<Sprite> { devSprites[devSprites.Count - 1] };
+
+            var playerIdle = BuildOrUpdateSpriteClipFromFrames(
+                "Assets/Animation/Clips/player_idle.anim", idleFrames, 0.5f, loop: true);
+            var playerWalk = BuildOrUpdateSpriteClipFromFrames(
+                "Assets/Animation/Clips/player_walk.anim", walkFrames, 0.35f, loop: true);
+            var playerAttack = BuildOrUpdateSpriteClipFromFrames(
+                "Assets/Animation/Clips/player_attack.anim", attackFrames, 0.25f, loop: false);
+
+            AssignClipsToExistingController(
+                "Assets/Animation/Controllers/AC_Player.controller",
+                playerIdle,
+                playerWalk,
+                playerAttack,
+                deathClip: null);
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log("[CharacterAnimationPipeline] Dev player animation assets rebuilt from IMG_0600.");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("[CharacterAnimationPipeline] EnsureDevPlayerAnimationAssets: " + ex);
+            if (Application.isBatchMode)
+                EditorApplication.Exit(1);
+        }
+    }
+
+    /// <summary>Unity -batchmode -quit -executeMethod CharacterAnimationPipeline.SetupPlayerAnimatorInSampleScene</summary>
+    public static void SetupPlayerAnimatorInSampleScene()
+    {
+        try
+        {
+            SetupPlayerInSampleScene();
+            AssetDatabase.SaveAssets();
+            Debug.Log("[CharacterAnimationPipeline] Player animator visual wired in SampleScene.");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("[CharacterAnimationPipeline] SetupPlayerAnimatorInSampleScene: " + ex);
+            if (Application.isBatchMode)
+                EditorApplication.Exit(1);
+        }
+    }
+
+    /// <summary>
+    /// Regenerates placeholder sprite sheets and animation clips when production art is missing.
+    /// Unity -batchmode -quit -executeMethod CharacterAnimationPipeline.EnsurePlaceholderAnimationAssets
+    /// </summary>
+    public static void EnsurePlaceholderAnimationAssets()
+    {
+        try
+        {
+            EnsureFolders();
+            WritePlaceholderSheets();
+            AssetDatabase.Refresh();
+
+            var playerSprites = ImportAndSlice("Assets/Art/Characters/Player/player_sheet.png", "p");
+            var enemySprites = ImportAndSlice("Assets/Art/Characters/Enemy/enemy_sheet.png", "e");
+
+            var playerIdle = BuildSpriteClip("Assets/Animation/Clips/player_idle.anim", playerSprites, new[] { 0, 1 }, 0.5f, loop: true);
+            var playerWalk = BuildSpriteClip("Assets/Animation/Clips/player_walk.anim", playerSprites, new[] { 2, 3, 4 }, 0.35f, loop: true);
+            var playerAttack = BuildSpriteClip("Assets/Animation/Clips/player_attack.anim", playerSprites, new[] { 5, 6 }, 0.25f, loop: false);
+
+            var enemyIdle = BuildSpriteClip("Assets/Animation/Clips/enemy_idle.anim", enemySprites, new[] { 0, 1 }, 0.5f, loop: true);
+            var enemyWalk = BuildSpriteClip("Assets/Animation/Clips/enemy_walk.anim", enemySprites, new[] { 2, 3, 4 }, 0.35f, loop: true);
+            var enemyAttack = BuildSpriteClip("Assets/Animation/Clips/enemy_attack.anim", enemySprites, new[] { 5, 6 }, 0.25f, loop: false);
+            var enemyDeath = BuildSpriteClip("Assets/Animation/Clips/enemy_death.anim", enemySprites, new[] { 7 }, 0.4f, loop: false);
+
+            BuildController(
+                "Assets/Animation/Controllers/AC_Player.controller",
+                playerIdle,
+                playerWalk,
+                playerAttack,
+                includeDeath: false);
+
+            BuildController(
+                "Assets/Animation/Controllers/AC_Enemy.controller",
+                enemyIdle,
+                enemyWalk,
+                enemyAttack,
+                includeDeath: true,
+                deathClip: enemyDeath);
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log("[CharacterAnimationPipeline] Placeholder animation assets regenerated.");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("[CharacterAnimationPipeline] EnsurePlaceholderAnimationAssets: " + ex);
+            if (Application.isBatchMode)
+                EditorApplication.Exit(1);
+        }
+    }
+
+    /// <summary>
+    /// Builds player clips from Assets/Art/Characters/Player/player_walk.png and Player_attak.png,
+    /// then wires AC_Player on SampleScene Player/Visual.
+    /// Unity -batchmode -quit -executeMethod CharacterAnimationPipeline.BindArtFolderPlayerSprites
+    /// </summary>
+    public static void BindArtFolderPlayerSprites()
+    {
+        try
+        {
+            EnsureFolders();
+
+            const string walkPath = "Assets/Art/Characters/Player/player_walk.png";
+            const string attackPath = "Assets/Art/Characters/Player/Player_attak.png";
+
+            if (!File.Exists(walkPath))
+                throw new FileNotFoundException("Missing " + walkPath);
+            if (!File.Exists(attackPath))
+                throw new FileNotFoundException("Missing " + attackPath);
+
+            EnsurePlayerWalkSpriteSheet(walkPath);
+
+            var walkSprites = LoadSpritesOrdered(walkPath)
+                .Where(s => s.rect.width >= 64 && s.rect.height >= 64)
+                .ToList();
+            var attackSprites = LoadSpritesOrdered(attackPath)
+                .Where(s => s.rect.width >= 64 && s.rect.height >= 64)
+                .ToList();
+
+            if (walkSprites.Count == 0)
+                throw new System.InvalidOperationException("No usable walk sprites in player_walk.png.");
+            if (attackSprites.Count == 0)
+                throw new System.InvalidOperationException("No usable attack sprites in Player_attak.png.");
+
+            var idleFrames = walkSprites.Count >= 2
+                ? walkSprites.GetRange(0, 2)
+                : new List<Sprite> { walkSprites[0] };
+
+            var playerIdle = BuildOrUpdateSpriteClipFromFrames(
+                "Assets/Animation/Clips/player_idle.anim", idleFrames, 0.5f, loop: true);
+            var playerWalk = BuildOrUpdateSpriteClipFromFrames(
+                "Assets/Animation/Clips/player_walk.anim", walkSprites, 0.35f, loop: true);
+            var playerAttack = BuildOrUpdateSpriteClipFromFrames(
+                "Assets/Animation/Clips/player_attack.anim", attackSprites, 0.25f, loop: false);
+
+            AssignClipsToExistingController(
+                "Assets/Animation/Controllers/AC_Player.controller",
+                playerIdle,
+                playerWalk,
+                playerAttack,
+                deathClip: null);
+
+            SetupPlayerInSampleScene();
+            AssignDefaultPlayerVisualSprite(walkSprites[0]);
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[CharacterAnimationPipeline] Bound art-folder player sprites: walk={walkSprites.Count}, attack={attackSprites.Count}.");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("[CharacterAnimationPipeline] BindArtFolderPlayerSprites: " + ex);
+            if (Application.isBatchMode)
+                EditorApplication.Exit(1);
+        }
+    }
+
+    /// <summary>
+    /// Re-slices enemy_sheet.png, rebuilds AC_Enemy clips, and updates Level1/2/3 enemy prefabs.
+    /// Unity -batchmode -quit -executeMethod CharacterAnimationPipeline.BindArtFolderEnemySprites
+    /// </summary>
+    public static void BindArtFolderEnemySprites()
+    {
+        try
+        {
+            EnsureFolders();
+
+            const string sheetPath = "Assets/Art/Characters/Enemy/enemy_sheet.png";
+            if (!File.Exists(sheetPath))
+                throw new FileNotFoundException("Missing " + sheetPath);
+
+            EnsureEnemySheetSpriteSheet(sheetPath);
+
+            var enemySprites = LoadSpritesOrdered(sheetPath)
+                .Where(s => s.rect.width >= 64 && s.rect.height >= 64)
+                .ToList();
+
+            if (enemySprites.Count < 7)
+                throw new System.InvalidOperationException(
+                    $"Expected at least 7 enemy sprites in enemy_sheet.png, got {enemySprites.Count}.");
+
+            var enemyIdle = BuildOrUpdateSpriteClipFromFrames(
+                "Assets/Animation/Clips/enemy_idle.anim",
+                enemySprites.GetRange(0, 2),
+                0.5f,
+                loop: true);
+            var enemyWalk = BuildOrUpdateSpriteClipFromFrames(
+                "Assets/Animation/Clips/enemy_walk.anim",
+                enemySprites.GetRange(2, System.Math.Min(3, enemySprites.Count - 2)),
+                0.35f,
+                loop: true);
+            var enemyAttack = BuildOrUpdateSpriteClipFromFrames(
+                "Assets/Animation/Clips/enemy_attack.anim",
+                enemySprites.GetRange(5, System.Math.Min(2, enemySprites.Count - 5)),
+                0.25f,
+                loop: false);
+            var enemyDeath = BuildOrUpdateSpriteClipFromFrames(
+                "Assets/Animation/Clips/enemy_death.anim",
+                new List<Sprite> { enemySprites[enemySprites.Count - 1] },
+                0.4f,
+                loop: false);
+
+            AssignClipsToExistingController(
+                "Assets/Animation/Controllers/AC_Enemy.controller",
+                enemyIdle,
+                enemyWalk,
+                enemyAttack,
+                deathClip: enemyDeath);
+
+            var defaultSprite = enemySprites[0];
+            SetupEnemyPrefab("Assets/Prefabs/Enemy/Level1Enemy.prefab", defaultSprite);
+            SetupEnemyPrefab("Assets/Prefabs/Enemy/Level2Enemy.prefab", defaultSprite);
+            SetupEnemyPrefab("Assets/Prefabs/Enemy/Level3Enemy.prefab", defaultSprite);
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[CharacterAnimationPipeline] Bound enemy_sheet sprites: count={enemySprites.Count}.");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("[CharacterAnimationPipeline] BindArtFolderEnemySprites: " + ex);
+            if (Application.isBatchMode)
+                EditorApplication.Exit(1);
+        }
+    }
+
+    /// <summary>
+    /// Rebuilds per-tier enemy clips/controllers from dev sprite sheets and updates Level1/2/3 prefabs.
+    /// Unity -batchmode -quit -executeMethod CharacterAnimationPipeline.BindDevTierEnemySprites
+    /// </summary>
+    public static void BindDevTierEnemySprites()
+    {
+        try
+        {
+            EnsureFolders();
+
+            BindDevTierEnemy(
+                "Assets/Sprites/IMG_0603.png",
+                "level1",
+                "Assets/Animation/Controllers/AC_Enemy_Level1.controller",
+                "Assets/Prefabs/Enemy/Level1Enemy.prefab");
+
+            BindDevTierEnemy(
+                "Assets/Sprites/IMG_0652.png",
+                "level2",
+                "Assets/Animation/Controllers/AC_Enemy_Level2.controller",
+                "Assets/Prefabs/Enemy/Level2Enemy.prefab");
+
+            BindDevTierEnemy(
+                "Assets/Sprites/final binal/IMG_0639.png",
+                "level3",
+                "Assets/Animation/Controllers/AC_Enemy_Level3.controller",
+                "Assets/Prefabs/Enemy/Level3Enemy.prefab");
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log("[CharacterAnimationPipeline] Bound dev-tier enemy sprites for Level1/2/3.");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("[CharacterAnimationPipeline] BindDevTierEnemySprites: " + ex);
+            if (Application.isBatchMode)
+                EditorApplication.Exit(1);
+        }
+    }
+
+    static void BindDevTierEnemy(
+        string texturePath,
+        string tierId,
+        string controllerPath,
+        string prefabPath)
+    {
+        if (!File.Exists(texturePath))
+            throw new FileNotFoundException("Missing " + texturePath);
+
+        var sprites = LoadSpritesOrdered(texturePath)
+            .Where(s => s.rect.width >= 64 && s.rect.height >= 64)
+            .ToList();
+
+        if (sprites.Count == 0)
+            throw new System.InvalidOperationException("No usable sprites in " + texturePath);
+
+        var idleFrames = sprites.Count >= 2
+            ? sprites.GetRange(0, 2)
+            : new List<Sprite> { sprites[0] };
+
+        List<Sprite> walkFrames;
+        if (sprites.Count >= 5)
+            walkFrames = sprites.GetRange(2, 3);
+        else if (sprites.Count >= 3)
+            walkFrames = sprites.GetRange(1, sprites.Count - 1);
+        else
+            walkFrames = idleFrames;
+
+        List<Sprite> attackFrames;
+        if (sprites.Count >= 7)
+            attackFrames = sprites.GetRange(5, 2);
+        else if (sprites.Count >= 2)
+            attackFrames = new List<Sprite> { sprites[sprites.Count - 1] };
+        else
+            attackFrames = idleFrames;
+
+        var deathFrame = sprites[sprites.Count - 1];
+
+        var idleClip = BuildOrUpdateSpriteClipFromFrames(
+            $"Assets/Animation/Clips/enemy_{tierId}_idle.anim", idleFrames, 0.5f, loop: true);
+        var walkClip = BuildOrUpdateSpriteClipFromFrames(
+            $"Assets/Animation/Clips/enemy_{tierId}_walk.anim", walkFrames, 0.35f, loop: true);
+        var attackClip = BuildOrUpdateSpriteClipFromFrames(
+            $"Assets/Animation/Clips/enemy_{tierId}_attack.anim", attackFrames, 0.25f, loop: false);
+        var deathClip = BuildOrUpdateSpriteClipFromFrames(
+            $"Assets/Animation/Clips/enemy_{tierId}_death.anim",
+            new List<Sprite> { deathFrame },
+            0.4f,
+            loop: false);
+
+        EnsureEnemyTierController(controllerPath, idleClip, walkClip, attackClip, deathClip);
+        SetupEnemyPrefab(prefabPath, sprites[0], controllerPath);
+    }
+
+    static void EnsureEnemyTierController(
+        string controllerPath,
+        AnimationClip idle,
+        AnimationClip walk,
+        AnimationClip attack,
+        AnimationClip death)
+    {
+        if (AssetDatabase.LoadAssetAtPath<AnimatorController>(controllerPath) == null)
+        {
+            BuildController(controllerPath, idle, walk, attack, includeDeath: true, deathClip: death);
+            return;
+        }
+
+        AssignClipsToExistingController(controllerPath, idle, walk, attack, deathClip: death);
+    }
+
+    static void EnsureEnemySheetSpriteSheet(string assetPath)
+    {
+        var existing = LoadSpritesOrdered(assetPath);
+        if (existing.Count >= 7 && existing.All(s => s.rect.width > 64 && s.rect.height > 64))
+            return;
+
+        ApplyManualSpriteRects(assetPath, "enemy_sheet", new[]
+        {
+            new Rect(94f, 1438f, 343f, 329f),
+            new Rect(563f, 1434f, 331f, 330f),
+            new Rect(1053f, 1435f, 316f, 328f),
+            new Rect(1589f, 1436f, 310f, 324f),
+            new Rect(1027f, 763f, 327f, 318f),
+            new Rect(563f, 754f, 320f, 315f),
+            new Rect(1583f, 744f, 333f, 320f),
+            new Rect(108f, 741f, 313f, 319f),
+            new Rect(814f, 125f, 338f, 321f),
+        });
+    }
+
+    static void EnsurePlayerWalkSpriteSheet(string assetPath)
+    {
+        var existing = LoadSpritesOrdered(assetPath);
+        if (existing.Count > 0 && existing.All(s => s.rect.width > 64 && s.rect.height > 64))
+            return;
+
+        ApplyManualSpriteRects(assetPath, "player_walk", new[]
+        {
+            new Rect(195f, 1096f, 388f, 859f),
+            new Rect(830f, 1090f, 388f, 859f),
+            new Rect(1460f, 1079f, 388f, 859f),
+            new Rect(833f, 50f, 388f, 860f),
+        });
+    }
+
+    static void ApplyManualSpriteRects(string assetPath, string prefix, Rect[] rects)
+    {
+        AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
+        var importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+        if (importer == null)
+            throw new System.InvalidOperationException("No TextureImporter for " + assetPath);
+
+        importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Multiple;
+        importer.filterMode = FilterMode.Point;
+        importer.textureCompression = TextureImporterCompression.Uncompressed;
+        importer.mipmapEnabled = false;
+        importer.spritePixelsToUnits = 100f;
+
+        var spriteRects = new SpriteRect[rects.Length];
+        for (var i = 0; i < rects.Length; i++)
+        {
+            spriteRects[i] = new SpriteRect
+            {
+                name = $"{prefix}_{i}",
+                rect = rects[i],
+                alignment = SpriteAlignment.Center,
+                pivot = new Vector2(0.5f, 0.5f),
+                border = Vector4.zero,
+                spriteID = GUID.Generate()
+            };
+        }
+
+        ApplySpriteRectsViaDataProvider(importer, spriteRects);
+    }
+
     public static void GenerateAll()
     {
         try
@@ -480,6 +907,41 @@ public static class CharacterAnimationPipeline
         toWalk.AddCondition(AnimatorConditionMode.Greater, 0.09f, AnimationParams.Speed);
     }
 
+    static void AssignDefaultPlayerVisualSprite(Sprite sprite)
+    {
+        if (sprite == null)
+            return;
+
+        var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity");
+        GameObject player = null;
+        foreach (var go in scene.GetRootGameObjects())
+        {
+            if (go.CompareTag("Player"))
+            {
+                player = go;
+                break;
+            }
+        }
+
+        if (player == null)
+            return;
+
+        var visual = player.transform.Find("Visual");
+        if (visual == null)
+            return;
+
+        var sr = visual.GetComponent<SpriteRenderer>();
+        if (sr == null)
+            return;
+
+        sr.sprite = sprite;
+        var scale = ResolveVisualDisplayScale(sprite);
+        visual.localScale = new Vector3(scale, scale, 1f);
+
+        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(scene);
+        UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene);
+    }
+
     static void SetupPlayerInSampleScene()
     {
         var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity");
@@ -519,15 +981,33 @@ public static class CharacterAnimationPipeline
         UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene);
     }
 
-    static void SetupEnemyPrefab(string prefabPath)
+    static void SetupEnemyPrefab(
+        string prefabPath,
+        Sprite defaultVisualSprite = null,
+        string controllerPath = "Assets/Animation/Controllers/AC_Enemy.controller")
     {
         var root = PrefabUtility.LoadPrefabContents(prefabPath);
         try
         {
             EnsureVisualAnimator(
                 root,
-                "Assets/Animation/Controllers/AC_Enemy.controller",
+                controllerPath,
                 addPlayerCharacterAnimation: false);
+
+            var visual = root.transform.Find("Visual");
+            if (visual != null && defaultVisualSprite != null)
+            {
+                var sr = visual.GetComponent<SpriteRenderer>();
+                if (sr != null)
+                {
+                    sr.sprite = defaultVisualSprite;
+                    sr.drawMode = SpriteDrawMode.Simple;
+                    sr.spriteSortPoint = SpriteSortPoint.Center;
+                }
+
+                var scale = ResolveVisualDisplayScale(defaultVisualSprite);
+                visual.localScale = new Vector3(scale, scale, 1f);
+            }
 
             var ai = root.GetComponent<EnemyAI>();
             if (ai != null)
@@ -544,6 +1024,19 @@ public static class CharacterAnimationPipeline
         {
             PrefabUtility.UnloadPrefabContents(root);
         }
+    }
+
+    static float ResolveVisualDisplayScale(Sprite sprite)
+    {
+        if (sprite == null)
+            return VisualDisplayScale;
+
+        var worldHeight = sprite.rect.height / sprite.pixelsPerUnit;
+        if (worldHeight > 2f)
+            return VisualDisplayScale;
+        if (worldHeight > 0.5f)
+            return 1f;
+        return VisualDisplayScale;
     }
 
     static void EnsureVisualAnimator(GameObject root, string controllerPath, bool addPlayerCharacterAnimation)
@@ -570,7 +1063,10 @@ public static class CharacterAnimationPipeline
             visualGo.transform.SetParent(root.transform, false);
             visualGo.transform.localPosition = Vector3.zero;
             visualGo.transform.localRotation = Quaternion.identity;
-            visualGo.transform.localScale = new Vector3(VisualDisplayScale, VisualDisplayScale, 1f);
+            visualGo.transform.localScale = new Vector3(
+                ResolveVisualDisplayScale(oldSr != null ? oldSr.sprite : null),
+                ResolveVisualDisplayScale(oldSr != null ? oldSr.sprite : null),
+                1f);
 
             sr = visualGo.AddComponent<SpriteRenderer>();
             animator = visualGo.AddComponent<Animator>();
@@ -592,7 +1088,15 @@ public static class CharacterAnimationPipeline
             }
         }
 
-        visualGo.transform.localScale = new Vector3(VisualDisplayScale, VisualDisplayScale, 1f);
+        var displayScale = ResolveVisualDisplayScale(sr.sprite);
+        visualGo.transform.localScale = new Vector3(displayScale, displayScale, 1f);
+        visualGo.layer = root.layer;
+
+        if (sr.sprite != null)
+        {
+            sr.drawMode = SpriteDrawMode.Simple;
+            sr.spriteSortPoint = SpriteSortPoint.Center;
+        }
 
         var controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(controllerPath);
         animator.runtimeAnimatorController = controller;

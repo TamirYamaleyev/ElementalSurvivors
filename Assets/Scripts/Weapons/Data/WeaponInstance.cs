@@ -42,6 +42,8 @@ public class WeaponInstance
             return;
         }
 
+        ctx.PlayerAnimation?.NotifyAttack();
+
         float baseCooldown = data.cooldown;
         cooldownTimer = ctx.PlayerStats != null
             ? CombatStatResolver.ScaleCooldown(baseCooldown, ctx.PlayerStats.Current)

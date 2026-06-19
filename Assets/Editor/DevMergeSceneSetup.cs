@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /// <summary>
 /// Idempotent wiring of release gameplay systems into the dev SampleScene after a bad YAML merge.
@@ -44,6 +45,337 @@ public static class DevMergeSceneSetup
         File.WriteAllText(PendingWireFlagPath, "pending");
     }
 
+    const string PlayerControllerPath = "Assets/Animation/Controllers/AC_Player.controller";
+    const string VisualChildName = "Visual";
+    const float VisualDisplayScale = 0.24f;
+
+    [MenuItem("Tools/Dev Merge/Bind Enemy Art Animations")]
+    public static void BindEnemyArtAnimationsMenu()
+    {
+        CharacterAnimationPipeline.BindDevTierEnemySprites();
+    }
+
+    [MenuItem("Tools/Dev Merge/Bind Dev Tier Enemy Sprites")]
+    public static void BindDevTierEnemySpritesMenu()
+    {
+        CharacterAnimationPipeline.BindDevTierEnemySprites();
+    }
+
+    /// <summary>Unity -batchmode -quit -executeMethod DevMergeSceneSetup.RunFullPipelineFromCli</summary>
+    public static void RunFullPipelineFromCli()
+    {
+        try
+        {
+            CharacterAnimationPipeline.BindArtFolderPlayerSprites();
+            AddPlayerAnimatorVisual(logToConsole: false);
+            CharacterAnimationPipeline.BindDevTierEnemySprites();
+            WireReleaseSystems(logToConsole: false);
+            FixLevelUpUi(FindScene(), new List<string>());
+            EditorSceneManager.SaveScene(FindScene());
+            VerifySampleScene();
+            Debug.Log("[DevMergeSceneSetup] Full pipeline completed.");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("[DevMergeSceneSetup] Full pipeline failed: " + ex);
+            EditorApplication.Exit(1);
+        }
+    }
+
+    static Scene FindScene()
+    {
+        return EditorSceneManager.OpenScene(SampleScenePath, OpenSceneMode.Single);
+    }
+
+    /// <summary>Unity -batchmode -quit -executeMethod DevMergeSceneSetup.FixLevelUpUiFromCli</summary>
+    public static void FixLevelUpUiFromCli()
+    {
+        try
+        {
+            var scene = EditorSceneManager.OpenScene(SampleScenePath, OpenSceneMode.Single);
+            var checklist = new List<string>();
+            FixLevelUpUi(scene, checklist);
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            Debug.Log("[DevMergeSceneSetup] Level-up UI wired: " + string.Join(", ", checklist));
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("[DevMergeSceneSetup] FixLevelUpUi: " + ex);
+            EditorApplication.Exit(1);
+        }
+    }
+
+    [MenuItem("Tools/Dev Merge/Fix Level-Up UI Wiring")]
+    public static void FixLevelUpUiMenu()
+    {
+        var scene = EditorSceneManager.OpenScene(SampleScenePath, OpenSceneMode.Single);
+        var checklist = new List<string>();
+        FixLevelUpUi(scene, checklist);
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        Debug.Log("[DevMergeSceneSetup] Level-up UI wired: " + string.Join(", ", checklist));
+    }
+
+    static void FixLevelUpUi(Scene scene, List<string> checklist)
+    {
+        var levelUpUi = Object.FindFirstObjectByType<LevelUpUI>();
+        if (levelUpUi == null)
+        {
+            Debug.LogWarning("[DevMergeSceneSetup] LevelUpUI not found.");
+            return;
+        }
+
+        var player = FindRootObject(scene, "Player");
+        if (player == null)
+            throw new System.InvalidOperationException("Player not found in SampleScene.");
+
+        var spearWeapon = EnsurePlayerDefaultWeapon(player, checklist);
+        var orbitWeapon = player.GetComponentInChildren<OrbitWeapon>(true);
+        var boomerangWeapon = player.GetComponentInChildren<BoomerangController>(true);
+
+        var uiSo = new SerializedObject(levelUpUi);
+        if (spearWeapon != null && uiSo.FindProperty("spearWeapon").objectReferenceValue == null)
+        {
+            uiSo.FindProperty("spearWeapon").objectReferenceValue = spearWeapon;
+            checklist.Add("LevelUpUI.spearWeapon");
+        }
+
+        if (orbitWeapon != null && uiSo.FindProperty("orbitWeapon").objectReferenceValue == null)
+        {
+            uiSo.FindProperty("orbitWeapon").objectReferenceValue = orbitWeapon;
+            checklist.Add("LevelUpUI.orbitWeapon");
+        }
+
+        if (boomerangWeapon != null && uiSo.FindProperty("boomerangWeapon").objectReferenceValue == null)
+        {
+            uiSo.FindProperty("boomerangWeapon").objectReferenceValue = boomerangWeapon;
+            checklist.Add("LevelUpUI.boomerangWeapon");
+        }
+
+        var option1 = FindSceneButton(scene, "Option1");
+        var option2 = FindSceneButton(scene, "Option2");
+        var option3 = FindSceneButton(scene, "Option3");
+
+        if (option1 != null && uiSo.FindProperty("option1Button").objectReferenceValue == null)
+        {
+            uiSo.FindProperty("option1Button").objectReferenceValue = option1;
+            checklist.Add("LevelUpUI.option1Button");
+        }
+
+        if (option2 != null && uiSo.FindProperty("option2Button").objectReferenceValue == null)
+        {
+            uiSo.FindProperty("option2Button").objectReferenceValue = option2;
+            checklist.Add("LevelUpUI.option2Button");
+        }
+
+        if (option3 != null && uiSo.FindProperty("option3Button").objectReferenceValue == null)
+        {
+            uiSo.FindProperty("option3Button").objectReferenceValue = option3;
+            checklist.Add("LevelUpUI.option3Button");
+        }
+
+        uiSo.ApplyModifiedPropertiesWithoutUndo();
+
+        if (spearWeapon != null && option1 != null)
+            WireButtonLevelUpTarget(option1, spearWeapon, levelUpUi, checklist, "Option1→PlayerDefaultWeapon");
+        if (orbitWeapon != null && option2 != null)
+            WireButtonLevelUpTarget(option2, orbitWeapon, levelUpUi, checklist, "Option2→OrbitWeapon");
+        if (boomerangWeapon != null && option3 != null)
+            WireButtonLevelUpTarget(option3, boomerangWeapon, levelUpUi, checklist, "Option3→BoomerangController");
+    }
+
+    static PlayerDefaultWeapon EnsurePlayerDefaultWeapon(GameObject player, List<string> checklist)
+    {
+        var spearWeapon = player.GetComponent<PlayerDefaultWeapon>();
+        if (spearWeapon == null)
+        {
+            spearWeapon = player.AddComponent<PlayerDefaultWeapon>();
+            checklist.Add("PlayerDefaultWeapon component");
+        }
+
+        var spearTransform = player.transform.Find("SpearHitbox");
+        if (spearTransform == null)
+        {
+            var spearGo = new GameObject("SpearHitbox");
+            spearGo.transform.SetParent(player.transform, false);
+            spearGo.SetActive(false);
+            spearTransform = spearGo.transform;
+            checklist.Add("Player/SpearHitbox child");
+        }
+
+        var cam = Camera.main ?? Object.FindFirstObjectByType<Camera>();
+        var weaponSo = new SerializedObject(spearWeapon);
+        if (weaponSo.FindProperty("spear").objectReferenceValue == null)
+            weaponSo.FindProperty("spear").objectReferenceValue = spearTransform;
+        if (cam != null && weaponSo.FindProperty("cam").objectReferenceValue == null)
+            weaponSo.FindProperty("cam").objectReferenceValue = cam;
+
+        var characterAnimation = player.GetComponent<PlayerCharacterAnimation>();
+        if (characterAnimation != null &&
+            weaponSo.FindProperty("characterAnimation").objectReferenceValue == null)
+            weaponSo.FindProperty("characterAnimation").objectReferenceValue = characterAnimation;
+
+        var stats = player.GetComponent<PlayerStats>();
+        if (stats != null && weaponSo.FindProperty("statsProviderBehaviour").objectReferenceValue == null)
+            weaponSo.FindProperty("statsProviderBehaviour").objectReferenceValue = stats;
+
+        weaponSo.ApplyModifiedPropertiesWithoutUndo();
+        return spearWeapon;
+    }
+
+    static Button FindSceneButton(Scene scene, string objectName)
+    {
+        foreach (var root in scene.GetRootGameObjects())
+        {
+            foreach (var button in root.GetComponentsInChildren<Button>(true))
+            {
+                if (button.name == objectName)
+                    return button;
+            }
+        }
+
+        return null;
+    }
+
+    static void WireButtonLevelUpTarget(
+        Button button,
+        MonoBehaviour weaponTarget,
+        LevelUpUI levelUpUi,
+        List<string> checklist,
+        string label)
+    {
+        var buttonSo = new SerializedObject(button);
+        var calls = buttonSo.FindProperty("m_OnClick.m_PersistentCalls.m_Calls");
+        var changed = false;
+
+        for (var i = 0; i < calls.arraySize; i++)
+        {
+            var call = calls.GetArrayElementAtIndex(i);
+            var methodName = call.FindPropertyRelative("m_MethodName").stringValue;
+            if (methodName != "LevelUp")
+                continue;
+
+            var targetProp = call.FindPropertyRelative("m_Target");
+            if (targetProp.objectReferenceValue == weaponTarget)
+                continue;
+
+            targetProp.objectReferenceValue = weaponTarget;
+            changed = true;
+        }
+
+        if (changed)
+        {
+            buttonSo.ApplyModifiedPropertiesWithoutUndo();
+            checklist.Add(label);
+        }
+
+        WireChoiceSelectedTarget(button, levelUpUi, checklist);
+    }
+
+    static void WireChoiceSelectedTarget(Button button, LevelUpUI levelUpUi, List<string> checklist)
+    {
+        var buttonSo = new SerializedObject(button);
+        var calls = buttonSo.FindProperty("m_OnClick.m_PersistentCalls.m_Calls");
+        var changed = false;
+
+        for (var i = 0; i < calls.arraySize; i++)
+        {
+            var call = calls.GetArrayElementAtIndex(i);
+            if (call.FindPropertyRelative("m_MethodName").stringValue != "ChoiceSelected")
+                continue;
+
+            var targetProp = call.FindPropertyRelative("m_Target");
+            if (targetProp.objectReferenceValue == levelUpUi)
+                continue;
+
+            targetProp.objectReferenceValue = levelUpUi;
+            changed = true;
+        }
+
+        if (changed)
+        {
+            buttonSo.ApplyModifiedPropertiesWithoutUndo();
+            checklist.Add(button.name + "→LevelUpUI.ChoiceSelected");
+        }
+    }
+
+    [MenuItem("Tools/Dev Merge/Add Player Animator Visual")]
+    public static void AddPlayerAnimatorVisualMenu()
+    {
+        AddPlayerAnimatorVisual(logToConsole: true);
+    }
+
+    /// <summary>Unity -batchmode -quit -executeMethod DevMergeSceneSetup.AddPlayerAnimatorVisualFromCli</summary>
+    public static void AddPlayerAnimatorVisualFromCli()
+    {
+        try
+        {
+            AddPlayerAnimatorVisual(logToConsole: true);
+            Debug.Log("[DevMergeSceneSetup] Player animator CLI run completed.");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("[DevMergeSceneSetup] " + ex);
+            EditorApplication.Exit(1);
+        }
+    }
+
+    static void AddPlayerAnimatorVisual(bool logToConsole)
+    {
+        EnsurePlayerAnimationAssets();
+
+        if (!File.Exists("Assets/Art/Characters/Player/player_walk.png"))
+            CharacterAnimationPipeline.SetupPlayerAnimatorInSampleScene();
+
+        var scene = EditorSceneManager.OpenScene(SampleScenePath, OpenSceneMode.Single);
+        var player = FindRootObject(scene, "Player");
+        if (player == null)
+            throw new System.InvalidOperationException("Player not found in SampleScene.");
+
+        var checklist = new List<string>();
+        if (player.GetComponent<PlayerCharacterAnimation>() != null)
+            checklist.Add("PlayerCharacterAnimation on Player");
+        if (player.transform.Find(VisualChildName) != null)
+            checklist.Add("Player/Visual child");
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+
+        var message = checklist.Count > 0
+            ? "[DevMergeSceneSetup] Player animator visual ready:\n  - " + string.Join("\n  - ", checklist)
+            : "[DevMergeSceneSetup] Player animator setup finished.";
+
+        if (logToConsole)
+            Debug.Log(message);
+    }
+
+    static void EnsurePlayerAnimationAssets()
+    {
+        if (File.Exists("Assets/Art/Characters/Player/player_walk.png") &&
+            File.Exists("Assets/Art/Characters/Player/Player_attak.png"))
+        {
+            CharacterAnimationPipeline.BindArtFolderPlayerSprites();
+            return;
+        }
+
+        if (File.Exists("Assets/Art/Characters/Player/Player_idle.png"))
+        {
+            CharacterAnimationPipeline.BindProductionCharacterSprites();
+            return;
+        }
+
+        if (AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Sprites/IMG_0600.png") != null)
+        {
+            CharacterAnimationPipeline.EnsureDevPlayerAnimationAssets();
+            CharacterAnimationPipeline.SetupPlayerAnimatorInSampleScene();
+            return;
+        }
+
+        CharacterAnimationPipeline.EnsurePlaceholderAnimationAssets();
+        CharacterAnimationPipeline.SetupPlayerAnimatorInSampleScene();
+    }
+
     [MenuItem("Tools/Dev Merge/Wire Release Systems Into SampleScene")]
     public static void WireReleaseSystemsMenu()
     {
@@ -74,6 +406,7 @@ public static class DevMergeSceneSetup
         WireGameInstaller(scene, checklist);
         WireEnvironmentObstacleGenerator(scene, checklist);
         WirePlayerPickup(scene, checklist);
+        FixLevelUpUi(scene, checklist);
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
@@ -382,6 +715,11 @@ public static class DevMergeSceneSetup
 
         if (FindRootObject(scene, "showcase") == null)
             Debug.LogWarning("[DevMergeSceneSetup] showcase root not found.");
+
+        if (player.GetComponent<PlayerCharacterAnimation>() == null)
+            Debug.LogWarning("[DevMergeSceneSetup] PlayerCharacterAnimation missing — run Tools/Dev Merge/Add Player Animator Visual.");
+        else if (player.transform.Find(VisualChildName) == null)
+            Debug.LogWarning("[DevMergeSceneSetup] Player Visual child missing.");
     }
 
     static void Require(Object obj, string label)
