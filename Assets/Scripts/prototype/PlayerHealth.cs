@@ -82,9 +82,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             Die();
     }
 
-    /// <summary>
-    /// Heals a fraction of current max health. Does not trigger i-frames.
-    /// </summary>
     public void HealFractionOfMax(float fraction)
     {
         if (fraction <= 0f)
@@ -98,9 +95,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         NotifyHealthChanged();
     }
 
-    /// <summary>
-    /// Heals a flat amount of HP. Does not trigger i-frames.
-    /// </summary>
     public void HealFlat(float amount)
     {
         if (amount <= 0f)
@@ -121,7 +115,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private void Die()
     {
-        Debug.Log("m'dead");
+        Debug.Log("Player died");
         gameObject.SetActive(false);
     }
 }

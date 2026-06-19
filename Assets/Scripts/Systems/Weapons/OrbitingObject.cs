@@ -16,6 +16,12 @@ public class OrbitingObject : MonoBehaviour
 
     private Transform center;
 
+    private void Awake()
+    {
+        if (sr == null)
+            sr = GetComponent<SpriteRenderer>();
+    }
+
     public void Init(
         int index,
         int total,
@@ -42,7 +48,11 @@ public class OrbitingObject : MonoBehaviour
 
         this.center = center;
 
-        sr.sprite = visualSprite;
+        if (sr == null)
+            sr = GetComponent<SpriteRenderer>();
+
+        if (sr != null && visualSprite != null)
+            sr.sprite = visualSprite;
     }
 
     void Update()
@@ -69,10 +79,10 @@ public class OrbitingObject : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-      if (other.TryGetComponent(out Enemy enemy))
-        {
-            enemy.TakeDamage(damage);
-            statusSystem.Apply(enemy, status, statusDuration);
-        }  
+        if (!CombatHitUtility.TryResolveEnemy(other, out Enemy enemy))
+            return;
+
+        enemy.TakeDamage(damage);
+        statusSystem.Apply(enemy, status, statusDuration);
     }
 }

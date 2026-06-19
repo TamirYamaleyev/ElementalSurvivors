@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,7 +24,7 @@ public class TargetingSystem : MonoBehaviour
         {
             Enemy e = registry.ActiveEnemies[i];
 
-            if (e == null) 
+            if (e == null)
                 continue;
 
             Vector3 diff = e.transform.position - pos;
@@ -43,9 +42,11 @@ public class TargetingSystem : MonoBehaviour
 
     public List<Enemy> GetChainTargets(Vector2 startPosition, int chainCount, float range)
     {
-        List<Enemy> result = new();
-        HashSet<Enemy> visited = new();
+        var result = new List<Enemy>();
+        if (registry == null || registry.ActiveEnemies == null || chainCount <= 0)
+            return result;
 
+        var visited = new HashSet<Enemy>();
         Vector2 currentPos = startPosition;
         float maxSqr = range * range;
 
@@ -62,14 +63,11 @@ public class TargetingSystem : MonoBehaviour
                 Vector2 delta = (Vector2)enemy.transform.position - currentPos;
                 float d = delta.sqrMagnitude;
 
-                if (d > maxSqr)
+                if (d > maxSqr || d >= bestDist)
                     continue;
 
-                if (d < bestDist)
-                {
-                    bestDist = d;
-                    best = enemy;
-                }
+                bestDist = d;
+                best = enemy;
             }
 
             if (best == null)
@@ -77,7 +75,6 @@ public class TargetingSystem : MonoBehaviour
 
             result.Add(best);
             visited.Add(best);
-
             currentPos = best.transform.position;
         }
 

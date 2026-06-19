@@ -14,6 +14,10 @@ public class ChainLightningWeapon : WeaponBehavior
         if (targets == null || targets.Count == 0)
             return false;
 
+        float damage = ctx.PlayerStats != null
+            ? CombatStatResolver.ScaleDamage(data.damage, ctx.PlayerStats.Current)
+            : data.damage;
+
         Vector2 previousPoint = origin;
 
         foreach (var enemy in targets)
@@ -26,13 +30,12 @@ public class ChainLightningWeapon : WeaponBehavior
             var visual = Instantiate(visualPrefab);
             visual.Initialize(previousPoint, hitPoint, data.visualSprite, visualLifetime);
 
-            enemy.TakeDamage(data.damage);
+            enemy.TakeDamage(damage);
 
             ctx.StatusSystem.Apply(enemy, definition.appliedStatus, data.statusDuration);
 
             previousPoint = hitPoint;
         }
-        Debug.Log("Zap");
 
         return true;
     }

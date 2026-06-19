@@ -19,22 +19,26 @@ public class BoomerangController : MonoBehaviour
 
     private Vector2 lastDirection = Vector2.right;
 
-    void Start()
-    {
-        player = PlayerController.Instance;
-        timer = 0f;
-    }
-
     public void LevelUp()
     {
+        if (!gameObject.activeSelf)
+            gameObject.SetActive(true);
+
+        EnsureInitialized();
+
         if (currentLevel >= boomerangsPerLevel.Length - 1) return;
         currentLevel++;
 
         spreadAngle = 20f + currentLevel * 10f;
     }
 
+    public bool IsMaxed => currentLevel >= boomerangsPerLevel.Length - 1;
+
     void Update()
     {
+        if (player == null)
+            return;
+
         UpdateDirection();
 
         timer -= Time.deltaTime;
@@ -46,6 +50,15 @@ public class BoomerangController : MonoBehaviour
         }
     }
 
+    private void EnsureInitialized()
+    {
+        if (player != null)
+            return;
+
+        player = PlayerController.Instance;
+        timer = 0f;
+    }
+
     private void UpdateDirection()
     {
         if (Mouse.current == null) return;
@@ -55,7 +68,7 @@ public class BoomerangController : MonoBehaviour
         Vector3 mouseWorldPos = mainCam.ScreenToWorldPoint(mouseScreenPos);
         mouseWorldPos.z = 0f;
 
-        Vector2 dir = (mouseWorldPos - (Vector3)player.position);
+        Vector2 dir = mouseWorldPos - player.position;
 
         if (dir.sqrMagnitude > 0.0001f)
             lastDirection = dir.normalized;
@@ -63,6 +76,9 @@ public class BoomerangController : MonoBehaviour
 
     private void Fire()
     {
+        if (boomerangPrefab == null)
+            return;
+
         int count = BoomerangCount;
 
         float baseAngle = Mathf.Atan2(lastDirection.y, lastDirection.x) * Mathf.Rad2Deg;

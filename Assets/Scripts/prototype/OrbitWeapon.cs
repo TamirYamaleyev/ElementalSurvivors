@@ -1,8 +1,5 @@
-using NUnit.Framework;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class OrbitWeapon : MonoBehaviour
 {
@@ -18,31 +15,21 @@ public class OrbitWeapon : MonoBehaviour
 
     private List<Transform> orbs;
     private float currentAngle;
-
-    void Start()
-    {
-        orbs = new List<Transform>();
-
-        currentOrbCount = levelOneOrbCount;
-
-        for (int i = 0; i < currentOrbCount; i++)
-        {
-            GameObject orb = Instantiate(orbPrefab, transform);
-            orbs.Add(orb.transform);
-        }
-    }
+    private bool initialized;
 
     public void LevelUp()
     {
+        if (!gameObject.activeSelf)
+            gameObject.SetActive(true);
+
+        EnsureInitialized();
+
         if (currentOrbCount == levelOneOrbCount)
             currentOrbCount = levelTwoOrbCount;
-
         else if (currentOrbCount == levelTwoOrbCount)
             currentOrbCount = levelThreeOrbCount;
-
         else if (currentOrbCount == levelThreeOrbCount)
             currentOrbCount = levelFourOrbCount;
-
         else if (currentOrbCount == levelFourOrbCount)
             currentOrbCount = levelFiveOrbCount;
 
@@ -53,8 +40,13 @@ public class OrbitWeapon : MonoBehaviour
         }
     }
 
+    public bool IsMaxed => initialized && currentOrbCount >= levelFiveOrbCount;
+
     void Update()
     {
+        if (!initialized || orbs == null || orbs.Count == 0)
+            return;
+
         currentAngle += rotationSpeed * Time.deltaTime;
 
         float angleStep = 360f / currentOrbCount;
@@ -65,8 +57,30 @@ public class OrbitWeapon : MonoBehaviour
             float rad = angle * Mathf.Deg2Rad;
 
             Vector2 offset = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * radius;
-
             orbs[i].localPosition = offset;
         }
+    }
+
+    private void EnsureInitialized()
+    {
+        if (initialized)
+            return;
+
+        if (orbPrefab == null)
+        {
+            Debug.LogError($"{nameof(OrbitWeapon)} on '{name}' is missing {nameof(orbPrefab)}.", this);
+            return;
+        }
+
+        orbs = new List<Transform>();
+        currentOrbCount = levelOneOrbCount;
+
+        for (int i = 0; i < currentOrbCount; i++)
+        {
+            GameObject orb = Instantiate(orbPrefab, transform);
+            orbs.Add(orb.transform);
+        }
+
+        initialized = true;
     }
 }

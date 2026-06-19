@@ -24,7 +24,7 @@ public class BoomerangWeapon : MonoBehaviour
         moveDir = direction.normalized;
         returning = false;
 
-        transform.right = moveDir;
+        DirectionFacing2D.Apply(transform, moveDir);
     }
 
     void Update()
@@ -46,7 +46,7 @@ public class BoomerangWeapon : MonoBehaviour
 
             transform.position += dirToOwner * speed * returnSpeedMultiplier * Time.deltaTime;
 
-            transform.right = dirToOwner;
+            DirectionFacing2D.Apply(transform, dirToOwner);
 
             if (Vector3.Distance(transform.position, owner.position) < 0.5f)
             {
@@ -57,10 +57,12 @@ public class BoomerangWeapon : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.TryGetComponent<EnemyAI>(out var ai))
-            ai.ApplyFear(fearDuration);
+        if (!CombatHitUtility.TryResolveEnemyHealth(other, out EnemyHealth health))
+            return;
 
-        if (other.TryGetComponent<Enemy>(out var enemy))
-            enemy.TakeDamage(damage);
+        health.TakeDamage(damage);
+        var ai = other.GetComponentInParent<EnemyAI>();
+        if (ai != null)
+            ai.ApplyFear(fearDuration);
     }
 }

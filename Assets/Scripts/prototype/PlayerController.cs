@@ -32,6 +32,8 @@ public class PlayerController : MonoBehaviour
             _statsProvider = provider;
         else
             _statsProvider = GetComponent<IPlayerStatsProvider>();
+
+        PlayerPickupRuntimeSetup.Ensure(transform);
     }
 
     void FixedUpdate()
@@ -42,8 +44,8 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
-        playerAimDirection.SetDirection(moveInput);
-
+        if (playerAimDirection != null)
+            playerAimDirection.SetDirection(moveInput);
     }
 
     private void Move()

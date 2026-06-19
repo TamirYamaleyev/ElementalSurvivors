@@ -1,23 +1,47 @@
-using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
+public struct WeaponLoadoutEntry
+{
+    public WeaponDefinition definition;
+    public int level;
+}
+
 public class WeaponSystem : MonoBehaviour
 {
-    [SerializeField] private List<WeaponInstance> weapons;
+    [SerializeField] private List<WeaponLoadoutEntry> weapons = new();
 
+    private readonly List<WeaponInstance> runtimeWeapons = new();
     private WeaponSystemContext context;
 
     public void Initialize(WeaponSystemContext ctx)
     {
         context = ctx;
 
-        ctx.Targeting.Initialize(ctx.EnemyRegistry);
+        if (ctx.Targeting != null && ctx.EnemyRegistry != null)
+            ctx.Targeting.Initialize(ctx.EnemyRegistry);
+
+        runtimeWeapons.Clear();
+        if (weapons == null)
+            return;
+
+        foreach (var entry in weapons)
+        {
+            if (entry.definition == null)
+                continue;
+
+            runtimeWeapons.Add(new WeaponInstance(entry.definition, entry.level));
+        }
     }
 
-    void Update()
+    private void Update()
     {
-        foreach (var w in weapons)
+        if (context?.Targeting == null || runtimeWeapons.Count == 0)
+            return;
+
+        foreach (var w in runtimeWeapons)
         {
             var target = context.Targeting.GetNearest(transform.position, w.Current.range);
             w.Tick(Time.deltaTime, target, context);

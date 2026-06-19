@@ -1,7 +1,5 @@
-using NUnit.Framework;
 using UnityEngine;
 
-[System.Serializable]
 public class WeaponInstance
 {
     public WeaponDefinition definition;
@@ -11,11 +9,10 @@ public class WeaponInstance
 
     public WeaponLevelData Current => definition.levels[level - 1];
 
-    public WeaponInstance(WeaponDefinition def)
+    public WeaponInstance(WeaponDefinition def, int startLevel = 1)
     {
         definition = def;
-        level = 1;
-
+        level = Mathf.Max(1, startLevel);
         cooldownTimer = Current.cooldown;
     }
 
@@ -28,17 +25,44 @@ public class WeaponInstance
 
         var data = Current;
 
-        bool fired = TryExecute(target, ctx, data);
+        bool fired;
+        try
+        {
+            fired = TryExecute(target, ctx, data);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogException(ex);
+            fired = false;
+        }
 
-        if (fired)
-            cooldownTimer = data.cooldown;
+        if (!fired)
+        {
+            cooldownTimer = Mathf.Min(data.cooldown, 0.25f);
+            return;
+        }
+
+        float baseCooldown = data.cooldown;
+        cooldownTimer = ctx.PlayerStats != null
+            ? CombatStatResolver.ScaleCooldown(baseCooldown, ctx.PlayerStats.Current)
+            : baseCooldown;
     }
 
     public bool TryExecute(Enemy target, WeaponSystemContext ctx, WeaponLevelData data)
     {
-        bool fired = false;
+        var stats = ctx.PlayerStats != null ? ctx.PlayerStats.Current : default;
 
-        Vector2 spawnPos = ctx.PlayerTransformPoint.position;
+        float damage = ctx.PlayerStats != null
+            ? CombatStatResolver.ScaleDamage(data.damage, stats)
+            : data.damage;
+
+        float speed = ctx.PlayerStats != null
+            ? CombatStatResolver.ScaleProjectileSpeed(data.speed, stats)
+            : data.speed;
+
+        Vector2 spawnPos = ctx.PlayerTransformPoint != null
+            ? ctx.PlayerTransformPoint.position
+            : transformFallback(ctx);
 
         switch (definition.behaviorType)
         {
@@ -51,35 +75,32 @@ public class WeaponInstance
                     definition.projectilePrefab,
                     spawnPos,
                     dir,
-                    data.damage,
-                    data.speed,
+                    damage,
+                    speed,
                     definition.appliedStatus,
                     data.statusDuration,
                     ctx.StatusSystem,
-                    data.visualSprite
-                );
+                    data.visualSprite);
 
-                fired = true;
-                break;
+                return true;
             }
 
             case WeaponBehaviorType.Area:
             {
-
-                Vector2 pos = ctx.AreaSpawnPoint.position;
+                Vector2 pos = ctx.AreaSpawnPoint != null
+                    ? ctx.AreaSpawnPoint.position
+                    : spawnPos;
 
                 ctx.AreaSystem.Cast(
                     pos,
                     data.range,
-                    data.damage,
+                    damage,
                     definition.appliedStatus,
                     data.statusDuration,
                     ctx.StatusSystem,
-                    data.visualSprite
-                );
+                    data.visualSprite);
 
-                fired = true;
-                break;
+                return true;
             }
 
             case WeaponBehaviorType.Orbit:
@@ -89,34 +110,44 @@ public class WeaponInstance
                     ctx.OrbitCenter,
                     data.projectileCount,
                     data.range,
-                    data.speed,
-                    data.damage,
+                    speed,
+                    damage,
                     definition.appliedStatus,
                     data.statusDuration,
                     ctx.StatusSystem,
-                    data.visualSprite
-                );
+                    data.visualSprite);
 
-                fired = true;
-                break;
+                return true;
             }
 
             case WeaponBehaviorType.Custom:
             {
-                fired = definition.customWeaponPrefab.TryExecute(target, data, ctx, definition);
-                break;
+                if (definition.customWeaponPrefab == null)
+                    return false;
+
+                return definition.customWeaponPrefab.TryExecute(target, data, ctx, definition);
             }
         }
-        return fired;
+
+        return false;
     }
 
-    private Vector2 ResolveDirection(Enemy target, Vector2 origin, WeaponSystemContext ctx)
+    static Vector2 transformFallback(WeaponSystemContext ctx)
+    {
+        if (ctx.ProjectileSpawnPoint != null)
+            return ctx.ProjectileSpawnPoint.position;
+
+        return Vector2.zero;
+    }
+
+    static Vector2 ResolveDirection(Enemy target, Vector2 origin, WeaponSystemContext ctx)
     {
         if (target != null)
-        {
             return ((Vector2)target.transform.position - origin).normalized;
-        }
 
-        return ctx.AimDirection.LastDirection;
+        if (ctx.AimDirection != null)
+            return ctx.AimDirection.LastDirection;
+
+        return Vector2.right;
     }
 }
