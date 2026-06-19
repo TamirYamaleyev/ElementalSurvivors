@@ -327,27 +327,30 @@ public static class CharacterAnimationPipeline
         if (sprites.Count == 0)
             throw new System.InvalidOperationException("No usable sprites in " + texturePath);
 
-        var idleFrames = sprites.Count >= 2
-            ? sprites.GetRange(0, 2)
-            : new List<Sprite> { sprites[0] };
+        var characterSprites = FilterCharacterSprites(sprites);
+        var primarySprite = PickPrimarySprite(characterSprites);
+
+        var idleFrames = characterSprites.Count >= 2
+            ? characterSprites.GetRange(0, 2)
+            : new List<Sprite> { primarySprite };
 
         List<Sprite> walkFrames;
-        if (sprites.Count >= 5)
-            walkFrames = sprites.GetRange(2, 3);
-        else if (sprites.Count >= 3)
-            walkFrames = sprites.GetRange(1, sprites.Count - 1);
+        if (characterSprites.Count >= 5)
+            walkFrames = characterSprites.GetRange(2, 3);
+        else if (characterSprites.Count >= 3)
+            walkFrames = characterSprites.GetRange(1, characterSprites.Count - 1);
         else
             walkFrames = idleFrames;
 
         List<Sprite> attackFrames;
-        if (sprites.Count >= 7)
-            attackFrames = sprites.GetRange(5, 2);
-        else if (sprites.Count >= 2)
-            attackFrames = new List<Sprite> { sprites[sprites.Count - 1] };
+        if (characterSprites.Count >= 7)
+            attackFrames = characterSprites.GetRange(5, 2);
+        else if (characterSprites.Count >= 2)
+            attackFrames = new List<Sprite> { characterSprites[characterSprites.Count - 1] };
         else
             attackFrames = idleFrames;
 
-        var deathFrame = sprites[sprites.Count - 1];
+        var deathFrame = characterSprites[characterSprites.Count - 1];
 
         var idleClip = BuildOrUpdateSpriteClipFromFrames(
             $"Assets/Animation/Clips/enemy_{tierId}_idle.anim", idleFrames, 0.5f, loop: true);
@@ -362,7 +365,30 @@ public static class CharacterAnimationPipeline
             loop: false);
 
         EnsureEnemyTierController(controllerPath, idleClip, walkClip, attackClip, deathClip);
-        SetupEnemyPrefab(prefabPath, sprites[0], controllerPath);
+        SetupEnemyPrefab(prefabPath, primarySprite, controllerPath);
+    }
+
+    static List<Sprite> FilterCharacterSprites(IReadOnlyList<Sprite> sprites)
+    {
+        const float minHeight = 200f;
+        var tall = sprites.Where(s => s.rect.height >= minHeight).ToList();
+        return tall.Count > 0 ? tall : sprites.ToList();
+    }
+
+    static Sprite PickPrimarySprite(IReadOnlyList<Sprite> sprites)
+    {
+        var best = sprites[0];
+        var bestArea = best.rect.width * best.rect.height;
+        for (var i = 1; i < sprites.Count; i++)
+        {
+            var area = sprites[i].rect.width * sprites[i].rect.height;
+            if (area <= bestArea)
+                continue;
+            bestArea = area;
+            best = sprites[i];
+        }
+
+        return best;
     }
 
     static void EnsureEnemyTierController(
@@ -428,7 +454,7 @@ public static class CharacterAnimationPipeline
         importer.filterMode = FilterMode.Point;
         importer.textureCompression = TextureImporterCompression.Uncompressed;
         importer.mipmapEnabled = false;
-        importer.spritePixelsToUnits = 100f;
+        importer.spritePixelsPerUnit = 100f;
 
         var spriteRects = new SpriteRect[rects.Length];
         for (var i = 0; i < rects.Length; i++)
