@@ -13,15 +13,10 @@ public class AreaSystem : MonoBehaviour
         StatusSystem statusSystem,
         Sprite sprite = null)
     {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(position, radius, enemyLayer);
-
-        foreach (var hit in hits)
+        CombatHitUtility.ForEachEnemyInArea(position, radius, enemyLayer, enemy =>
         {
-            if (hit.TryGetComponent(out Enemy enemy))
-            {
-                enemy.TakeDamage(damage);
-                statusSystem.Apply(enemy, status, duration);
-            }
-        }
+            enemy.TakeDamage(damage);
+            statusSystem.Apply(enemy, status, duration);
+        });
     }
 }

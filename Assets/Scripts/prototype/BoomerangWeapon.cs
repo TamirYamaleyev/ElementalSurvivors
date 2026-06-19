@@ -57,13 +57,12 @@ public class BoomerangWeapon : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        var health = other.GetComponent<EnemyHealth>() ?? other.GetComponentInParent<EnemyHealth>();
-        if (health != null)
-        {
-            health.TakeDamage(damage);
-            var ai = other.GetComponentInParent<EnemyAI>();
-            if (ai != null)
-                ai.ApplyFear(fearDuration);
-        }
+        if (!CombatHitUtility.TryResolveEnemyHealth(other, out EnemyHealth health))
+            return;
+
+        health.TakeDamage(damage);
+        var ai = other.GetComponentInParent<EnemyAI>();
+        if (ai != null)
+            ai.ApplyFear(fearDuration);
     }
 }

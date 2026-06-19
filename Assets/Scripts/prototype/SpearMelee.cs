@@ -19,8 +19,7 @@ public class SpearMelee : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        var health = other.GetComponent<EnemyHealth>() ?? other.GetComponentInParent<EnemyHealth>();
-        if (health == null)
+        if (!CombatHitUtility.TryResolveEnemyHealth(other, out EnemyHealth health))
             return;
 
         var ai = other.GetComponentInParent<EnemyAI>();

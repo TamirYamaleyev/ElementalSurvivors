@@ -36,10 +36,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     public void TakeDamage(float amount)
     {
-        if (currentHealth <= 0f)
+        if (currentHealth <= 0f || amount <= 0f)
             return;
 
         currentHealth -= amount;
+
+        DamageNumberDisplay.Instance?.DisplayDamageNumber(amount, transform.position);
 
         if (currentHealth <= 0f)
             OnDied?.Invoke();

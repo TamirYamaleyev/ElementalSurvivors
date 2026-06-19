@@ -2402,6 +2402,7 @@ RectTransform:
   - {fileID: 930977517}
   - {fileID: 793641536}
   - {fileID: 376262325}
+  - {fileID: 2100000002}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3190,6 +3191,7 @@ GameObject:
   - component: {fileID: 1859789188}
   - component: {fileID: 1859789187}
   - component: {fileID: 1859789192}
+  - component: {fileID: 1859789193}
   m_Layer: 0
   m_Name: CombatManager
   m_TagString: Untagged
@@ -3289,6 +3291,61 @@ MonoBehaviour:
   areaSpawnPoint: {fileID: 0}
   playerTransformPoint: {fileID: 181845785}
   weaponSystem: {fileID: 181845793}
+--- !u!114 &1859789193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1859789186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d8e2f1a9b0c4d5e6f708192a3b4c5d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DamageNumberDisplay
+  prefab: {fileID: 800000005, guid: 6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f, type: 3}
+  container: {fileID: 2100000002}
+  worldCamera: {fileID: 519420031}
+  prewarmCount: 16
+  color: {r: 1, g: 0.95, b: 0.4, a: 1}
+  lifetime: 0.8
+  worldOffset: {x: 0, y: 0.5}
+  randomSpread: {x: 0.35, y: 0.15}
+--- !u!1 &2100000001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2100000002}
+  m_Layer: 5
+  m_Name: DamageNumbers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2100000002
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2100000001}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1431378606}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1929810247
 GameObject:
   m_ObjectHideFlags: 0

@@ -47,13 +47,13 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.TryGetComponent(out Enemy enemy))
-        {
-            enemy.TakeDamage(damage);
-            statusSystem.Apply(enemy, status, statusDuration);
+        if (!CombatHitUtility.TryResolveEnemy(other, out Enemy enemy))
+            return;
 
-            // replace with pooling(?)
-            Destroy(gameObject);
-        }
+        enemy.TakeDamage(damage);
+        statusSystem.Apply(enemy, status, statusDuration);
+
+        // replace with pooling(?)
+        Destroy(gameObject);
     }
 }
