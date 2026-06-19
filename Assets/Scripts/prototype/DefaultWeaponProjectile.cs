@@ -5,15 +5,15 @@ public class DefaultWeaponProjectile : MonoBehaviour
     [SerializeField] private float speed = 8f;
     [SerializeField] private float lifetime = 3f;
     [SerializeField] private float damage = 1f;
+    [SerializeField] private DirectionFacing2D.ArtForward artForward = DirectionFacing2D.ArtForward.Right;
+    [SerializeField] private float extraRotationOffset;
 
     private Vector2 direction;
 
     public void Init(Vector2 dir)
     {
-        direction = dir.normalized;
-
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, angle);
+        direction = dir.sqrMagnitude > 1e-6f ? dir.normalized : Vector2.right;
+        DirectionFacing2D.Apply(transform, direction, artForward, extraRotationOffset);
     }
 
     void Update()

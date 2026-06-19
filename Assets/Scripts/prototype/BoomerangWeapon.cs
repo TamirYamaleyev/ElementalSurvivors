@@ -24,7 +24,7 @@ public class BoomerangWeapon : MonoBehaviour
         moveDir = direction.normalized;
         returning = false;
 
-        transform.right = moveDir;
+        DirectionFacing2D.Apply(transform, moveDir);
     }
 
     void Update()
@@ -46,7 +46,7 @@ public class BoomerangWeapon : MonoBehaviour
 
             transform.position += dirToOwner * speed * returnSpeedMultiplier * Time.deltaTime;
 
-            transform.right = dirToOwner;
+            DirectionFacing2D.Apply(transform, dirToOwner);
 
             if (Vector3.Distance(transform.position, owner.position) < 0.5f)
             {

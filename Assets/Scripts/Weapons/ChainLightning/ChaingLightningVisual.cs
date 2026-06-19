@@ -11,29 +11,40 @@ public class ChaingLightningVisual : MonoBehaviour
 
     private float frameTimer;
 
+    private void Awake()
+    {
+        if (sr == null)
+            sr = GetComponent<SpriteRenderer>();
+    }
+
     public void Initialize(Vector2 start, Vector2 end, Sprite sprite, float lifetime)
     {
-        Vector2 dir = (end - start).normalized;
+        if (sr == null)
+            sr = GetComponent<SpriteRenderer>();
+
+        Vector2 delta = end - start;
+        if (delta.sqrMagnitude < 1e-6f)
+            delta = Vector2.up;
+
+        Vector2 dir = delta.normalized;
 
         start += dir * offset;
         end -= dir * offset;
 
-        Vector2 mid = (start +  end) * 0.5f;
-
-        transform.position = mid;
+        transform.position = (start + end) * 0.5f;
 
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
         transform.rotation = Quaternion.Euler(0, 0, angle);
 
-        if (frames != null && frames.Length > 0)
-            sr.sprite = frames[Random.Range(0, frames.Length)];
+        Sprite activeSprite = PickSprite(sprite);
+        if (sr != null && activeSprite != null)
+            sr.sprite = activeSprite;
 
         float distance = Vector2.Distance(start, end);
-        float spriteHeight = sr.sprite.bounds.size.y;
+        float spriteHeight = activeSprite != null ? activeSprite.bounds.size.y : 1f;
+        if (spriteHeight < 1e-4f)
+            spriteHeight = 1f;
 
-        //transform.right = dir.normalized;
-
-        // Stretch between enemies
         transform.localScale = new Vector3(thickness, distance / spriteHeight, 1f);
 
         Destroy(gameObject, lifetime);
@@ -41,7 +52,7 @@ public class ChaingLightningVisual : MonoBehaviour
 
     void Update()
     {
-        if (frames == null || frames.Length == 0)
+        if (sr == null || frames == null || frames.Length == 0)
             return;
 
         frameTimer += Time.deltaTime;
@@ -50,7 +61,24 @@ public class ChaingLightningVisual : MonoBehaviour
         {
             frameTimer = 0f;
 
-            sr.sprite = frames[Random.Range(0, frames.Length)];
+            Sprite frame = frames[Random.Range(0, frames.Length)];
+            if (frame != null)
+                sr.sprite = frame;
         }
+    }
+
+    Sprite PickSprite(Sprite fallback)
+    {
+        if (frames != null && frames.Length > 0)
+        {
+            for (int attempt = 0; attempt < frames.Length; attempt++)
+            {
+                Sprite frame = frames[Random.Range(0, frames.Length)];
+                if (frame != null)
+                    return frame;
+            }
+        }
+
+        return fallback;
     }
 }

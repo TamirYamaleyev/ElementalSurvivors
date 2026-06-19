@@ -4,6 +4,8 @@ public class Projectile : MonoBehaviour
 {
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private SpriteRenderer sr;
+    [SerializeField] private DirectionFacing2D.ArtForward artForward = DirectionFacing2D.ArtForward.Right;
+    [SerializeField] private float extraRotationOffset;
 
     private Vector2 direction;
     private float damage;
@@ -34,6 +36,8 @@ public class Projectile : MonoBehaviour
 
         if (sr != null && visualSprite != null)
             sr.sprite = visualSprite;
+
+        DirectionFacing2D.Apply(transform, this.direction, artForward, extraRotationOffset);
     }
 
     void Update()
