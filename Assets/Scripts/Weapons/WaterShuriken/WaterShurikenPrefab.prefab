@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 9174616918100398903}
   - component: {fileID: -4971674855801846006}
   m_Layer: 7
-  m_Name: WaterShurikenLv1
+  m_Name: WaterShurikenPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
