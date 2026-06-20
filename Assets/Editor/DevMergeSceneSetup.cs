@@ -18,7 +18,9 @@ public static class DevMergeSceneSetup
     const string ReactionVfxCatalogPath = "Assets/Data/ReactionVfxCatalog.asset";
     const string BranchPrefabPath = "Assets/Prefabs/Environment/PF_Environment_Branch.prefab";
     const string BushPrefabPath = "Assets/Prefabs/Environment/PF_Environment_Bush.prefab";
+    const string DamageNumbersWorldName = "DamageNumbersWorld";
     const string DamageNumbersChildName = "DamageNumbers";
+    const float DamageNumbersWorldCanvasScale = 0.01f;
     const string CollectTriggerName = "CollectTrigger";
     const string ObstacleGeneratorName = "EnvironmentObstacleGenerator";
     const string PendingWireFlagPath = "Temp/devmerge-wire-pending";
@@ -429,16 +431,7 @@ public static class DevMergeSceneSetup
             return;
         }
 
-        var hud = FindRootObject(scene, "HUD");
-        if (hud == null)
-        {
-            Debug.LogWarning("[DevMergeSceneSetup] HUD not found; skipping damage numbers.");
-            return;
-        }
-
-        var container = EnsureDamageNumbersContainer(hud.transform);
-        if (container != null)
-            checklist.Add("HUD/DamageNumbers container");
+        var container = EnsureWorldDamageNumbersContainer(scene, checklist);
 
         var prefab = AssetDatabase.LoadAssetAtPath<DamageNumberView>(DamageNumberPrefabPath);
         if (prefab == null)
@@ -451,30 +444,88 @@ public static class DevMergeSceneSetup
             checklist.Add("DamageNumberDisplay on CombatManager");
         }
 
+        var mainCamera = Camera.main;
+        if (mainCamera == null)
+            mainCamera = Object.FindFirstObjectByType<Camera>();
+
         var so = new SerializedObject(display);
-        if (prefab != null && so.FindProperty("prefab").objectReferenceValue == null)
+        if (prefab != null)
         {
             so.FindProperty("prefab").objectReferenceValue = prefab;
             checklist.Add("DamageNumberDisplay.prefab");
         }
 
-        if (container != null && so.FindProperty("container").objectReferenceValue == null)
+        if (container != null)
         {
             so.FindProperty("container").objectReferenceValue = container;
-            checklist.Add("DamageNumberDisplay.container");
+            checklist.Add("DamageNumberDisplay.container (world space)");
         }
 
-        var mainCamera = Camera.main;
-        if (mainCamera == null)
-            mainCamera = Object.FindFirstObjectByType<Camera>();
-
-        if (mainCamera != null && so.FindProperty("worldCamera").objectReferenceValue == null)
+        if (mainCamera != null)
         {
             so.FindProperty("worldCamera").objectReferenceValue = mainCamera;
             checklist.Add("DamageNumberDisplay.worldCamera");
         }
 
         so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    static RectTransform EnsureWorldDamageNumbersContainer(Scene scene, List<string> checklist)
+    {
+        var worldRoot = FindRootObject(scene, DamageNumbersWorldName);
+        GameObject go;
+        if (worldRoot == null)
+        {
+            go = new GameObject(DamageNumbersWorldName);
+            SceneManager.MoveGameObjectToScene(go, scene);
+            checklist.Add(DamageNumbersWorldName + " root");
+        }
+        else
+        {
+            go = worldRoot;
+        }
+
+        var rect = go.GetComponent<RectTransform>();
+        if (rect == null)
+            rect = go.AddComponent<RectTransform>();
+
+        rect.anchorMin = new Vector2(0.5f, 0.5f);
+        rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.sizeDelta = new Vector2(100f, 100f);
+        rect.localPosition = Vector3.zero;
+        rect.localRotation = Quaternion.identity;
+        rect.localScale = Vector3.one;
+
+        var canvas = go.GetComponent<Canvas>();
+        if (canvas == null)
+            canvas = go.AddComponent<Canvas>();
+
+        var mainCamera = Camera.main;
+        if (mainCamera == null)
+            mainCamera = Object.FindFirstObjectByType<Camera>();
+
+        if (canvas.renderMode != RenderMode.WorldSpace)
+        {
+            canvas.renderMode = RenderMode.WorldSpace;
+            checklist.Add(DamageNumbersWorldName + " canvas world space");
+        }
+
+        if (mainCamera != null && canvas.worldCamera != mainCamera)
+        {
+            canvas.worldCamera = mainCamera;
+            checklist.Add(DamageNumbersWorldName + " canvas camera");
+        }
+
+        go.transform.localScale = Vector3.one * DamageNumbersWorldCanvasScale;
+
+        if (go.GetComponent<UnityEngine.UI.CanvasScaler>() == null)
+            go.AddComponent<UnityEngine.UI.CanvasScaler>();
+
+        if (go.GetComponent<UnityEngine.UI.GraphicRaycaster>() == null)
+            go.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+
+        return rect;
     }
 
     static RectTransform EnsureDamageNumbersContainer(Transform hud)
@@ -706,9 +757,13 @@ public static class DevMergeSceneSetup
         if (installerSo.FindProperty("reactionVfxCatalog").objectReferenceValue == null)
             throw new System.InvalidOperationException("GameInstaller.reactionVfxCatalog not assigned.");
 
-        var hud = FindRootObject(scene, "HUD");
-        if (hud.transform.Find(DamageNumbersChildName) == null)
-            throw new System.InvalidOperationException("HUD missing DamageNumbers container.");
+        var worldDamageNumbers = FindRootObject(scene, DamageNumbersWorldName);
+        if (worldDamageNumbers == null)
+            throw new System.InvalidOperationException("Missing " + DamageNumbersWorldName + " world canvas.");
+
+        var worldCanvas = worldDamageNumbers.GetComponent<Canvas>();
+        if (worldCanvas == null || worldCanvas.renderMode != RenderMode.WorldSpace)
+            throw new System.InvalidOperationException(DamageNumbersWorldName + " must use a World Space Canvas.");
 
         if (player.transform.Find("BlobShadow") == null && !ContainsChildNamed(player.transform, "BlobShadow"))
             Debug.LogWarning("[DevMergeSceneSetup] BlobShadow child not found on Player (dev prefab may use different name).");

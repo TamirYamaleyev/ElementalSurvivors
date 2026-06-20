@@ -152,7 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DamageNumberView
   text: {fileID: 800000004}
   canvasGroup: {fileID: 800000006}
-  driftPixels: 35
+  driftWorldUnits: 0.35
 --- !u!225 &800000006
 CanvasGroup:
   m_ObjectHideFlags: 0

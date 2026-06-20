@@ -13,7 +13,9 @@ public class WeaponInstance
     {
         definition = def;
         level = Mathf.Max(1, startLevel);
-        cooldownTimer = Current.cooldown;
+        cooldownTimer = definition.behaviorType == WeaponBehaviorType.Orbit
+            ? 0f
+            : Current.cooldown;
     }
 
     public void Tick(float deltaTime, Enemy target, WeaponSystemContext ctx)

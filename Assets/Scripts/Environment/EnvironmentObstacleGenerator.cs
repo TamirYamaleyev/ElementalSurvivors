@@ -18,7 +18,7 @@ public sealed class EnvironmentObstacleGenerator : MonoBehaviour
 
     [Header("Spawn region (full floor hides objects off-camera)")]
     [Tooltip("If true, only spawn inside the intersection of floor bounds and a box around the player at Start.")]
-    [SerializeField] private bool limitSpawnToAreaAroundPlayer = true;
+    [SerializeField] private bool limitSpawnToAreaAroundPlayer = false;
     [SerializeField] private Vector2 spawnHalfExtents = new Vector2(18f, 11f);
 
     [Header("Player spawn clearance")]

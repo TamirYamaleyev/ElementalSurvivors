@@ -7,14 +7,14 @@ public class DamageNumberView : MonoBehaviour
 {
     [SerializeField] private TMP_Text text;
     [SerializeField] private CanvasGroup canvasGroup;
-    [SerializeField] private float driftPixels = 35f;
+    [SerializeField] private float driftWorldUnits = 0.35f;
 
-    private RectTransform rectTransform;
+    private Transform cachedTransform;
     private Coroutine playRoutine;
 
     private void Awake()
     {
-        rectTransform = transform as RectTransform;
+        cachedTransform = transform;
 
         if (text == null)
             text = GetComponent<TMP_Text>();
@@ -23,15 +23,15 @@ public class DamageNumberView : MonoBehaviour
             canvasGroup = GetComponent<CanvasGroup>();
     }
 
-    public void Play(int damage, Color color, Vector2 anchoredPosition, float lifetime, Action<DamageNumberView> onComplete)
+    public void Play(int damage, Color color, Vector3 worldPosition, float lifetime, Action<DamageNumberView> onComplete)
     {
         if (playRoutine != null)
             StopCoroutine(playRoutine);
 
         gameObject.SetActive(true);
 
-        if (rectTransform != null)
-            rectTransform.anchoredPosition = anchoredPosition;
+        if (cachedTransform != null)
+            cachedTransform.position = worldPosition;
 
         if (text != null)
         {
@@ -43,13 +43,12 @@ public class DamageNumberView : MonoBehaviour
         if (canvasGroup != null)
             canvasGroup.alpha = 1f;
 
-        playRoutine = StartCoroutine(PlayRoutine(lifetime, onComplete));
+        playRoutine = StartCoroutine(PlayRoutine(worldPosition, lifetime, onComplete));
     }
 
-    private IEnumerator PlayRoutine(float lifetime, Action<DamageNumberView> onComplete)
+    private IEnumerator PlayRoutine(Vector3 startWorldPosition, float lifetime, Action<DamageNumberView> onComplete)
     {
-        Vector2 start = rectTransform != null ? rectTransform.anchoredPosition : Vector2.zero;
-        Vector2 end = start + Vector2.up * driftPixels;
+        Vector3 endWorldPosition = startWorldPosition + Vector3.up * driftWorldUnits;
         float elapsed = 0f;
 
         while (elapsed < lifetime)
@@ -58,8 +57,8 @@ public class DamageNumberView : MonoBehaviour
             float t = lifetime > 0f ? Mathf.Clamp01(elapsed / lifetime) : 1f;
             float alpha = 1f - t;
 
-            if (rectTransform != null)
-                rectTransform.anchoredPosition = Vector2.Lerp(start, end, t);
+            if (cachedTransform != null)
+                cachedTransform.position = Vector3.Lerp(startWorldPosition, endWorldPosition, t);
 
             if (canvasGroup != null)
                 canvasGroup.alpha = alpha;

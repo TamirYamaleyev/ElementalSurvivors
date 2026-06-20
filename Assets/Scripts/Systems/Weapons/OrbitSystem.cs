@@ -12,14 +12,32 @@ public class OrbitSystem : MonoBehaviour
         StatusType status,
         float statusDuration,
         StatusSystem statusSystem,
-        Sprite sprite
-        )
-
+        Sprite sprite)
     {
+        if (prefab == null)
+        {
+            Debug.LogWarning("[OrbitSystem] Spawn skipped: orbit prefab is null.");
+            return;
+        }
+
+        if (center == null)
+        {
+            Debug.LogWarning("[OrbitSystem] Spawn skipped: orbit center is null.");
+            return;
+        }
+
+        if (statusSystem == null)
+        {
+            Debug.LogWarning("[OrbitSystem] Spawn skipped: StatusSystem is null.");
+            return;
+        }
+
+        if (count <= 0)
+            return;
+
         for (int i = 0; i < count; i++)
         {
-            // replace with pooling
-            var obj = Instantiate(prefab);
+            var obj = Instantiate(prefab, center.position, Quaternion.identity, center);
 
             obj.Init(
                 i,
@@ -31,8 +49,7 @@ public class OrbitSystem : MonoBehaviour
                 statusDuration,
                 statusSystem,
                 center,
-                sprite
-                );
+                sprite);
         }
     }
 }

@@ -15,7 +15,6 @@ public class DamageNumberDisplay : MonoBehaviour
     [SerializeField] private Vector2 randomSpread = new(0.35f, 0.15f);
 
     private readonly Stack<DamageNumberView> pool = new();
-    private Canvas rootCanvas;
 
     private void Awake()
     {
@@ -29,9 +28,6 @@ public class DamageNumberDisplay : MonoBehaviour
 
         if (worldCamera == null)
             worldCamera = Camera.main;
-
-        if (container != null)
-            rootCanvas = container.GetComponentInParent<Canvas>();
 
         Prewarm();
     }
@@ -47,30 +43,12 @@ public class DamageNumberDisplay : MonoBehaviour
         if (prefab == null || container == null || damage <= 0f)
             return;
 
-        if (worldCamera == null)
-            worldCamera = Camera.main;
-
-        if (worldCamera == null)
-            return;
-
-        Vector3 world = worldPosition + (Vector3)worldOffset;
-        world.x += Random.Range(-randomSpread.x, randomSpread.x);
-        world.y += Random.Range(-randomSpread.y, randomSpread.y);
-
-        Vector2 screenPoint = worldCamera.WorldToScreenPoint(world);
-        Camera eventCamera = rootCanvas != null && rootCanvas.renderMode != RenderMode.ScreenSpaceOverlay
-            ? rootCanvas.worldCamera
-            : null;
-
-        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                container,
-                screenPoint,
-                eventCamera,
-                out Vector2 localPoint))
-            return;
+        Vector3 spawnPosition = worldPosition + (Vector3)worldOffset;
+        spawnPosition.x += Random.Range(-randomSpread.x, randomSpread.x);
+        spawnPosition.y += Random.Range(-randomSpread.y, randomSpread.y);
 
         DamageNumberView view = Acquire();
-        view.Play(Mathf.RoundToInt(damage), color, localPoint, lifetime, Release);
+        view.Play(Mathf.RoundToInt(damage), color, spawnPosition, lifetime, Release);
     }
 
     private void Prewarm()
