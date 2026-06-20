@@ -20,7 +20,7 @@ Material:
   stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
-  m_LockedProperties: _Density
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs: []
@@ -32,6 +32,7 @@ Material:
     - _MinHue: 0
     - _Offset: -3
     - _Saturation: 0
+    - _TopNoiseScale: 342.7
     m_Colors:
     - _Color: {r: 0.589, g: 0.3915703, b: 0.133703, a: 1}
   m_BuildTextureStacks: []
