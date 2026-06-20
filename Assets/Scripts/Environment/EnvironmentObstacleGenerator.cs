@@ -1,28 +1,31 @@
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// At game start, instantiates obstacle prefabs at random XY positions inside the floor
-/// <see cref="SpriteRenderer.bounds"/> (with padding). Prefabs should use a non-trigger
-/// <see cref="Collider2D"/> and a visible sprite (e.g. unlit solid quad) so the player can see and collide with them.
+/// Streams obstacle prefabs in a grid around the player. Cells enter an active window as the player
+/// moves and return to an object pool when they leave the despawn window.
 /// </summary>
 public sealed class EnvironmentObstacleGenerator : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer floorRenderer;
     [SerializeField] private GameObject[] obstaclePrefabs = System.Array.Empty<GameObject>();
-    [SerializeField] private int spawnCount = 100;
-    [SerializeField] private float edgePadding = 3f;
-    [SerializeField] private float scaleMin = 0.9f;
-    [SerializeField] private float scaleMax = 1.1f;
     [SerializeField] private uint randomSeed;
 
-    [Header("Spawn region (full floor hides objects off-camera)")]
-    [Tooltip("If true, only spawn inside the intersection of floor bounds and a box around the player at Start.")]
-    [SerializeField] private bool limitSpawnToAreaAroundPlayer = false;
-    [SerializeField] private Vector2 spawnHalfExtents = new Vector2(18f, 11f);
+    [Header("Streaming grid")]
+    [SerializeField] private float cellSize = 16f;
+    [Tooltip("Obstacles are kept while the cell overlaps this box around the player.")]
+    [SerializeField] private Vector2 activeHalfExtents = new(24f, 14f);
+    [Tooltip("Cells outside this box are returned to the pool (should be larger than activeHalfExtents).")]
+    [SerializeField] private Vector2 despawnHalfExtents = new(32f, 20f);
+    [SerializeField] private int obstaclesPerCell = 4;
+    [SerializeField] private float streamRefreshInterval = 0.2f;
 
-    [Header("Player spawn clearance")]
-    [Tooltip("No obstacle center is placed closer than this radius (XY) from the player at spawn time.")]
+    [Header("Floor")]
+    [SerializeField] private float edgePadding = 3f;
+
+    [Header("Placement")]
+    [SerializeField] private float scaleMin = 0.9f;
+    [SerializeField] private float scaleMax = 1.1f;
     [SerializeField] private float playerClearRadius = 3.5f;
     [SerializeField] private int playerClearMaxAttempts = 48;
 
@@ -33,38 +36,69 @@ public sealed class EnvironmentObstacleGenerator : MonoBehaviour
     [SerializeField] private LayerMask separationLayerMask = ~0;
 
     [Header("Rendering")]
-    [Tooltip("Added to the floor SpriteRenderer sorting order for spawned obstacle sprites. Default keeps blocks above the player sprite.")]
     [SerializeField] private int sortingOrderOffset = 22;
 
     [Header("Orientation")]
     [SerializeField] private bool randomizeRotation;
 
-    private Transform _spawnRoot;
+    [Header("Pool")]
+    [SerializeField] private int poolPrewarmPerPrefab = 8;
+
+    private readonly Dictionary<Vector2Int, List<GameObject>> activeCells = new();
+    private readonly List<Stack<GameObject>> pools = new();
+
+    private Transform _activeRoot;
+    private Transform _poolRoot;
+    private Transform _player;
+    private Vector3 _floorMin;
+    private Vector3 _floorMax;
+    private float _floorZ;
+    private int _obstacleSortOrder;
+    private float _streamTimer;
+    private bool _initialized;
+    private int _baseSeed;
 
     private void Awake()
     {
-        var existing = transform.Find("SpawnedObstacles");
-        if (existing != null)
-        {
-            _spawnRoot = existing;
-            return;
-        }
+        _activeRoot = GetOrCreateChild("SpawnedObstacles");
+        _poolRoot = GetOrCreateChild("ObstaclePool");
+    }
 
-        var holder = new GameObject("SpawnedObstacles");
+    private Transform GetOrCreateChild(string name)
+    {
+        var existing = transform.Find(name);
+        if (existing != null)
+            return existing;
+
+        var holder = new GameObject(name);
         holder.transform.SetParent(transform, false);
-        _spawnRoot = holder.transform;
+        return holder.transform;
     }
 
     private void Start()
     {
-        StartCoroutine(SpawnRoutine());
+        if (!TryInitialize())
+            return;
+
+        PrewarmPool();
+        RefreshStreaming(force: true);
     }
 
-    private IEnumerator SpawnRoutine()
+    private void Update()
     {
-        // Wait one frame so Floor/Player transforms and renderers are fully initialized (order-safe).
-        yield return null;
+        if (!_initialized || _player == null)
+            return;
 
+        _streamTimer -= Time.deltaTime;
+        if (_streamTimer > 0f)
+            return;
+
+        _streamTimer = streamRefreshInterval;
+        RefreshStreaming(force: false);
+    }
+
+    private bool TryInitialize()
+    {
         if (floorRenderer == null)
         {
             var floorGo = GameObject.Find("Floor");
@@ -75,133 +109,318 @@ public sealed class EnvironmentObstacleGenerator : MonoBehaviour
         if (floorRenderer == null)
         {
             Debug.LogWarning("[EnvironmentObstacleGenerator] Assign Floor SpriteRenderer or name an object 'Floor'.", this);
-            yield break;
+            return false;
         }
 
-        if (obstaclePrefabs == null || obstaclePrefabs.Length == 0)
+        if (!HasValidPrefabs())
         {
             Debug.LogWarning("[EnvironmentObstacleGenerator] obstaclePrefabs is empty.", this);
-            yield break;
-        }
-
-        var nonNullCount = 0;
-        foreach (var p in obstaclePrefabs)
-        {
-            if (p != null)
-                nonNullCount++;
-        }
-
-        if (nonNullCount == 0)
-        {
-            Debug.LogWarning("[EnvironmentObstacleGenerator] obstaclePrefabs has no non-null entries.", this);
-            yield break;
+            return false;
         }
 
         LogPrefabColliderIssues();
 
-        if (randomSeed != 0)
-            Random.InitState((int)randomSeed);
-        else
-            Random.InitState((int)(Time.realtimeSinceStartup * 1000f) ^ GetInstanceID());
+        _player = PlayerController.Instance;
+        if (_player == null)
+        {
+            var playerGo = GameObject.FindGameObjectWithTag("Player");
+            if (playerGo != null)
+                _player = playerGo.transform;
+        }
+
+        if (_player == null)
+        {
+            Debug.LogWarning("[EnvironmentObstacleGenerator] Player transform not found.", this);
+            return false;
+        }
 
         var bounds = floorRenderer.bounds;
-        var min = bounds.min;
-        var max = bounds.max;
-        min.x += edgePadding;
-        max.x -= edgePadding;
-        min.y += edgePadding;
-        max.y -= edgePadding;
-        if (min.x >= max.x || min.y >= max.y)
+        _floorMin = bounds.min;
+        _floorMax = bounds.max;
+        _floorMin.x += edgePadding;
+        _floorMax.x -= edgePadding;
+        _floorMin.y += edgePadding;
+        _floorMax.y -= edgePadding;
+        if (_floorMin.x >= _floorMax.x || _floorMin.y >= _floorMax.y)
         {
             Debug.LogWarning("[EnvironmentObstacleGenerator] Floor bounds too small after padding.", this);
-            yield break;
+            return false;
         }
 
-        if (limitSpawnToAreaAroundPlayer && spawnHalfExtents.x > 0f && spawnHalfExtents.y > 0f)
+        _floorZ = floorRenderer.transform.position.z;
+        _obstacleSortOrder = Mathf.Clamp(floorRenderer.sortingOrder + sortingOrderOffset, -32768, 32767);
+        _baseSeed = randomSeed != 0
+            ? (int)randomSeed
+            : (int)(Time.realtimeSinceStartup * 1000f) ^ GetInstanceID();
+
+        _initialized = true;
+        return true;
+    }
+
+    private void RefreshStreaming(bool force)
+    {
+        var playerPlanar = (Vector2)_player.position;
+        UnloadDistantCells(playerPlanar);
+        LoadNearbyCells(playerPlanar);
+
+        if (force)
         {
-            var focus = FindPlayerPlanarPosition();
-            var cxMin = focus.x - spawnHalfExtents.x;
-            var cxMax = focus.x + spawnHalfExtents.x;
-            var cyMin = focus.y - spawnHalfExtents.y;
-            var cyMax = focus.y + spawnHalfExtents.y;
-            var ixMin = Mathf.Max(min.x, cxMin);
-            var ixMax = Mathf.Min(max.x, cxMax);
-            var iyMin = Mathf.Max(min.y, cyMin);
-            var iyMax = Mathf.Min(max.y, cyMax);
-            if (ixMin < ixMax && iyMin < iyMax)
+            Debug.Log(
+                $"[EnvironmentObstacleGenerator] Streaming initialized. activeCells={activeCells.Count} pooled={CountPooled()} " +
+                $"cellSize={cellSize} activeHalf=({activeHalfExtents.x},{activeHalfExtents.y}) " +
+                $"despawnHalf=({despawnHalfExtents.x},{despawnHalfExtents.y}) perCell={obstaclesPerCell}.",
+                this);
+        }
+    }
+
+    private void UnloadDistantCells(Vector2 playerPlanar)
+    {
+        cellsToUnload.Clear();
+        foreach (var pair in activeCells)
+        {
+            if (!CellOverlapsBox(pair.Key, playerPlanar, despawnHalfExtents))
+                cellsToUnload.Add(pair.Key);
+        }
+
+        for (var i = 0; i < cellsToUnload.Count; i++)
+            UnloadCell(cellsToUnload[i]);
+    }
+
+    private void LoadNearbyCells(Vector2 playerPlanar)
+    {
+        if (cellSize <= 0f || obstaclesPerCell <= 0)
+            return;
+
+        var minCellX = WorldToCellIndex(playerPlanar.x - activeHalfExtents.x);
+        var maxCellX = WorldToCellIndex(playerPlanar.x + activeHalfExtents.x);
+        var minCellY = WorldToCellIndex(playerPlanar.y - activeHalfExtents.y);
+        var maxCellY = WorldToCellIndex(playerPlanar.y + activeHalfExtents.y);
+
+        for (var cx = minCellX; cx <= maxCellX; cx++)
+        {
+            for (var cy = minCellY; cy <= maxCellY; cy++)
             {
-                min.x = ixMin;
-                max.x = ixMax;
-                min.y = iyMin;
-                max.y = iyMax;
+                var coord = new Vector2Int(cx, cy);
+                if (activeCells.ContainsKey(coord))
+                    continue;
+
+                if (!CellIntersectsFloor(coord))
+                    continue;
+
+                LoadCell(coord, playerPlanar);
             }
         }
+    }
 
-        var z = floorRenderer.transform.position.z;
-        var playerPlanar = FindPlayerPlanarPosition();
+    private readonly List<Vector2Int> cellsToUnload = new();
 
-        for (var i = 0; i < spawnCount; i++)
+    private void LoadCell(Vector2Int cell, Vector2 playerPlanar)
+    {
+        if (!TryGetCellBounds(cell, out var min, out var max))
+            return;
+
+        var instances = new List<GameObject>(obstaclesPerCell);
+        var cellSeed = _baseSeed ^ (cell.x * 73856093) ^ (cell.y * 19349663);
+
+        for (var i = 0; i < obstaclesPerCell; i++)
         {
-            GameObject prefab;
-            do
-            {
-                prefab = obstaclePrefabs[Random.Range(0, obstaclePrefabs.Length)];
-            } while (prefab == null);
-            var pos = RandomPointAvoidingPlayer(min, max, z, playerPlanar, playerClearRadius, playerClearMaxAttempts);
+            var prefabIndex = PickPrefabIndex(cellSeed + i * 17);
+            var prefab = obstaclePrefabs[prefabIndex];
+            var pos = RandomPointAvoidingPlayer(min, max, _floorZ, playerPlanar, playerClearRadius, playerClearMaxAttempts);
             if (minSeparation > 0f && separationCheckRadius > 0f)
             {
                 for (var a = 0; a < separationMaxAttempts; a++)
                 {
                     if (!Physics2D.OverlapCircle(pos, separationCheckRadius, separationLayerMask))
                         break;
-                    pos = RandomPointAvoidingPlayer(min, max, z, playerPlanar, playerClearRadius, playerClearMaxAttempts);
+                    pos = RandomPointAvoidingPlayer(min, max, _floorZ, playerPlanar, playerClearRadius, playerClearMaxAttempts);
                 }
             }
 
             var rot = randomizeRotation ? Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)) : Quaternion.identity;
-            var inst = Instantiate(prefab, pos, rot, _spawnRoot);
+            var inst = Acquire(prefab, prefabIndex);
+            inst.transform.SetPositionAndRotation(pos, rot);
+
+            var s = Random.Range(scaleMin, scaleMax);
+            var pooled = inst.GetComponent<PooledObstacle>();
+            var baseScale = pooled != null ? pooled.BaseScale : inst.transform.localScale;
+            inst.transform.localScale = new Vector3(baseScale.x * s, baseScale.y * s, baseScale.z);
+
+            AlignSpawnedInstance(inst);
+            instances.Add(inst);
+        }
+
+        if (instances.Count > 0)
+            activeCells[cell] = instances;
+    }
+
+    private void UnloadCell(Vector2Int cell)
+    {
+        if (!activeCells.TryGetValue(cell, out var instances))
+            return;
+
+        for (var i = 0; i < instances.Count; i++)
+            Release(instances[i]);
+
+        activeCells.Remove(cell);
+    }
+
+    private GameObject Acquire(GameObject prefab, int prefabIndex)
+    {
+        EnsurePoolSlots();
+        var stack = pools[prefabIndex];
+        GameObject inst;
+        if (stack.Count > 0)
+        {
+            inst = stack.Pop();
+            inst.SetActive(true);
+            inst.transform.SetParent(_activeRoot, false);
+        }
+        else
+        {
+            inst = Instantiate(prefab, _activeRoot);
             var obstacleLayer = LayerMask.NameToLayer("Obstacle");
             if (obstacleLayer >= 0)
                 inst.layer = obstacleLayer;
-            var s = Random.Range(scaleMin, scaleMax);
-            var ls = inst.transform.localScale;
-            inst.transform.localScale = new Vector3(ls.x * s, ls.y * s, ls.z);
-            AlignSpawnedInstance(inst);
+
+            var pooled = inst.GetComponent<PooledObstacle>() ?? inst.AddComponent<PooledObstacle>();
+            pooled.Initialize(prefabIndex, inst.transform.localScale);
         }
 
-        var floorOrder = floorRenderer.sortingOrder;
-        var obstacleOrder = Mathf.Clamp(floorOrder + sortingOrderOffset, -32768, 32767);
-        var childCount = _spawnRoot != null ? _spawnRoot.childCount : 0;
-        var samplePos = Vector3.zero;
-        var sampleSpriteOrder = obstacleOrder;
-        var sampleSpriteCount = 0;
-        if (_spawnRoot != null && childCount > 0)
-        {
-            var first = _spawnRoot.GetChild(0);
-            samplePos = first.position;
-            var renderers = first.GetComponentsInChildren<SpriteRenderer>(true);
-            sampleSpriteCount = renderers.Length;
-            if (renderers.Length > 0)
-                sampleSpriteOrder = renderers[0].sortingOrder;
-        }
-
-        Debug.Log(
-            $"[EnvironmentObstacleGenerator] Spawned {spawnCount} obstacles under '{(_spawnRoot != null ? _spawnRoot.name : "?")}' " +
-            $"(childCount={childCount}). Region min=({min.x:F1},{min.y:F1}) max=({max.x:F1},{max.y:F1}). " +
-            $"sortLayer='{floorRenderer.sortingLayerName}' floorSortingOrder={floorOrder} obstacleSortingOrder={obstacleOrder} (floor+offset={floorOrder}+{sortingOrderOffset}). " +
-            $"Verify: first child worldPos=({samplePos.x:F2},{samplePos.y:F2},{samplePos.z:F2}) spriteRenderers={sampleSpriteCount} firstSpriteSortingOrder={sampleSpriteOrder}.",
-            this);
+        return inst;
     }
+
+    private void Release(GameObject inst)
+    {
+        if (inst == null)
+            return;
+
+        var pooled = inst.GetComponent<PooledObstacle>();
+        if (pooled == null)
+        {
+            Destroy(inst);
+            return;
+        }
+
+        inst.SetActive(false);
+        inst.transform.SetParent(_poolRoot, false);
+        EnsurePoolSlots();
+        pools[pooled.PrefabIndex].Push(inst);
+    }
+
+    private void PrewarmPool()
+    {
+        if (poolPrewarmPerPrefab <= 0 || !HasValidPrefabs())
+            return;
+
+        EnsurePoolSlots();
+        for (var i = 0; i < obstaclePrefabs.Length; i++)
+        {
+            var prefab = obstaclePrefabs[i];
+            if (prefab == null)
+                continue;
+
+            for (var n = 0; n < poolPrewarmPerPrefab; n++)
+            {
+                var inst = Instantiate(prefab, _poolRoot);
+                inst.SetActive(false);
+                var obstacleLayer = LayerMask.NameToLayer("Obstacle");
+                if (obstacleLayer >= 0)
+                    inst.layer = obstacleLayer;
+                var pooled = inst.GetComponent<PooledObstacle>() ?? inst.AddComponent<PooledObstacle>();
+                pooled.Initialize(i, inst.transform.localScale);
+                pools[i].Push(inst);
+            }
+        }
+    }
+
+    private void EnsurePoolSlots()
+    {
+        while (pools.Count < obstaclePrefabs.Length)
+            pools.Add(new Stack<GameObject>());
+    }
+
+    private int PickPrefabIndex(int rollSeed)
+    {
+        Random.InitState(rollSeed);
+
+        var validCount = 0;
+        for (var i = 0; i < obstaclePrefabs.Length; i++)
+        {
+            if (obstaclePrefabs[i] != null)
+                validCount++;
+        }
+
+        if (validCount <= 0)
+            return 0;
+
+        var pick = Random.Range(0, validCount);
+        for (var i = 0; i < obstaclePrefabs.Length; i++)
+        {
+            if (obstaclePrefabs[i] == null)
+                continue;
+            if (pick == 0)
+                return i;
+            pick--;
+        }
+
+        return 0;
+    }
+
+    private int CountPooled()
+    {
+        var total = 0;
+        for (var i = 0; i < pools.Count; i++)
+            total += pools[i].Count;
+        return total;
+    }
+
+    private bool CellIntersectsFloor(Vector2Int cell)
+    {
+        if (!TryGetCellBounds(cell, out var min, out var max))
+            return false;
+
+        return min.x < _floorMax.x && max.x > _floorMin.x && min.y < _floorMax.y && max.y > _floorMin.y;
+    }
+
+    private bool CellOverlapsBox(Vector2Int cell, Vector2 focus, Vector2 halfExtents)
+    {
+        if (!TryGetCellBounds(cell, out var min, out var max))
+            return false;
+
+        var boxMinX = focus.x - halfExtents.x;
+        var boxMaxX = focus.x + halfExtents.x;
+        var boxMinY = focus.y - halfExtents.y;
+        var boxMaxY = focus.y + halfExtents.y;
+        return min.x < boxMaxX && max.x > boxMinX && min.y < boxMaxY && max.y > boxMinY;
+    }
+
+    private bool TryGetCellBounds(Vector2Int cell, out Vector3 min, out Vector3 max)
+    {
+        var worldMinX = cell.x * cellSize;
+        var worldMinY = cell.y * cellSize;
+        var worldMaxX = worldMinX + cellSize;
+        var worldMaxY = worldMinY + cellSize;
+
+        min = new Vector3(
+            Mathf.Max(worldMinX, _floorMin.x),
+            Mathf.Max(worldMinY, _floorMin.y),
+            _floorMin.z);
+        max = new Vector3(
+            Mathf.Min(worldMaxX, _floorMax.x),
+            Mathf.Min(worldMaxY, _floorMax.y),
+            _floorMax.z);
+
+        return min.x < max.x && min.y < max.y;
+    }
+
+    private int WorldToCellIndex(float worldCoord) => Mathf.FloorToInt(worldCoord / cellSize);
 
     private void AlignSpawnedInstance(GameObject inst)
     {
-        // Do not reassign layers to the floor's Default layer: dense solid colliders would cage the player
-        // and block movement toward EXP orbs (pickup uses trigger overlap). Use prefab layer (Obstacle).
-
-        var obstacleOrder = Mathf.Clamp(floorRenderer.sortingOrder + sortingOrderOffset, -32768, 32767);
         foreach (var r in inst.GetComponentsInChildren<SpriteRenderer>(true))
         {
-            WorldSprite2DDefaults.Apply(r, obstacleOrder);
+            WorldSprite2DDefaults.Apply(r, _obstacleSortOrder);
             r.sortingLayerID = floorRenderer.sortingLayerID;
             r.maskInteraction = floorRenderer.maskInteraction;
             r.renderingLayerMask = floorRenderer.renderingLayerMask;
@@ -218,9 +437,6 @@ public sealed class EnvironmentObstacleGenerator : MonoBehaviour
             z);
     }
 
-    /// <summary>
-    /// Picks a random point in the spawn AABB; if <paramref name="clearRadius"/> &gt; 0, avoids a disk around the player.
-    /// </summary>
     private static Vector3 RandomPointAvoidingPlayer(
         Vector3 min,
         Vector3 max,
@@ -245,13 +461,18 @@ public sealed class EnvironmentObstacleGenerator : MonoBehaviour
         return RandomPoint(min, max, z);
     }
 
-    private static Vector2 FindPlayerPlanarPosition()
+    private bool HasValidPrefabs()
     {
-        var p = GameObject.FindGameObjectWithTag("Player");
-        if (p == null)
-            return Vector2.zero;
-        var t = p.transform.position;
-        return new Vector2(t.x, t.y);
+        if (obstaclePrefabs == null || obstaclePrefabs.Length == 0)
+            return false;
+
+        foreach (var p in obstaclePrefabs)
+        {
+            if (p != null)
+                return true;
+        }
+
+        return false;
     }
 
     private void LogPrefabColliderIssues()
@@ -279,6 +500,11 @@ public sealed class EnvironmentObstacleGenerator : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
+        if (despawnHalfExtents.x < activeHalfExtents.x)
+            despawnHalfExtents.x = activeHalfExtents.x;
+        if (despawnHalfExtents.y < activeHalfExtents.y)
+            despawnHalfExtents.y = activeHalfExtents.y;
+
         if (obstaclePrefabs == null)
             return;
         foreach (var p in obstaclePrefabs)
@@ -290,4 +516,16 @@ public sealed class EnvironmentObstacleGenerator : MonoBehaviour
         }
     }
 #endif
+
+    private sealed class PooledObstacle : MonoBehaviour
+    {
+        public int PrefabIndex { get; private set; }
+        public Vector3 BaseScale { get; private set; }
+
+        public void Initialize(int prefabIndex, Vector3 scale)
+        {
+            PrefabIndex = prefabIndex;
+            BaseScale = scale;
+        }
+    }
 }

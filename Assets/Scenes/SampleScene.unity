@@ -1201,13 +1201,15 @@ MonoBehaviour:
   obstaclePrefabs:
   - {fileID: 432000001, guid: 25088721223243bfae2245a64948d27f, type: 3}
   - {fileID: 431000001, guid: 4021b1895561419382d746bd97508993, type: 3}
-  spawnCount: 120
+  randomSeed: 0
+  cellSize: 16
+  activeHalfExtents: {x: 24, y: 14}
+  despawnHalfExtents: {x: 32, y: 20}
+  obstaclesPerCell: 4
+  streamRefreshInterval: 0.2
   edgePadding: 4
   scaleMin: 0.9
   scaleMax: 1.1
-  randomSeed: 0
-  limitSpawnToAreaAroundPlayer: 0
-  spawnHalfExtents: {x: 18, y: 11}
   playerClearRadius: 3.5
   playerClearMaxAttempts: 48
   minSeparation: 0
@@ -1218,6 +1220,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   sortingOrderOffset: 22
   randomizeRotation: 0
+  poolPrewarmPerPrefab: 8
 --- !u!4 &232856793
 Transform:
   m_ObjectHideFlags: 0

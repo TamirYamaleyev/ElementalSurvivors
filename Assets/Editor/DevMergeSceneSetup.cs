@@ -621,11 +621,11 @@ public static class DevMergeSceneSetup
             checklist.Add("EnvironmentObstacleGenerator.obstaclePrefabs");
         }
 
-        if (so.FindProperty("spawnCount").intValue != 55)
-        {
-            so.FindProperty("spawnCount").intValue = 55;
-            checklist.Add("EnvironmentObstacleGenerator.spawnCount=55");
-        }
+        SetVector2IfDifferent(so, "activeHalfExtents", new Vector2(24f, 14f), checklist, "EnvironmentObstacleGenerator.activeHalfExtents");
+        SetVector2IfDifferent(so, "despawnHalfExtents", new Vector2(32f, 20f), checklist, "EnvironmentObstacleGenerator.despawnHalfExtents");
+        SetFloatIfDifferent(so, "cellSize", 16f, checklist, "EnvironmentObstacleGenerator.cellSize=16");
+        SetIntIfDifferent(so, "obstaclesPerCell", 4, checklist, "EnvironmentObstacleGenerator.obstaclesPerCell=4");
+        SetIntIfDifferent(so, "poolPrewarmPerPrefab", 8, checklist, "EnvironmentObstacleGenerator.poolPrewarmPerPrefab=8");
 
         if (so.FindProperty("edgePadding").floatValue != 4f)
         {
@@ -634,6 +634,42 @@ public static class DevMergeSceneSetup
         }
 
         so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    static void SetBoolIfDifferent(SerializedObject so, string propertyName, bool value, List<string> checklist, string label)
+    {
+        var prop = so.FindProperty(propertyName);
+        if (prop == null || prop.boolValue == value)
+            return;
+        prop.boolValue = value;
+        checklist.Add(label);
+    }
+
+    static void SetIntIfDifferent(SerializedObject so, string propertyName, int value, List<string> checklist, string label)
+    {
+        var prop = so.FindProperty(propertyName);
+        if (prop == null || prop.intValue == value)
+            return;
+        prop.intValue = value;
+        checklist.Add(label);
+    }
+
+    static void SetFloatIfDifferent(SerializedObject so, string propertyName, float value, List<string> checklist, string label)
+    {
+        var prop = so.FindProperty(propertyName);
+        if (prop == null || Mathf.Approximately(prop.floatValue, value))
+            return;
+        prop.floatValue = value;
+        checklist.Add(label);
+    }
+
+    static void SetVector2IfDifferent(SerializedObject so, string propertyName, Vector2 value, List<string> checklist, string label)
+    {
+        var prop = so.FindProperty(propertyName);
+        if (prop == null || prop.vector2Value == value)
+            return;
+        prop.vector2Value = value;
+        checklist.Add(label);
     }
 
     static void WirePlayerPickup(Scene scene, List<string> checklist)
