@@ -41,13 +41,13 @@ Material:
     m_Floats:
     - _GradientScale: 0.91
     - _MinHue: 5
-    - _MultiplyScale: 7.62
+    - _MultiplyScale: 6.5
     - _QueueControl: 0
-    - _SimpleNoiseScale: 3.1
+    - _SimpleNoiseScale: 5.26
     - _SmallNoiseScale: 0
-    - _VoronoiDensity: -0.17
-    - _VoronoiOffset: -2.29
+    - _VoronoiDensity: -0.16
+    - _VoronoiOffset: -1.55
     m_Colors:
-    - _Color: {r: 0.41509432, g: 0.26740095, b: 0.072445706, a: 1}
+    - _Color: {r: 0.254717, g: 0.21867214, b: 0.1766198, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

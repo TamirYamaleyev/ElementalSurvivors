@@ -1178,11 +1178,12 @@ MonoBehaviour:
   obstaclePrefabs:
   - {fileID: 432000001, guid: 25088721223243bfae2245a64948d27f, type: 3}
   - {fileID: 431000001, guid: 4021b1895561419382d746bd97508993, type: 3}
-  randomSeed: 0
+  - {fileID: 431000001, guid: e4df4710a0f36d04993ca7532ede2cba, type: 3}
+  randomSeed: 2147483647
   cellSize: 16
   activeHalfExtents: {x: 24, y: 14}
-  despawnHalfExtents: {x: 32, y: 20}
-  obstaclesPerCell: 4
+  despawnHalfExtents: {x: 6000, y: 6000}
+  obstaclesPerCell: 6
   streamRefreshInterval: 0.2
   edgePadding: 4
   scaleMin: 0.9
@@ -1194,10 +1195,10 @@ MonoBehaviour:
   separationMaxAttempts: 16
   separationLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 8
   sortingOrderOffset: 5
   randomizeRotation: 0
-  poolPrewarmPerPrefab: 8
+  poolPrewarmPerPrefab: 128
 --- !u!4 &232856793
 Transform:
   m_ObjectHideFlags: 0
