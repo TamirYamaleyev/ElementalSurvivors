@@ -11,7 +11,7 @@ public static class CombatHitUtility
     public static bool TryResolveEnemy(Collider2D collider, out Enemy enemy)
     {
         enemy = null;
-        if (collider == null || collider.isTrigger)
+        if (collider == null /*|| collider.isTrigger*/)
             return false;
 
         enemy = collider.GetComponentInParent<Enemy>();

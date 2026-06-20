@@ -602,7 +602,6 @@ GameObject:
   - component: {fileID: 181845795}
   - component: {fileID: 181845796}
   - component: {fileID: 181845797}
-  - component: {fileID: 181845798}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -628,7 +627,6 @@ Transform:
   - {fileID: 3278941026719209832}
   - {fileID: 236211835}
   - {fileID: 896157293}
-  - {fileID: 976328486}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &181845786
@@ -919,27 +917,6 @@ MonoBehaviour:
   animator: {fileID: 896157294}
   spriteRenderer: {fileID: 896157295}
   flipDeadzone: 0.02
---- !u!114 &181845798
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 181845783}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71d6adcbada4d4f42b827c1b2d01a23a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerDefaultWeapon
-  spear: {fileID: 976328486}
-  cam: {fileID: 519420031}
-  characterAnimation: {fileID: 181845797}
-  attackCooldown: 1.5
-  attackRadius: 2
-  activeTime: 0.12
-  thrustInterval: 0.05
-  thrustsPerLevel: 010000000200000003000000
-  statsProviderBehaviour: {fileID: 181845794}
 --- !u!1 &191866787
 GameObject:
   m_ObjectHideFlags: 0
@@ -1179,7 +1156,7 @@ GameObject:
   - component: {fileID: 232856793}
   - component: {fileID: 232856792}
   m_Layer: 0
-  m_Name: EnvironmentObstacleGenerator
+  m_Name: EnvironmentPropGenerator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1218,7 +1195,7 @@ MonoBehaviour:
   separationLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  sortingOrderOffset: 22
+  sortingOrderOffset: 5
   randomizeRotation: 0
   poolPrewarmPerPrefab: 8
 --- !u!4 &232856793
@@ -1552,7 +1529,7 @@ GameObject:
   - component: {fileID: 276119232}
   - component: {fileID: 276119231}
   m_Layer: 0
-  m_Name: DamageNumbersWorld
+  m_Name: WorldCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1597,7 +1574,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!223 &276119233
 Canvas:
   m_ObjectHideFlags: 0
@@ -2392,7 +2369,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelUpUI
   levelUpPanel: {fileID: 376262324}
   expRef: {fileID: 181845791}
-  spearWeapon: {fileID: 181845798}
+  spearWeapon: {fileID: 0}
   orbitWeapon: {fileID: 0}
   boomerangWeapon: {fileID: 0}
   option1Button: {fileID: 1201057199}
@@ -2692,37 +2669,6 @@ MonoBehaviour:
   fillImage: {fileID: 564796377}
   levelText: {fileID: 1929810249}
   levelPrefix: 'LV: '
---- !u!1 &976328485
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 976328486}
-  m_Layer: 0
-  m_Name: SpearHitbox
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &976328486
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 976328485}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 181845785}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1017471715
 GameObject:
   m_ObjectHideFlags: 0
@@ -3470,7 +3416,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 181845798}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PlayerDefaultWeapon, Assembly-CSharp
         m_MethodName: LevelUp
         m_Mode: 1
@@ -4442,7 +4388,9 @@ MonoBehaviour:
   spawnRadius: 10
   spawnJitter: 0.5
   spawnBodyRadius: 0.35
+  spawnClearancePadding: 0.08
   spawnClearMaxAttempts: 24
+  spawnSearchRadiusExtra: 3
 --- !u!114 &1627141333
 MonoBehaviour:
   m_ObjectHideFlags: 0
