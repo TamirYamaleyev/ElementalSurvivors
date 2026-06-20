@@ -24,9 +24,9 @@ public static class ReactionVfxPrefabBuilder
         if (sprite == null)
             Debug.LogWarning("[ReactionVfxPrefabBuilder] White Pixel sprite not found under Assets/Sprites or Assets/Spritres.");
 
-        var vaporize = SaveOne($"{OutputDir}/VFX_Reaction_Vaporize.prefab", "VFX_Reaction_Vaporize", ReactionBurstParticleBootstrap.ReactionBurstKind.Vaporize, sprite);
+        var vaporize = SaveVaporize($"{OutputDir}/VFX_Reaction_Vaporize.prefab", "VFX_Reaction_Vaporize", sprite);
         var crystallize = SaveOne($"{OutputDir}/VFX_Reaction_Crystallize.prefab", "VFX_Reaction_Crystallize", ReactionBurstParticleBootstrap.ReactionBurstKind.Crystallize, sprite);
-        var scorchingWind = SaveOne($"{OutputDir}/VFX_Reaction_ScorchingWind.prefab", "VFX_Reaction_ScorchingWind", ReactionBurstParticleBootstrap.ReactionBurstKind.ScorchingWind, sprite);
+        var scorchingWind = SaveScorchingWind($"{OutputDir}/VFX_Reaction_ScorchingWind.prefab", "VFX_Reaction_ScorchingWind", sprite);
         var explosion = SaveOne($"{OutputDir}/VFX_Reaction_Explosion.prefab", "VFX_Reaction_Explosion", ReactionBurstParticleBootstrap.ReactionBurstKind.Explosion, sprite);
         var growth = SaveOne($"{OutputDir}/VFX_Reaction_Growth.prefab", "VFX_Reaction_Growth", ReactionBurstParticleBootstrap.ReactionBurstKind.Growth, sprite);
         var hail = SaveHail($"{OutputDir}/VFX_Reaction_Hail.prefab", "VFX_Reaction_Hail", sprite);
@@ -75,6 +75,26 @@ public static class ReactionVfxPrefabBuilder
         }
 
         EditorApplication.Exit(0);
+    }
+
+    private static GameObject SaveVaporize(string assetPath, string objectName, Sprite sprite)
+    {
+        return SaveWithExtraComponents(
+            assetPath,
+            objectName,
+            ReactionBurstParticleBootstrap.ReactionBurstKind.Vaporize,
+            sprite,
+            go => go.AddComponent<ReactionVaporizeVisual>());
+    }
+
+    private static GameObject SaveScorchingWind(string assetPath, string objectName, Sprite sprite)
+    {
+        return SaveWithExtraComponents(
+            assetPath,
+            objectName,
+            ReactionBurstParticleBootstrap.ReactionBurstKind.ScorchingWind,
+            sprite,
+            go => go.AddComponent<ReactionScorchingRaysVisual>());
     }
 
     private static GameObject SaveHail(string assetPath, string objectName, Sprite sprite)

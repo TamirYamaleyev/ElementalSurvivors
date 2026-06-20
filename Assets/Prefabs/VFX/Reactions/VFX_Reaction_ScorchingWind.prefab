@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7097962789291830932}
   - component: {fileID: 2530577922501865276}
+  - component: {fileID: 8530577922501865277}
   m_Layer: 0
   m_Name: VFX_Reaction_ScorchingWind
   m_TagString: Untagged
@@ -46,3 +47,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ReactionBurstParticleBootstrap
   kind: 2
   particleSprite: {fileID: 21300000, guid: 1c671ba2a2339934aaaeda2feea031ee, type: 3}
+--- !u!114 &8530577922501865277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7692888851382953324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2a3b4c5d6e7890123456789ab012345, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ReactionScorchingRaysVisual
+  rayBurstInterval: 0.07
+  minRaysPerBurst: 5
+  maxRaysPerBurst: 9
+  minRayLength: 1.1
+  maxRayLength: 2.6
+  minRayLifetime: 0.14
+  maxRayLifetime: 0.3
+  sortingOrderOffset: 40
