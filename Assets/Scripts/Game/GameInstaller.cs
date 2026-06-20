@@ -29,7 +29,10 @@ public class GameInstaller : MonoBehaviour
     void Awake()
     {
         if (status != null)
+        {
             status.SetReactionVfxCatalog(reactionVfxCatalog);
+            status.SetEnemyRegistry(registry);
+        }
 
         weaponSystem.Initialize(BuildWeaponContext());
     }

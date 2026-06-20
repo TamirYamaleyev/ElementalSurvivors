@@ -3621,7 +3621,7 @@ Transform:
   m_GameObject: {fileID: 888777666555001}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3640,8 +3640,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ReactionVfxShowcaseBootstrap
   enemyPrefab: {fileID: 1111111111111111101, guid: 77c68128e80259940a8a7848e64cca13, type: 3}
-  horizontalSpacing: 2.2
+  columns: 5
+  columnSpacing: 2.2
+  rowSpacing: 2.6
   statusDurationSeconds: 9999
+  loopReactionVfx: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -19,20 +19,21 @@ public static class ReactionVfxPrefabBuilder
         EnsureFolder(OutputDir);
         EnsureFolder("Assets/Data");
 
-        var sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Spritres/White Pixel.png");
+        var sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/White Pixel.png")
+            ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Spritres/White Pixel.png");
         if (sprite == null)
-            Debug.LogWarning("[ReactionVfxPrefabBuilder] White Pixel sprite not found at Assets/Spritres/White Pixel.png");
+            Debug.LogWarning("[ReactionVfxPrefabBuilder] White Pixel sprite not found under Assets/Sprites or Assets/Spritres.");
 
         var vaporize = SaveOne($"{OutputDir}/VFX_Reaction_Vaporize.prefab", "VFX_Reaction_Vaporize", ReactionBurstParticleBootstrap.ReactionBurstKind.Vaporize, sprite);
         var crystallize = SaveOne($"{OutputDir}/VFX_Reaction_Crystallize.prefab", "VFX_Reaction_Crystallize", ReactionBurstParticleBootstrap.ReactionBurstKind.Crystallize, sprite);
         var scorchingWind = SaveOne($"{OutputDir}/VFX_Reaction_ScorchingWind.prefab", "VFX_Reaction_ScorchingWind", ReactionBurstParticleBootstrap.ReactionBurstKind.ScorchingWind, sprite);
         var explosion = SaveOne($"{OutputDir}/VFX_Reaction_Explosion.prefab", "VFX_Reaction_Explosion", ReactionBurstParticleBootstrap.ReactionBurstKind.Explosion, sprite);
         var growth = SaveOne($"{OutputDir}/VFX_Reaction_Growth.prefab", "VFX_Reaction_Growth", ReactionBurstParticleBootstrap.ReactionBurstKind.Growth, sprite);
-        var hail = SaveOne($"{OutputDir}/VFX_Reaction_Hail.prefab", "VFX_Reaction_Hail", ReactionBurstParticleBootstrap.ReactionBurstKind.Hail, sprite);
-        var electrowetting = SaveOne($"{OutputDir}/VFX_Reaction_Electrowetting.prefab", "VFX_Reaction_Electrowetting", ReactionBurstParticleBootstrap.ReactionBurstKind.Electrowetting, sprite);
-        var dustSandStorm = SaveOne($"{OutputDir}/VFX_Reaction_DustSandStorm.prefab", "VFX_Reaction_DustSandStorm", ReactionBurstParticleBootstrap.ReactionBurstKind.DustSandStorm, sprite);
-        var magnetism = SaveOne($"{OutputDir}/VFX_Reaction_Magnetism.prefab", "VFX_Reaction_Magnetism", ReactionBurstParticleBootstrap.ReactionBurstKind.Magnetism, sprite);
-        var staticCharge = SaveOne($"{OutputDir}/VFX_Reaction_StaticCharge.prefab", "VFX_Reaction_StaticCharge", ReactionBurstParticleBootstrap.ReactionBurstKind.StaticCharge, sprite);
+        var hail = SaveHail($"{OutputDir}/VFX_Reaction_Hail.prefab", "VFX_Reaction_Hail", sprite);
+        var electrowetting = SaveElectrowetting($"{OutputDir}/VFX_Reaction_Electrowetting.prefab", "VFX_Reaction_Electrowetting", sprite);
+        var dustSandStorm = SaveDustSandStorm($"{OutputDir}/VFX_Reaction_DustSandStorm.prefab", "VFX_Reaction_DustSandStorm", sprite);
+        var magnetism = SaveMagnetism($"{OutputDir}/VFX_Reaction_Magnetism.prefab", "VFX_Reaction_Magnetism", sprite);
+        var staticCharge = SaveStaticCharge($"{OutputDir}/VFX_Reaction_StaticCharge.prefab", "VFX_Reaction_StaticCharge", sprite);
 
         var catalog = AssetDatabase.LoadAssetAtPath<ReactionVfxCatalogSO>(CatalogPath);
         if (catalog == null)
@@ -76,7 +77,75 @@ public static class ReactionVfxPrefabBuilder
         EditorApplication.Exit(0);
     }
 
-    private static GameObject SaveOne(string assetPath, string objectName, ReactionBurstParticleBootstrap.ReactionBurstKind kind, Sprite sprite)
+    private static GameObject SaveHail(string assetPath, string objectName, Sprite sprite)
+    {
+        return SaveWithExtraComponents(
+            assetPath,
+            objectName,
+            ReactionBurstParticleBootstrap.ReactionBurstKind.Hail,
+            sprite,
+            go => go.AddComponent<ReactionHailVisual>());
+    }
+
+    private static GameObject SaveDustSandStorm(string assetPath, string objectName, Sprite sprite)
+    {
+        return SaveWithExtraComponents(
+            assetPath,
+            objectName,
+            ReactionBurstParticleBootstrap.ReactionBurstKind.DustSandStorm,
+            sprite,
+            go => go.AddComponent<ReactionDustSandStormVisual>());
+    }
+
+    private static GameObject SaveStaticCharge(string assetPath, string objectName, Sprite sprite)
+    {
+        return SaveWithExtraComponents(
+            assetPath,
+            objectName,
+            ReactionBurstParticleBootstrap.ReactionBurstKind.StaticCharge,
+            sprite,
+            go => go.AddComponent<ReactionStaticChargeParalysisVisual>());
+    }
+
+    private static GameObject SaveMagnetism(string assetPath, string objectName, Sprite sprite)
+    {
+        return SaveWithExtraComponents(
+            assetPath,
+            objectName,
+            ReactionBurstParticleBootstrap.ReactionBurstKind.Magnetism,
+            sprite,
+            go => go.AddComponent<ReactionMagneticFieldShrink>());
+    }
+
+    private static GameObject SaveElectrowetting(string assetPath, string objectName, Sprite sprite)
+    {
+        var lightningPrefab = AssetDatabase.LoadAssetAtPath<ChaingLightningVisual>(
+            "Assets/Scripts/Weapons/ChainLightning/LightningVisualPrefab.prefab");
+
+        return SaveWithExtraComponents(
+            assetPath,
+            objectName,
+            ReactionBurstParticleBootstrap.ReactionBurstKind.Electrowetting,
+            sprite,
+            go =>
+            {
+                go.AddComponent<ReactionMagneticFieldShrink>();
+                var bolts = go.AddComponent<ReactionElectrowettingBolts>();
+                if (lightningPrefab != null)
+                {
+                    var boltsSo = new SerializedObject(bolts);
+                    boltsSo.FindProperty("lightningVisualPrefab").objectReferenceValue = lightningPrefab;
+                    boltsSo.ApplyModifiedPropertiesWithoutUndo();
+                }
+            });
+    }
+
+    private static GameObject SaveWithExtraComponents(
+        string assetPath,
+        string objectName,
+        ReactionBurstParticleBootstrap.ReactionBurstKind kind,
+        Sprite sprite,
+        System.Action<GameObject> addExtra)
     {
         var existing = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
         if (existing != null)
@@ -91,12 +160,19 @@ public static class ReactionVfxPrefabBuilder
             so.FindProperty("particleSprite").objectReferenceValue = sprite;
             so.ApplyModifiedPropertiesWithoutUndo();
 
+            addExtra?.Invoke(go);
+
             return PrefabUtility.SaveAsPrefabAsset(go, assetPath);
         }
         finally
         {
             Object.DestroyImmediate(go);
         }
+    }
+
+    private static GameObject SaveOne(string assetPath, string objectName, ReactionBurstParticleBootstrap.ReactionBurstKind kind, Sprite sprite)
+    {
+        return SaveWithExtraComponents(assetPath, objectName, kind, sprite, null);
     }
 
     private static void EnsureFolder(string path)
