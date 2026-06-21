@@ -12,6 +12,9 @@ public class StatusSystem : MonoBehaviour
 
     public void Apply(Enemy enemy, StatusType type, float duration)
     {
+        if (type == StatusType.None)
+            return;
+
         enemy.StatusController.AddStatus(type, duration);
     }
 

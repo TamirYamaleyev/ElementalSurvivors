@@ -17,6 +17,7 @@ public class WeaponDefinition : ScriptableObject
 
     public Projectile projectilePrefab;
     public OrbitingObject orbitPrefab;
+    public AreaWeapon areaPrefab;
     public WeaponBehavior customWeaponPrefab;
 
     public WeaponLevelData[] levels = new WeaponLevelData[5];

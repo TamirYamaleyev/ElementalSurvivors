@@ -96,9 +96,12 @@ public class WeaponInstance
                     : spawnPos;
 
                 ctx.AreaSystem.Cast(
+                    definition.areaPrefab,
                     pos,
-                    data.range,
+                    data.width,
+                    data.height,
                     damage,
+                    data.lifetime,
                     definition.appliedStatus,
                     data.statusDuration,
                     ctx.StatusSystem,
