@@ -97,7 +97,7 @@ public class WeaponInstance
 
                 ctx.AreaSystem.Cast(
                     definition.areaPrefab,
-                    pos,
+                    ctx.AreaSpawnPoint,
                     data.width,
                     data.height,
                     damage,

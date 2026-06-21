@@ -41,6 +41,8 @@ public class AreaWeapon : MonoBehaviour
         this.statusDuration = statusDuration;
         this.statusSystem = statusSystem;
 
+        gameObject.transform.localScale = new Vector3(width, height, 1f);
+
         if (sr == null)
             sr = GetComponent<SpriteRenderer>();
 

@@ -4,7 +4,7 @@ public class AreaSystem : MonoBehaviour
 {
     public void Cast(
         AreaWeapon prefab,
-        Vector2 position,
+        Transform spawnPoint,
         float width,
         float height,
         float damage,
@@ -26,14 +26,10 @@ public class AreaSystem : MonoBehaviour
             return;
         }
 
-        var obj = Instantiate(
-            prefab,
-            position,
-            Quaternion.identity
-        );
+        var obj = Instantiate(prefab, spawnPoint.position, Quaternion.identity, spawnPoint);
 
         obj.Init(
-            position,
+            spawnPoint.position,
             width,
             height,
             damage,

@@ -21,11 +21,11 @@ MonoBehaviour:
   customWeaponPrefab: {fileID: 0}
   levels:
   - damage: 10
-    cooldown: 3
+    cooldown: 1
     range: 10
     width: 1
     height: 1
-    lifetime: 0.5
+    lifetime: 0.1
     speed: 10
     projectileCount: 0
     statusDuration: 0
