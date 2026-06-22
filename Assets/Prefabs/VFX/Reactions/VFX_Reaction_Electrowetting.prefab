@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &794457656865860388
+--- !u!1 &410001001
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,10 +8,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5253430714837685668}
-  - component: {fileID: 171241927605656003}
-  - component: {fileID: 5691948806495181510}
-  - component: {fileID: 4775874315169202536}
+  - component: {fileID: 410001002}
+  - component: {fileID: 410001003}
+  - component: {fileID: 410001004}
+  - component: {fileID: 410001005}
   m_Layer: 0
   m_Name: VFX_Reaction_Electrowetting
   m_TagString: Untagged
@@ -19,13 +19,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5253430714837685668
+--- !u!4 &410001002
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 794457656865860388}
+  m_GameObject: {fileID: 410001001}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -34,13 +34,13 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &171241927605656003
+--- !u!114 &410001003
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 794457656865860388}
+  m_GameObject: {fileID: 410001001}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1b2c3d4e5f678901112131415161702, type: 3}
@@ -48,28 +48,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ReactionBurstParticleBootstrap
   kind: 6
   particleSprite: {fileID: 21300000, guid: 1c671ba2a2339934aaaeda2feea031ee, type: 3}
---- !u!114 &5691948806495181510
+--- !u!114 &410001004
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 794457656865860388}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f678901112131415161711, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ReactionMagneticFieldShrink
-  startScale: 2.2
-  endScale: 0.12
-  shrinkDuration: 1
---- !u!114 &4775874315169202536
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 794457656865860388}
+  m_GameObject: {fileID: 410001001}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1b2c3d4e5f678901112131415161712, type: 3}
@@ -77,7 +62,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ReactionElectrowettingBolts
   lightningVisualPrefab: {fileID: 1169245859301116722, guid: 542cfb66a3997b5498af20c5a0a7c068, type: 3}
   effectRadius: 2.4
-  boltInterval: 0.07
   maxTargets: 6
-  boltLifetime: 0.08
+  boltLifetime: 0.12
   boltTint: {r: 0.85, g: 0.95, b: 1, a: 1}
+--- !u!114 &410001005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 410001001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6789011a2b3c4d5e6f7890123456789, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ReactionRadialShockBolts
+  lightningVisualPrefab: {fileID: 1169245859301116722, guid: 542cfb66a3997b5498af20c5a0a7c068, type: 3}
+  boltCount: 11
+  minBoltLength: 0.75
+  maxBoltLength: 1.25
+  originRadius: 0.08
+  boltLifetime: 0.14
+  endpointInset: 0.06
+  boltThickness: 0.55
+  boltTint: {r: 0.45, g: 0.88, b: 1, a: 1}
+  sortingOrderOffset: 52

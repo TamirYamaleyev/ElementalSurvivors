@@ -17,7 +17,7 @@ public class ChaingLightningVisual : MonoBehaviour
             sr = GetComponent<SpriteRenderer>();
     }
 
-    public void Initialize(Vector2 start, Vector2 end, Sprite sprite, float lifetime)
+    public void Initialize(Vector2 start, Vector2 end, Sprite sprite, float lifetime, float endpointInset = -1f)
     {
         if (sr == null)
             sr = GetComponent<SpriteRenderer>();
@@ -28,8 +28,9 @@ public class ChaingLightningVisual : MonoBehaviour
 
         Vector2 dir = delta.normalized;
 
-        start += dir * offset;
-        end -= dir * offset;
+        var inset = endpointInset >= 0f ? endpointInset : offset;
+        start += dir * inset;
+        end -= dir * inset;
 
         transform.position = (start + end) * 0.5f;
 

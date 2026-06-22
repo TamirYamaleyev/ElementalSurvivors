@@ -27,7 +27,7 @@ public static class ReactionVfxPrefabBuilder
         var vaporize = SaveVaporize($"{OutputDir}/VFX_Reaction_Vaporize.prefab", "VFX_Reaction_Vaporize", sprite);
         var crystallize = SaveOne($"{OutputDir}/VFX_Reaction_Crystallize.prefab", "VFX_Reaction_Crystallize", ReactionBurstParticleBootstrap.ReactionBurstKind.Crystallize, sprite);
         var scorchingWind = SaveScorchingWind($"{OutputDir}/VFX_Reaction_ScorchingWind.prefab", "VFX_Reaction_ScorchingWind", sprite);
-        var explosion = SaveOne($"{OutputDir}/VFX_Reaction_Explosion.prefab", "VFX_Reaction_Explosion", ReactionBurstParticleBootstrap.ReactionBurstKind.Explosion, sprite);
+        var explosion = SaveExplosion($"{OutputDir}/VFX_Reaction_Explosion.prefab", "VFX_Reaction_Explosion", sprite);
         var growth = SaveOne($"{OutputDir}/VFX_Reaction_Growth.prefab", "VFX_Reaction_Growth", ReactionBurstParticleBootstrap.ReactionBurstKind.Growth, sprite);
         var hail = SaveHail($"{OutputDir}/VFX_Reaction_Hail.prefab", "VFX_Reaction_Hail", sprite);
         var electrowetting = SaveElectrowetting($"{OutputDir}/VFX_Reaction_Electrowetting.prefab", "VFX_Reaction_Electrowetting", sprite);
@@ -84,7 +84,21 @@ public static class ReactionVfxPrefabBuilder
             objectName,
             ReactionBurstParticleBootstrap.ReactionBurstKind.Vaporize,
             sprite,
-            go => go.AddComponent<ReactionVaporizeVisual>());
+            go =>
+            {
+                go.AddComponent<ReactionVaporizeVisual>();
+                go.AddComponent<ReactionVaporizeAreaOverlay>();
+            });
+    }
+
+    private static GameObject SaveExplosion(string assetPath, string objectName, Sprite sprite)
+    {
+        return SaveWithExtraComponents(
+            assetPath,
+            objectName,
+            ReactionBurstParticleBootstrap.ReactionBurstKind.Explosion,
+            sprite,
+            go => go.AddComponent<ReactionExplosionAreaFlash>());
     }
 
     private static GameObject SaveScorchingWind(string assetPath, string objectName, Sprite sprite)
@@ -129,12 +143,33 @@ public static class ReactionVfxPrefabBuilder
 
     private static GameObject SaveMagnetism(string assetPath, string objectName, Sprite sprite)
     {
+        var lightningPrefab = AssetDatabase.LoadAssetAtPath<ChaingLightningVisual>(
+            "Assets/Scripts/Weapons/ChainLightning/LightningVisualPrefab.prefab");
+
         return SaveWithExtraComponents(
             assetPath,
             objectName,
             ReactionBurstParticleBootstrap.ReactionBurstKind.Magnetism,
             sprite,
-            go => go.AddComponent<ReactionMagneticFieldShrink>());
+            go =>
+            {
+                go.AddComponent<ReactionMagneticFieldShrink>();
+                var bolts = go.AddComponent<ReactionMagnetismLightningBolts>();
+                if (lightningPrefab != null)
+                {
+                    WireLightningPrefab(bolts, lightningPrefab);
+                }
+            });
+    }
+
+    private static void WireLightningPrefab(MonoBehaviour component, ChaingLightningVisual lightningPrefab)
+    {
+        if (lightningPrefab == null)
+            return;
+
+        var so = new SerializedObject(component);
+        so.FindProperty("lightningVisualPrefab").objectReferenceValue = lightningPrefab;
+        so.ApplyModifiedPropertiesWithoutUndo();
     }
 
     private static GameObject SaveElectrowetting(string assetPath, string objectName, Sprite sprite)
@@ -149,13 +184,12 @@ public static class ReactionVfxPrefabBuilder
             sprite,
             go =>
             {
-                go.AddComponent<ReactionMagneticFieldShrink>();
+                var shock = go.AddComponent<ReactionRadialShockBolts>();
                 var bolts = go.AddComponent<ReactionElectrowettingBolts>();
                 if (lightningPrefab != null)
                 {
-                    var boltsSo = new SerializedObject(bolts);
-                    boltsSo.FindProperty("lightningVisualPrefab").objectReferenceValue = lightningPrefab;
-                    boltsSo.ApplyModifiedPropertiesWithoutUndo();
+                    WireLightningPrefab(shock, lightningPrefab);
+                    WireLightningPrefab(bolts, lightningPrefab);
                 }
             });
     }

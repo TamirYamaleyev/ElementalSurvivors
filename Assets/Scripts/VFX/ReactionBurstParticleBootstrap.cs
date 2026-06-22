@@ -58,7 +58,7 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
                 ConfigureCrystallize(ps);
                 break;
             case ReactionBurstKind.ScorchingWind:
-                life.SetDestroyAfter(2.4f);
+                life.SetDestroyAfter(0.5f);
                 ConfigureScorchingWind(ps);
                 break;
             case ReactionBurstKind.Explosion:
@@ -74,7 +74,7 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
                 ConfigureHail(ps);
                 break;
             case ReactionBurstKind.Electrowetting:
-                life.SetDestroyAfter(1.4f);
+                life.SetDestroyAfter(0.35f);
                 ConfigureElectrowetting(ps);
                 break;
             case ReactionBurstKind.DustSandStorm:
@@ -137,12 +137,15 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
         shape.position = Vector3.zero;
 
         var vel = ps.velocityOverLifetime;
-        vel.enabled = true;
-        vel.space = ParticleSystemSimulationSpace.Local;
-        vel.x = ConstantCurve(0f);
-        vel.y = ConstantCurve(0f);
-        vel.z = ConstantCurve(0f);
-        ApplyOrbitalVelocity(vel, orbitalZ * VelocityScale, radial * VelocityScale);
+        ApplyVelocityOverLifetime(
+            vel,
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(orbitalZ * VelocityScale),
+            VelConst(radial * VelocityScale));
     }
 
     private static void ConfigureVaporize(ParticleSystem ps)
@@ -156,9 +159,9 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
         ApplyCommonLoop(
             ps,
             0.8f,
-            50f,
+            62f,
             new ParticleSystem.MinMaxCurve(0.12f * VisualSizeScale, 0.18f * VisualSizeScale),
-            Mathf.RoundToInt(160f * MaxParticlesScale));
+            Mathf.RoundToInt(200f * MaxParticlesScale));
 
         var main = ps.main;
         RandomTwoColor(main, SteamWhite, SteamBlueGray);
@@ -166,18 +169,18 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
         var shape = ps.shape;
         shape.enabled = true;
         shape.shapeType = ParticleSystemShapeType.Circle;
-        shape.radius = 0.38f * VisualAreaScale;
+        shape.radius = 0.62f * VisualAreaScale;
 
         var vel = ps.velocityOverLifetime;
-        vel.enabled = true;
-        vel.space = ParticleSystemSimulationSpace.Local;
-        vel.x = ConstantCurve(0f);
-        vel.y = new ParticleSystem.MinMaxCurve(0.6f * VelocityScale, 1f * VelocityScale);
-        vel.z = ConstantCurve(0f);
-        vel.orbitalX = ConstantCurve(0f);
-        vel.orbitalY = ConstantCurve(0f);
-        vel.orbitalZ = ConstantCurve(0f);
-        vel.radial = new ParticleSystem.MinMaxCurve(0.15f * VelocityScale, 0.35f * VelocityScale);
+        ApplyVelocityOverLifetime(
+            vel,
+            VelConst(0f),
+            VelRange(0.6f * VelocityScale, 1f * VelocityScale),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelRange(0.15f * VelocityScale, 0.35f * VelocityScale));
 
         SteamAlphaOverLife(ps, 0.55f, 0.25f);
     }
@@ -189,9 +192,9 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
         ApplyCommonLoop(
             ps,
             1.05f,
-            26f,
+            34f,
             new ParticleSystem.MinMaxCurve(0.06f * VisualSizeScale, 0.11f * VisualSizeScale),
-            Mathf.RoundToInt(90f * MaxParticlesScale));
+            Mathf.RoundToInt(120f * MaxParticlesScale));
 
         var main = ps.main;
         RandomTwoColor(main, SteamWhite, SteamBlueGray);
@@ -199,18 +202,18 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
         var shape = ps.shape;
         shape.enabled = true;
         shape.shapeType = ParticleSystemShapeType.Circle;
-        shape.radius = 0.42f * VisualAreaScale;
+        shape.radius = 0.68f * VisualAreaScale;
 
         var vel = ps.velocityOverLifetime;
-        vel.enabled = true;
-        vel.space = ParticleSystemSimulationSpace.Local;
-        vel.x = new ParticleSystem.MinMaxCurve(-0.4f * VelocityScale, 0.4f * VelocityScale);
-        vel.y = new ParticleSystem.MinMaxCurve(1.8f * VelocityScale, 2.8f * VelocityScale);
-        vel.z = ConstantCurve(0f);
-        vel.orbitalX = ConstantCurve(0f);
-        vel.orbitalY = ConstantCurve(0f);
-        vel.orbitalZ = ConstantCurve(0f);
-        vel.radial = new ParticleSystem.MinMaxCurve(0.8f * VelocityScale, 1.4f * VelocityScale);
+        ApplyVelocityOverLifetime(
+            vel,
+            VelRange(-0.4f * VelocityScale, 0.4f * VelocityScale),
+            VelRange(1.8f * VelocityScale, 2.8f * VelocityScale),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelRange(0.8f * VelocityScale, 1.4f * VelocityScale));
 
         var sol = ps.sizeOverLifetime;
         sol.enabled = true;
@@ -271,20 +274,20 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
         main.duration = 0.35f;
         main.startLifetime = new ParticleSystem.MinMaxCurve(0.12f, 0.32f);
         main.startSpeed = new ParticleSystem.MinMaxCurve(2.2f * VelocityScale, 5.5f * VelocityScale);
-        main.startSize = new ParticleSystem.MinMaxCurve(0.12f * VisualSizeScale, 0.22f * VisualSizeScale);
+        main.startSize = new ParticleSystem.MinMaxCurve(0.2f * VisualSizeScale, 0.36f * VisualSizeScale);
         main.simulationSpace = ParticleSystemSimulationSpace.Local;
-        main.maxParticles = Mathf.RoundToInt(220f * MaxParticlesScale);
+        main.maxParticles = Mathf.RoundToInt(280f * MaxParticlesScale);
         main.gravityModifier = 0f;
         RandomTwoColor(main, new Color(1f, 0.15f, 0.08f), new Color(1f, 0.92f, 0.2f));
 
         var em = ps.emission;
         em.rateOverTime = 0f;
-        em.SetBursts(new[] { new ParticleSystem.Burst(0f, 90, 110) });
+        em.SetBursts(new[] { new ParticleSystem.Burst(0f, 130, 160) });
 
         var shape = ps.shape;
         shape.enabled = true;
         shape.shapeType = ParticleSystemShapeType.Sphere;
-        shape.radius = 0.08f * VisualAreaScale;
+        shape.radius = 0.38f * VisualAreaScale;
         shape.randomDirectionAmount = 0.35f;
 
         var vel = ps.velocityOverLifetime;
@@ -307,12 +310,15 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
         shape.position = new Vector3(0f, -0.24f * VisualAreaScale, 0f);
 
         var vel = ps.velocityOverLifetime;
-        vel.enabled = true;
-        vel.space = ParticleSystemSimulationSpace.Local;
-        vel.x = ConstantCurve(0f);
-        vel.y = ConstantCurve(1.9f * VelocityScale);
-        vel.z = ConstantCurve(0f);
-        ApplyOrbitalVelocity(vel, 0f, 0f);
+        ApplyVelocityOverLifetime(
+            vel,
+            VelConst(0f),
+            VelConst(1.9f * VelocityScale),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f));
 
         SolidColorOverLife(ps, c);
     }
@@ -344,23 +350,97 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
         shape.randomDirectionAmount = 0.12f;
 
         var vel = ps.velocityOverLifetime;
-        vel.enabled = true;
-        vel.space = ParticleSystemSimulationSpace.Local;
-        vel.x = new ParticleSystem.MinMaxCurve(-0.35f * VelocityScale, 0.35f * VelocityScale);
-        vel.y = new ParticleSystem.MinMaxCurve(-4.5f * VelocityScale, -2.8f * VelocityScale);
-        vel.z = ConstantCurve(0f);
-        ApplyOrbitalVelocity(vel, 0f, 0f);
+        ApplyVelocityOverLifetime(
+            vel,
+            VelRange(-0.35f * VelocityScale, 0.35f * VelocityScale),
+            VelRange(-4.5f * VelocityScale, -2.8f * VelocityScale),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f));
 
         FadeAlphaOverLife(ps);
     }
 
     private static void ConfigureElectrowetting(ParticleSystem ps)
     {
-        ConfigureMagneticFieldCore(
-            ps,
-            new Color(0.2f, 0.55f, 1f),
-            new Color(1f, 0.92f, 0.25f));
-        ConfigureMagneticCoreGlow(CreateCoreChild(ps.transform, "CoreGlow"));
+        ConfigureElectrowettingBurst(ps);
+        ConfigureElectrowettingGlow(CreateCoreChild(ps.transform, "CoreGlow"));
+    }
+
+    private static void ConfigureElectrowettingBurst(ParticleSystem ps)
+    {
+        ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+        var main = ps.main;
+        main.playOnAwake = false;
+        main.loop = false;
+        main.duration = 0.2f;
+        main.startLifetime = new ParticleSystem.MinMaxCurve(0.1f, 0.18f);
+        main.startSpeed = new ParticleSystem.MinMaxCurve(0.8f * VelocityScale, 2.2f * VelocityScale);
+        main.startSize = new ParticleSystem.MinMaxCurve(0.06f * VisualSizeScale, 0.12f * VisualSizeScale);
+        main.simulationSpace = ParticleSystemSimulationSpace.Local;
+        main.maxParticles = Mathf.RoundToInt(80f * MaxParticlesScale);
+        main.gravityModifier = 0f;
+        RandomTwoColor(main, new Color(0.2f, 0.55f, 1f), new Color(1f, 0.92f, 0.25f));
+
+        var em = ps.emission;
+        em.rateOverTime = 0f;
+        em.SetBursts(new[] { new ParticleSystem.Burst(0f, 45, 60) });
+
+        var shape = ps.shape;
+        shape.enabled = true;
+        shape.shapeType = ParticleSystemShapeType.Circle;
+        shape.radius = 0.28f * VisualAreaScale;
+
+        var vel = ps.velocityOverLifetime;
+        ApplyVelocityOverLifetime(
+            vel,
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(2.4f * VelocityScale),
+            VelRange(1.2f * VelocityScale, 2.4f * VelocityScale));
+
+        FadeAlphaOverLife(ps);
+    }
+
+    private static void ConfigureElectrowettingGlow(Transform coreTransform)
+    {
+        var ps = coreTransform.gameObject.AddComponent<ParticleSystem>();
+        var glowColor = new Color(0.55f, 0.82f, 1f);
+
+        ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+        var main = ps.main;
+        main.playOnAwake = false;
+        main.loop = false;
+        main.duration = 0.15f;
+        main.startLifetime = 0.12f;
+        main.startSpeed = 0f;
+        main.startSize = 0.22f * VisualSizeScale;
+        main.simulationSpace = ParticleSystemSimulationSpace.Local;
+        main.maxParticles = 20;
+        main.gravityModifier = 0f;
+        main.startColor = glowColor;
+
+        var em = ps.emission;
+        em.rateOverTime = 0f;
+        em.SetBursts(new[] { new ParticleSystem.Burst(0f, 8, 12) });
+
+        var shape = ps.shape;
+        shape.enabled = true;
+        shape.shapeType = ParticleSystemShapeType.Circle;
+        shape.radius = 0.12f * VisualAreaScale;
+
+        var vel = ps.velocityOverLifetime;
+        vel.enabled = false;
+
+        SolidColorOverLife(ps, glowColor);
+        ElementalVfxParticleMaterials.ApplyBillboardMaterial(ps, VfxParticleShapeLibrary.Shape.Circle);
     }
 
     private static void ConfigureDustSandStorm(ParticleSystem ps)
@@ -369,12 +449,12 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
             ps,
             0.55f,
             52f,
-            new ParticleSystem.MinMaxCurve(0.045f * VisualSizeScale, 0.085f * VisualSizeScale),
+            new ParticleSystem.MinMaxCurve(0.035f * VisualSizeScale, 0.065f * VisualSizeScale),
             Mathf.RoundToInt(180f * MaxParticlesScale));
 
         var main = ps.main;
         RandomTwoColor(main, Sandy, new Color(0.45f, 0.35f, 0.22f));
-        EnableOrbitalRing(ps, -3.4f, 0.15f, 0.62f);
+        EnableOrbitalRing(ps, -3.4f, 0.12f, 0.42f);
         DustAlphaOverLife(ps, 0.75f, 0.95f);
         ElementalVfxParticleMaterials.ApplyBillboardMaterial(ps, VfxParticleShapeLibrary.Shape.Hexagon);
 
@@ -410,22 +490,25 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
         var ps = hazeTransform.gameObject.AddComponent<ParticleSystem>();
         var hazeColor = new Color(Sandy.r, Sandy.g, Sandy.b, 0.5f);
 
-        ApplyCommonLoop(ps, 0.75f, 28f, 0.2f * VisualSizeScale, 100);
+        ApplyCommonLoop(ps, 0.75f, 28f, 0.16f * VisualSizeScale, 100);
         var main = ps.main;
         main.startColor = hazeColor;
 
         var shape = ps.shape;
         shape.enabled = true;
         shape.shapeType = ParticleSystemShapeType.Circle;
-        shape.radius = 0.72f * VisualAreaScale;
+        shape.radius = 0.48f * VisualAreaScale;
 
         var vel = ps.velocityOverLifetime;
-        vel.enabled = true;
-        vel.space = ParticleSystemSimulationSpace.Local;
-        vel.x = ConstantCurve(0f);
-        vel.y = ConstantCurve(0f);
-        vel.z = ConstantCurve(0f);
-        ApplyOrbitalVelocity(vel, -1.6f * VelocityScale, 0.05f * VelocityScale);
+        ApplyVelocityOverLifetime(
+            vel,
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(-1.6f * VelocityScale),
+            VelConst(0.05f * VelocityScale));
 
         DustAlphaOverLife(ps, 0.45f, 0.7f);
         ElementalVfxParticleMaterials.ApplyBillboardMaterial(ps, VfxParticleShapeLibrary.Shape.Circle);
@@ -502,12 +585,15 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
         shape.position = Vector3.zero;
 
         var vel = ps.velocityOverLifetime;
-        vel.enabled = true;
-        vel.space = ParticleSystemSimulationSpace.Local;
-        vel.x = ConstantCurve(0f);
-        vel.y = ConstantCurve(0f);
-        vel.z = ConstantCurve(0f);
-        ApplyOrbitalVelocity(vel, 3f * VelocityScale, -2.8f * VelocityScale);
+        ApplyVelocityOverLifetime(
+            vel,
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(3f * VelocityScale),
+            VelConst(-2.8f * VelocityScale));
 
         var sol = ps.sizeOverLifetime;
         sol.enabled = true;
@@ -603,9 +689,40 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
         col.enabled = false;
     }
 
-    private static ParticleSystem.MinMaxCurve ConstantCurve(float value)
+    private static ParticleSystem.MinMaxCurve VelConst(float value)
     {
         return new ParticleSystem.MinMaxCurve(value, value);
+    }
+
+    private static ParticleSystem.MinMaxCurve VelRange(float min, float max)
+    {
+        return new ParticleSystem.MinMaxCurve(min, max);
+    }
+
+    private static void ApplyVelocityOverLifetime(
+        ParticleSystem.VelocityOverLifetimeModule vel,
+        ParticleSystem.MinMaxCurve x,
+        ParticleSystem.MinMaxCurve y,
+        ParticleSystem.MinMaxCurve z,
+        ParticleSystem.MinMaxCurve orbitalX,
+        ParticleSystem.MinMaxCurve orbitalY,
+        ParticleSystem.MinMaxCurve orbitalZ,
+        ParticleSystem.MinMaxCurve radial)
+    {
+        vel.enabled = true;
+        vel.space = ParticleSystemSimulationSpace.Local;
+        vel.x = x;
+        vel.y = y;
+        vel.z = z;
+        vel.orbitalX = orbitalX;
+        vel.orbitalY = orbitalY;
+        vel.orbitalZ = orbitalZ;
+        vel.radial = radial;
+    }
+
+    private static ParticleSystem.MinMaxCurve ConstantCurve(float value)
+    {
+        return VelConst(value);
     }
 
     private static void ApplyOrbitalVelocity(
@@ -615,9 +732,14 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
         float orbitalX = 0f,
         float orbitalY = 0f)
     {
-        vel.orbitalX = ConstantCurve(orbitalX);
-        vel.orbitalY = ConstantCurve(orbitalY);
-        vel.orbitalZ = ConstantCurve(orbitalZ);
-        vel.radial = ConstantCurve(radial);
+        ApplyVelocityOverLifetime(
+            vel,
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(0f),
+            VelConst(orbitalX),
+            VelConst(orbitalY),
+            VelConst(orbitalZ),
+            VelConst(radial));
     }
 }

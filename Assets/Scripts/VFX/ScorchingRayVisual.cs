@@ -1,26 +1,37 @@
 using UnityEngine;
 
 /// <summary>
-/// Single straight scorching ray stretched from origin along a direction.
+/// Single straight scorching ray stretched from the ring edge along a direction.
 /// </summary>
 public sealed class ScorchingRayVisual : MonoBehaviour
 {
-    private static readonly Color CoreWhite = new(1f, 0.97f, 0.88f, 1f);
-    private static readonly Color EdgeOrange = new(1f, 0.2f, 0.08f, 1f);
-
     private static Sprite cachedBeamSprite;
+    private static int cachedSpriteVersion;
+    private const int BeamSpriteVersion = 3;
 
-    [SerializeField] private float thickness = 0.13f;
+    [SerializeField] private float thickness = 0.4f;
+    [SerializeField] private float shootDuration = 0.07f;
 
     private SpriteRenderer spriteRenderer;
     private float lifetime;
+    private float targetLength;
+    private float spriteHeight = 1f;
     private float elapsed;
     private Color startColor = Color.white;
 
-    public void Initialize(Vector2 origin, float angleDeg, float length, float lifetime, int sortingOrder, int sortingLayerId)
+    public void Initialize(
+        Vector2 origin,
+        Vector2 direction,
+        float length,
+        float lifetime,
+        int sortingOrder,
+        int sortingLayerId)
     {
         this.lifetime = Mathf.Max(0.01f, lifetime);
+        targetLength = length;
         elapsed = 0f;
+
+        var dir = direction.sqrMagnitude > 1e-6f ? direction.normalized : Vector2.up;
 
         if (spriteRenderer == null)
         {
@@ -30,17 +41,17 @@ public sealed class ScorchingRayVisual : MonoBehaviour
 
         spriteRenderer.sortingLayerID = sortingLayerId;
         spriteRenderer.sortingOrder = sortingOrder;
-        startColor = Color.Lerp(CoreWhite, EdgeOrange, Random.Range(0.15f, 0.45f));
+        startColor = new Color(1f, 0.28f, 0.06f, 1f);
         spriteRenderer.color = startColor;
 
         transform.position = origin;
-        transform.rotation = Quaternion.Euler(0f, 0f, angleDeg);
+        transform.rotation = Quaternion.FromToRotation(Vector3.up, new Vector3(dir.x, dir.y, 0f));
 
-        var spriteHeight = spriteRenderer.sprite != null ? spriteRenderer.sprite.bounds.size.y : 1f;
+        spriteHeight = spriteRenderer.sprite != null ? spriteRenderer.sprite.bounds.size.y : 1f;
         if (spriteHeight < 1e-4f)
             spriteHeight = 1f;
 
-        transform.localScale = new Vector3(thickness, length / spriteHeight, 1f);
+        transform.localScale = new Vector3(thickness, 0f, 1f);
         Destroy(gameObject, this.lifetime);
     }
 
@@ -51,7 +62,14 @@ public sealed class ScorchingRayVisual : MonoBehaviour
 
         elapsed += Time.deltaTime;
         var t = Mathf.Clamp01(elapsed / lifetime);
-        var alpha = 1f - t;
+
+        var shootT = shootDuration > 0f ? Mathf.Clamp01(elapsed / shootDuration) : 1f;
+        var easedShoot = 1f - (1f - shootT) * (1f - shootT);
+        var currentLength = targetLength * easedShoot;
+        transform.localScale = new Vector3(thickness, currentLength / spriteHeight, 1f);
+
+        var fadeStart = 0.55f;
+        var alpha = t < fadeStart ? 1f : 1f - ((t - fadeStart) / (1f - fadeStart));
         var c = startColor;
         c.a = alpha;
         spriteRenderer.color = c;
@@ -59,10 +77,12 @@ public sealed class ScorchingRayVisual : MonoBehaviour
 
     private static Sprite GetBeamSprite()
     {
-        if (cachedBeamSprite != null)
+        if (cachedBeamSprite != null && cachedSpriteVersion == BeamSpriteVersion)
             return cachedBeamSprite;
 
-        const int width = 12;
+        cachedBeamSprite = null;
+
+        const int width = 20;
         const int height = 64;
         const float pixelsPerUnit = 64f;
 
@@ -72,19 +92,24 @@ public sealed class ScorchingRayVisual : MonoBehaviour
         for (var y = 0; y < height; y++)
         {
             var vertical = y / (height - 1f);
-            var tipFade = vertical < 0.08f || vertical > 0.92f
-                ? Mathf.InverseLerp(0f, 0.08f, vertical < 0.08f ? vertical : 1f - vertical)
+            var rootFade = vertical < 0.04f
+                ? Mathf.InverseLerp(0f, 0.04f, vertical)
                 : 1f;
+            var tipFade = vertical > 0.9f
+                ? Mathf.InverseLerp(1f, 0.9f, vertical)
+                : 1f;
+            var verticalFade = rootFade * tipFade;
 
             for (var x = 0; x < width; x++)
             {
                 var dist = Mathf.Abs(x - centerX) / (width * 0.5f);
                 var core = 1f - Mathf.Clamp01(dist);
+                core = core > 0.35f ? 1f : core / 0.35f;
                 var rgb = Color32.Lerp(
-                    new Color32(255, 51, 20, 255),
-                    new Color32(255, 247, 224, 255),
+                    new Color32(255, 45, 8, 255),
+                    new Color32(255, 210, 120, 255),
                     core);
-                var alpha = (byte)Mathf.RoundToInt(Mathf.Lerp(0.65f, 1f, core) * tipFade * 255f);
+                var alpha = (byte)Mathf.RoundToInt(verticalFade * 255f);
                 rgb.a = alpha;
                 pixels[y * width + x] = rgb;
             }
@@ -92,7 +117,7 @@ public sealed class ScorchingRayVisual : MonoBehaviour
 
         var tex = new Texture2D(width, height, TextureFormat.RGBA32, false)
         {
-            filterMode = FilterMode.Bilinear,
+            filterMode = FilterMode.Point,
             wrapMode = TextureWrapMode.Clamp,
             hideFlags = HideFlags.HideAndDontSave
         };
@@ -105,6 +130,7 @@ public sealed class ScorchingRayVisual : MonoBehaviour
             new Vector2(0.5f, 0f),
             pixelsPerUnit);
 
+        cachedSpriteVersion = BeamSpriteVersion;
         return cachedBeamSprite;
     }
 }

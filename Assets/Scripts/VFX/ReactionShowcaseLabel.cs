@@ -20,6 +20,9 @@ public static class ReactionShowcaseLabel
         go.transform.localPosition = new Vector3(0f, LabelHeight, 0f);
 
         var text = go.AddComponent<TextMeshPro>();
+        var font = TMP_Settings.defaultFontAsset;
+        if (font != null)
+            text.font = font;
         text.text = $"{reactionName}\n{a} + {b}";
         text.fontSize = FontSize;
         text.alignment = TextAlignmentOptions.Center;

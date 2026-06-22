@@ -9,9 +9,17 @@ public sealed class ReactionMagneticFieldShrink : MonoBehaviour, IReactionWorldV
     [SerializeField] private float startScale = 2.2f;
     [SerializeField] private float endScale = 0.12f;
     [SerializeField] private float shrinkDuration = 1f;
+    [SerializeField] private float fieldBaseRadius = 0.7f;
 
     private float elapsed;
     private bool active;
+
+    public float StartScale => startScale;
+    public float EndScale => endScale;
+    public float ShrinkDuration => shrinkDuration;
+    public bool IsActive => active;
+    public float CurrentScale => transform.localScale.x;
+    public float CurrentFieldRadius => fieldBaseRadius * CurrentScale;
 
     public void Initialize(ReactionVfxContext ctx)
     {
