@@ -61,10 +61,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ReactionElectrowettingBolts
   lightningVisualPrefab: {fileID: 1169245859301116722, guid: 542cfb66a3997b5498af20c5a0a7c068, type: 3}
+  pullRingRadius: 0.95
+  pullBoltsOnSource: 5
   effectRadius: 2.4
-  maxTargets: 6
+  maxNearbyTargets: 4
   boltLifetime: 0.12
-  boltTint: {r: 0.85, g: 0.95, b: 1, a: 1}
+  endpointInset: 0.04
+  boltThickness: 0.45
+  boltTint: {r: 0.55, g: 0.9, b: 1, a: 1}
+  sortingOrderOffset: 54
 --- !u!114 &410001005
 MonoBehaviour:
   m_ObjectHideFlags: 0

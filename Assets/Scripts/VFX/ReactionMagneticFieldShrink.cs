@@ -19,6 +19,7 @@ public sealed class ReactionMagneticFieldShrink : MonoBehaviour, IReactionWorldV
     public float ShrinkDuration => shrinkDuration;
     public bool IsActive => active;
     public float CurrentScale => transform.localScale.x;
+    public float InitialFieldRadius => fieldBaseRadius * startScale;
     public float CurrentFieldRadius => fieldBaseRadius * CurrentScale;
 
     public void Initialize(ReactionVfxContext ctx)

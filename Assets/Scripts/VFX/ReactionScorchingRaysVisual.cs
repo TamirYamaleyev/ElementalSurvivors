@@ -1,13 +1,14 @@
 using UnityEngine;
 
 /// <summary>
-/// Spawns a heat ring plus exactly three thick beams from the ring edge in random directions.
+/// Spawns exactly three thick beams from an invisible origin radius in random outward directions.
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class ReactionScorchingRaysVisual : MonoBehaviour, IReactionWorldVfx
 {
     private const int BeamCount = 3;
 
+    [Tooltip("Invisible origin radius for beam spawn and distance tuning (sketch circle guide only).")]
     [SerializeField] private float sphereRadius = 0.36f;
     [SerializeField] private float minRayLength = 0.85f;
     [SerializeField] private float maxRayLength = 1.35f;
@@ -21,10 +22,6 @@ public sealed class ReactionScorchingRaysVisual : MonoBehaviour, IReactionWorldV
     {
         var center = (Vector2)ctx.Center;
         CacheSortingFromEnemy(ctx.SourceEnemy);
-
-        var ringGo = new GameObject("ScorchingWindRing");
-        ringGo.AddComponent<ScorchingWindRingVisual>()
-            .Initialize(center, sphereRadius, effectLifetime, sortingOrder, sortingLayerId);
 
         for (var i = 0; i < BeamCount; i++)
         {

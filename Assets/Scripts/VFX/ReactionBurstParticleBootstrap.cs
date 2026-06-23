@@ -74,7 +74,7 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
                 ConfigureHail(ps);
                 break;
             case ReactionBurstKind.Electrowetting:
-                life.SetDestroyAfter(0.35f);
+                life.SetDestroyAfter(0.5f);
                 ConfigureElectrowetting(ps);
                 break;
             case ReactionBurstKind.DustSandStorm:
@@ -376,23 +376,23 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
         var main = ps.main;
         main.playOnAwake = false;
         main.loop = false;
-        main.duration = 0.2f;
-        main.startLifetime = new ParticleSystem.MinMaxCurve(0.1f, 0.18f);
-        main.startSpeed = new ParticleSystem.MinMaxCurve(0.8f * VelocityScale, 2.2f * VelocityScale);
-        main.startSize = new ParticleSystem.MinMaxCurve(0.06f * VisualSizeScale, 0.12f * VisualSizeScale);
+        main.duration = 0.28f;
+        main.startLifetime = new ParticleSystem.MinMaxCurve(0.14f, 0.24f);
+        main.startSpeed = new ParticleSystem.MinMaxCurve(1.2f * VelocityScale, 3f * VelocityScale);
+        main.startSize = new ParticleSystem.MinMaxCurve(0.1f * VisualSizeScale, 0.2f * VisualSizeScale);
         main.simulationSpace = ParticleSystemSimulationSpace.Local;
-        main.maxParticles = Mathf.RoundToInt(80f * MaxParticlesScale);
+        main.maxParticles = Mathf.RoundToInt(120f * MaxParticlesScale);
         main.gravityModifier = 0f;
         RandomTwoColor(main, new Color(0.2f, 0.55f, 1f), new Color(1f, 0.92f, 0.25f));
 
         var em = ps.emission;
         em.rateOverTime = 0f;
-        em.SetBursts(new[] { new ParticleSystem.Burst(0f, 45, 60) });
+        em.SetBursts(new[] { new ParticleSystem.Burst(0f, 70, 95) });
 
         var shape = ps.shape;
         shape.enabled = true;
         shape.shapeType = ParticleSystemShapeType.Circle;
-        shape.radius = 0.28f * VisualAreaScale;
+        shape.radius = 0.38f * VisualAreaScale;
 
         var vel = ps.velocityOverLifetime;
         ApplyVelocityOverLifetime(

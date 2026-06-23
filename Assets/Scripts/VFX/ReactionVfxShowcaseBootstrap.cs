@@ -45,7 +45,7 @@ public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
     // Matches ReactionBurstParticleBootstrap destroy-after values per pair above.
     private static readonly float[] ReactionLoopSeconds =
     {
-        2.4f, 2.4f, 0.5f, 0.85f, 2.4f, 2.4f, 0.35f, 2.6f, 1.2f, 1.8f,
+        2.4f, 2.4f, 0.5f, 0.85f, 2.4f, 2.4f, 0.5f, 2.6f, 1.2f, 1.8f,
     };
 
     private void Start()
