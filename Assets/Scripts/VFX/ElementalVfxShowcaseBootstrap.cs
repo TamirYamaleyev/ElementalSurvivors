@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -8,6 +9,7 @@ public class ElementalVfxShowcaseBootstrap : MonoBehaviour
 {
     [SerializeField] private Enemy enemyPrefab;
     [SerializeField] private float horizontalSpacing = 2.2f;
+    [SerializeField] private float spawnHeightY = 1.5f;
     [SerializeField] private float statusDurationSeconds = 9999f;
 
     [Header("Boss VFX test")]
@@ -39,7 +41,16 @@ public class ElementalVfxShowcaseBootstrap : MonoBehaviour
         TmpFontUtility.EnsureAllInScene();
         HideGameplayUi();
 
+        StartCoroutine(SpawnShowcaseEnemies(status, registry));
+    }
+
+    private IEnumerator SpawnShowcaseEnemies(StatusSystem status, EnemyRegistry registry)
+    {
+        yield return null;
+
         var origin = transform.position;
+        origin.y = spawnHeightY;
+
         for (var i = 0; i < ShowcaseElements.Length; i++)
         {
             var element = ShowcaseElements[i];
@@ -53,10 +64,13 @@ public class ElementalVfxShowcaseBootstrap : MonoBehaviour
 
             ElementShowcaseLabel.Create(enemy.transform, element.ToString());
             status.Apply(enemy, element, statusDurationSeconds);
+
+            yield return null;
+            RefreshStatusParticles(enemy);
         }
 
         if (bossVfxPrefab == null)
-            return;
+            yield break;
 
         var bossPos = origin + bossSpawnOffset;
         var boss = Instantiate(enemyPrefab, bossPos, Quaternion.identity);
@@ -65,10 +79,24 @@ public class ElementalVfxShowcaseBootstrap : MonoBehaviour
         boss.Initialize(status, registry);
         PrepareShowcaseEnemy(boss, registry);
 
-        var vfx = Instantiate(bossVfxPrefab, boss.transform);
+        var vfx = Instantiate(bossVfxPrefab, boss.transform, worldPositionStays: false);
         vfx.transform.SetLocalPositionAndRotation(bossVfxLocalOffset, Quaternion.identity);
 
-        foreach (var ps in vfx.GetComponentsInChildren<ParticleSystem>())
+        yield return null;
+        RefreshParticleSystems(vfx);
+    }
+
+    private static void RefreshStatusParticles(Enemy enemy)
+    {
+        if (enemy == null)
+            return;
+
+        RefreshParticleSystems(enemy.gameObject);
+    }
+
+    private static void RefreshParticleSystems(GameObject root)
+    {
+        foreach (var ps in root.GetComponentsInChildren<ParticleSystem>(true))
         {
             ps.Clear(true);
             ps.Play(true);
@@ -90,7 +118,11 @@ public class ElementalVfxShowcaseBootstrap : MonoBehaviour
     {
         var spawner = FindAnyObjectByType<EnemySpawner>();
         if (spawner != null)
-            spawner.enabled = false;
+            spawner.gameObject.SetActive(false);
+
+        var pool = FindAnyObjectByType<EnemyPool>();
+        if (pool != null)
+            pool.gameObject.SetActive(false);
 
         var weaponSystem = FindAnyObjectByType<WeaponSystem>();
         if (weaponSystem != null)

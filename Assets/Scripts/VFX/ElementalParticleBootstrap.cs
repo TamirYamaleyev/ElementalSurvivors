@@ -12,8 +12,8 @@ public class ElementalParticleBootstrap : MonoBehaviour
     private static readonly Color ElementColorWaterSecondary = new(0.72f, 0.9f, 1f);
     private static readonly Color ElementColorWindPrimary = new(0.92f, 0.95f, 1f);
     private static readonly Color ElementColorWindSecondary = Color.white;
-    private static readonly Color ElementColorEarthPrimary = new(0.05f, 0.05f, 0.05f);
-    private static readonly Color ElementColorEarthSecondary = new(0.18f, 0.18f, 0.2f);
+    private static readonly Color ElementColorEarthPrimary = new(0.35f, 0.28f, 0.2f);
+    private static readonly Color ElementColorEarthSecondary = new(0.55f, 0.45f, 0.32f);
     private static readonly Color ElementColorLightningPrimary = new(1f, 0.92f, 0.15f);
     private static readonly Color ElementColorLightningSecondary = new(1f, 0.78f, 0.05f);
     private static readonly Color BossBlackParticle = new(0.02f, 0.02f, 0.025f);
@@ -68,6 +68,23 @@ public class ElementalParticleBootstrap : MonoBehaviour
                 break;
         }
 
+        ApplyParticleMaterial(ps);
+
+        if (kind != PresetKind.BossRisingCone)
+            ps.Play(true);
+    }
+
+    private void ApplyParticleMaterial(ParticleSystem ps)
+    {
+        if (kind == PresetKind.BossRisingCone)
+        {
+            if (particleSprite != null)
+                ElementalVfxParticleMaterials.ApplyBillboardMaterial(ps, particleSprite);
+            else
+                ElementalVfxParticleMaterials.ApplyBillboardMaterial(ps, VfxParticleShapeLibrary.GetElementShape(kind));
+            return;
+        }
+
         ElementalVfxParticleMaterials.ApplyBillboardMaterial(ps, VfxParticleShapeLibrary.GetElementShape(kind));
     }
 
@@ -86,7 +103,10 @@ public class ElementalParticleBootstrap : MonoBehaviour
             ps,
             primary,
             secondary,
-            HailFallParticleUtility.ElementStatusZone);
+            HailFallParticleUtility.ElementStatusZone,
+            HailFallParticleUtility.ElementStatusSizeScale,
+            HailFallParticleUtility.ElementStatusEmissionScale,
+            HailFallParticleUtility.ElementStatusFallSpeedScale);
     }
 
     private static void ApplyCommon(ParticleSystem ps)

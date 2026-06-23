@@ -18,10 +18,14 @@ public static class HailFallParticleUtility
         0.08f);
 
     public static readonly HailFallZone ElementStatusZone = new(
-        1f,
-        1f,
-        0.55f,
-        0.08f);
+        0.74f,
+        0.74f,
+        0.46f,
+        0.064f);
+
+    public const float ElementStatusSizeScale = 1.5f;
+    public const float ElementStatusEmissionScale = 1.35f;
+    public const float ElementStatusFallSpeedScale = 0.55f;
 
     public readonly struct HailFallZone
     {
@@ -39,7 +43,14 @@ public static class HailFallParticleUtility
         }
     }
 
-    public static void ApplyHailFall(ParticleSystem ps, Color primary, Color secondary, HailFallZone zone)
+    public static void ApplyHailFall(
+        ParticleSystem ps,
+        Color primary,
+        Color secondary,
+        HailFallZone zone,
+        float sizeScale = 1f,
+        float emissionScale = 1f,
+        float fallSpeedScale = 1f)
     {
         ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
@@ -47,18 +58,19 @@ public static class HailFallParticleUtility
         main.playOnAwake = false;
         main.loop = true;
         main.duration = 6f;
-        main.startLifetime = new ParticleSystem.MinMaxCurve(0.3f, 0.5f);
+        main.startLifetime = new ParticleSystem.MinMaxCurve(0.35f, 0.6f);
         main.startSpeed = new ParticleSystem.MinMaxCurve(0.15f * VelocityScale, 0.45f * VelocityScale);
         main.startSize = new ParticleSystem.MinMaxCurve(
-            0.035f * VisualSizeScale,
-            0.055f * VisualSizeScale);
+            0.035f * VisualSizeScale * sizeScale,
+            0.055f * VisualSizeScale * sizeScale);
         main.simulationSpace = ParticleSystemSimulationSpace.Local;
         main.maxParticles = Mathf.RoundToInt(120f * MaxParticlesScale);
         main.gravityModifier = 0f;
         ApplyRandomTwoColor(main, primary, secondary);
 
         var em = ps.emission;
-        em.rateOverTime = 50f * EmissionRateScale;
+        em.enabled = true;
+        em.rateOverTime = 50f * EmissionRateScale * emissionScale;
 
         var shape = ps.shape;
         shape.enabled = true;
@@ -67,11 +79,12 @@ public static class HailFallParticleUtility
         shape.position = new Vector3(0f, zone.SpawnHeight, 0f);
         shape.randomDirectionAmount = 0.12f;
 
+        var fall = fallSpeedScale;
         var vel = ps.velocityOverLifetime;
         ApplyVelocityOverLifetime(
             vel,
             VelRange(-0.35f * VelocityScale, 0.35f * VelocityScale),
-            VelRange(-4.5f * VelocityScale, -2.8f * VelocityScale),
+            VelRange(-4.5f * VelocityScale * fall, -2.8f * VelocityScale * fall),
             VelConst(0f),
             VelConst(0f),
             VelConst(0f),

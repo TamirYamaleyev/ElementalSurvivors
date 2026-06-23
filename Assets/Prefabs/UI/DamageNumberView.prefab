@@ -70,7 +70,7 @@ MonoBehaviour:
   m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: c8d9e0f1a2b3457b9c0d1e2f3a4b5c6d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -152,6 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DamageNumberView
   text: {fileID: 800000004}
   canvasGroup: {fileID: 800000006}
+  outlineMaterial: {fileID: 2100000, guid: c8d9e0f1a2b3457b9c0d1e2f3a4b5c6d, type: 2}
   driftWorldUnits: 0.35
 --- !u!225 &800000006
 CanvasGroup:

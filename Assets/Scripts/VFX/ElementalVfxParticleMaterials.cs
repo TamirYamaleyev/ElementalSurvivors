@@ -17,6 +17,7 @@ public static class ElementalVfxParticleMaterials
             return;
 
         rnd.renderMode = ParticleSystemRenderMode.Billboard;
+        rnd.enableGPUInstancing = false;
 
         Texture tex = null;
         if (particleSprite != null)
@@ -32,7 +33,7 @@ public static class ElementalVfxParticleMaterials
         if (tex == null)
             return;
 
-        var shader = Shader.Find("Sprites/Default") ?? Shader.Find("Unlit/Texture");
+        var shader = Shader.Find("Unlit/Texture");
         if (shader == null)
             return;
 
@@ -43,17 +44,6 @@ public static class ElementalVfxParticleMaterials
 
     public static Material CreateParticleMaterial(Texture tex)
     {
-        if (tex != null)
-        {
-            var spriteShader = Shader.Find("Sprites/Default");
-            if (spriteShader != null)
-            {
-                var spriteMat = new Material(spriteShader);
-                spriteMat.mainTexture = tex;
-                return spriteMat;
-            }
-        }
-
         var shader =
             Shader.Find("Universal Render Pipeline/Particles/Unlit")
             ?? Shader.Find("Particles/Standard Unlit")

@@ -188,12 +188,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ElementalStatusVfxPresenter
   optionalAnchor: {fileID: 8878452799534917276}
-  vfxLocalOffset: {x: 0, y: 0.25, z: 0}
-  fireStatusPrefab: {fileID: 100001, guid: f0e1d2c3b4a5968778695a4b3c2d1000, type: 3}
-  waterStatusPrefab: {fileID: 100001, guid: f0e1d2c3b4a5968778695a4b3c2d1001, type: 3}
-  windStatusPrefab: {fileID: 100001, guid: f0e1d2c3b4a5968778695a4b3c2d1002, type: 3}
-  earthStatusPrefab: {fileID: 100001, guid: f0e1d2c3b4a5968778695a4b3c2d1003, type: 3}
-  lightningStatusPrefab: {fileID: 100001, guid: f0e1d2c3b4a5968778695a4b3c2d1004, type: 3}
+  vfxLocalOffset: {x: 0, y: 0, z: 0}
+  fireStatusPrefab: {fileID: 5048118146191943710, guid: f0e1d2c3b4a5968778695a4b3c2d1000, type: 3}
+  waterStatusPrefab: {fileID: 1296498245142634484, guid: f0e1d2c3b4a5968778695a4b3c2d1001, type: 3}
+  windStatusPrefab: {fileID: 9024943813806199681, guid: f0e1d2c3b4a5968778695a4b3c2d1002, type: 3}
+  earthStatusPrefab: {fileID: 1944837503706811513, guid: f0e1d2c3b4a5968778695a4b3c2d1003, type: 3}
+  lightningStatusPrefab: {fileID: 8595690380204691298, guid: f0e1d2c3b4a5968778695a4b3c2d1004, type: 3}
 --- !u!114 &1424571725843723070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -294,7 +294,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -8269330794215314887, guid: f4bfc9f5460effe41a073aaab4c61dad, type: 3}
+  m_Sprite: {fileID: -2104790393, guid: e3954905565c04ea785c2f3c4ea6e549, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

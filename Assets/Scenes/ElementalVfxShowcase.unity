@@ -2508,7 +2508,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1627141331
 Transform:
   m_ObjectHideFlags: 0
@@ -2792,6 +2792,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8002001001001001, guid: 2355e8cc4e6444eba133dcb526242368, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8002001001001001, guid: 2355e8cc4e6444eba133dcb526242368, type: 3}
       propertyPath: m_Name
       value: EnemyPool
@@ -3641,6 +3645,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ElementalVfxShowcaseBootstrap
   enemyPrefab: {fileID: 1111111111111111101, guid: 77c68128e80259940a8a7848e64cca13, type: 3}
   horizontalSpacing: 2.2
+  spawnHeightY: 1.5
   statusDurationSeconds: 9999
   bossVfxPrefab: {fileID: 5634336729478383400, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
   bossSpawnOffset: {x: 6.5, y: 0, z: 0}
