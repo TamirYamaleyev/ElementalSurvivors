@@ -1,0 +1,21 @@
+public enum SfxId
+{
+    UiButtonClick,
+    EnemyHurt,
+    EnemyDeath,
+    BossSpawn,
+    BossHurt,
+    BossDeath,
+    Weapon1Activation,
+    Weapon2Activation,
+    Weapon3Activation,
+    Weapon4Activation,
+    Weapon5Activation,
+    Weapon6Activation,
+    Weapon7Activation,
+    LevelUp,
+    ExpShardCollected,
+    HealthCollected,
+    PlayerHurt,
+    PlayerDeath,
+}
