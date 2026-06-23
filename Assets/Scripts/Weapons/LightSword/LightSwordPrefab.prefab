@@ -169,7 +169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21da73abd24393f48897b67b5617f509, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  rotationDuration: 0.15
+  rotationDuration: 0.1
   rotAngle: 170
   sr: {fileID: 0}
 --- !u!1 &7227351116196777552
@@ -277,4 +277,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   sr: {fileID: 1777772827307961276}
-  fadeDuration: 0.2
+  fadeDuration: 0.1
