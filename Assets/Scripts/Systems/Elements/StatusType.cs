@@ -6,5 +6,6 @@ public enum StatusType
     Water,
     Wind,
     Earth,
-    Lightning
+    Lightning,
+    None
 }

@@ -29,7 +29,7 @@ public class WeaponSystem : MonoBehaviour
 
         foreach (var entry in weapons)
         {
-            if (entry.definition == null)
+            if (entry.definition == null || entry.level == 0)
                 continue;
 
             runtimeWeapons.Add(new WeaponInstance(entry.definition, entry.level));
@@ -43,6 +43,9 @@ public class WeaponSystem : MonoBehaviour
 
         foreach (var w in runtimeWeapons)
         {
+            if (w.level == 0)
+                continue;
+
             var target = context.Targeting.GetNearest(transform.position, w.Current.range);
             w.Tick(Time.deltaTime, target, context);
         }

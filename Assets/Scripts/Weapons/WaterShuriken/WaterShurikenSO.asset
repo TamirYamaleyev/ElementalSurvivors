@@ -17,11 +17,15 @@ MonoBehaviour:
   appliedStatus: 1
   projectilePrefab: {fileID: 0}
   orbitPrefab: {fileID: -4971674855801846006, guid: cb3abce2395fa6143806295e90aa6cf7, type: 3}
+  areaPrefab: {fileID: 0}
   customWeaponPrefab: {fileID: 0}
   levels:
   - damage: 5
     cooldown: 999999
     range: 2
+    width: 1
+    height: 1
+    lifetime: 999999
     speed: 2
     projectileCount: 2
     statusDuration: 10
@@ -29,6 +33,9 @@ MonoBehaviour:
   - damage: 10
     cooldown: 999999
     range: 2
+    width: 1
+    height: 1
+    lifetime: 999999
     speed: 2
     projectileCount: 3
     statusDuration: 10
@@ -36,6 +43,9 @@ MonoBehaviour:
   - damage: 20
     cooldown: 999999
     range: 2
+    width: 1
+    height: 1
+    lifetime: 999999
     speed: 5
     projectileCount: 4
     statusDuration: 10
@@ -43,6 +53,9 @@ MonoBehaviour:
   - damage: 30
     cooldown: 999999
     range: 2
+    width: 1
+    height: 1
+    lifetime: 999999
     speed: 2
     projectileCount: 5
     statusDuration: 10
@@ -50,6 +63,9 @@ MonoBehaviour:
   - damage: 50
     cooldown: 999999
     range: 2
+    width: 1
+    height: 1
+    lifetime: 999999
     speed: 3
     projectileCount: 6
     statusDuration: 10
