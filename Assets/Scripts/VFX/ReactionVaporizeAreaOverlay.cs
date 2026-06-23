@@ -8,7 +8,7 @@ using UnityEngine;
 public sealed class ReactionVaporizeAreaOverlay : MonoBehaviour, IReactionWorldVfx
 {
     [SerializeField] private float effectRadius = 1.25f;
-    [SerializeField] private float duration = 2.4f;
+    [SerializeField] private float duration = 4f;
     [SerializeField] private float refreshInterval = 0.15f;
     [SerializeField] private int sortingOrderOffset = 30;
 
@@ -123,7 +123,7 @@ public sealed class ReactionVaporizeAreaOverlay : MonoBehaviour, IReactionWorldV
         main.playOnAwake = false;
         main.loop = true;
         main.duration = 6f;
-        main.startLifetime = 0.55f;
+        main.startLifetime = 0.92f;
         main.startSpeed = 0f;
         main.startSize = new ParticleSystem.MinMaxCurve(0.08f, 0.14f);
         main.simulationSpace = ParticleSystemSimulationSpace.Local;

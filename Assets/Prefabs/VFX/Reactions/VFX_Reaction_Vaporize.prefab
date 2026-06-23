@@ -74,6 +74,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ReactionVaporizeAreaOverlay
   effectRadius: 1.25
-  duration: 2.4
+  duration: 4
   refreshInterval: 0.15
   sortingOrderOffset: 30

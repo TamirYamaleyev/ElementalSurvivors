@@ -188,7 +188,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ElementalStatusVfxPresenter
   optionalAnchor: {fileID: 8878452799534917276}
-  vfxLocalOffset: {x: 0, y: -0.6, z: 0}
+  vfxLocalOffset: {x: 0, y: 0.25, z: 0}
   fireStatusPrefab: {fileID: 100001, guid: f0e1d2c3b4a5968778695a4b3c2d1000, type: 3}
   waterStatusPrefab: {fileID: 100001, guid: f0e1d2c3b4a5968778695a4b3c2d1001, type: 3}
   windStatusPrefab: {fileID: 100001, guid: f0e1d2c3b4a5968778695a4b3c2d1002, type: 3}

@@ -6,25 +6,22 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class ElementalParticleBootstrap : MonoBehaviour
 {
-    /// <summary>Scales emission shape radius / offsets (wider cloud).</summary>
-    private const float VisualAreaScale = 2f;
-
-    /// <summary>Scales particle size in <see cref="ApplyCommon"/>.</summary>
-    private const float VisualSizeScale = 1.75f;
-
-    private const float EmissionRateScale = 1.55f;
-    private const float MaxParticlesScale = 1.5f;
-    /// <summary>Extra horizontal width for Fire/Water vertical streams (box emission).</summary>
-    private const float FireWaterStripWidth = 0.8f;
-
-    private const float VelocityScale = 1f;
-
-    private static readonly Color ElementColorFire = new(1f, 0.2f, 0.1f);
-    private static readonly Color ElementColorWater = new(0.2f, 0.45f, 1f);
-    private static readonly Color ElementColorWind = Color.white;
-    private static readonly Color ElementColorEarth = new(0.12f, 0.12f, 0.12f);
-    private static readonly Color ElementColorLightning = new(1f, 0.95f, 0.2f);
+    private static readonly Color ElementColorFirePrimary = new(1f, 0.15f, 0.08f);
+    private static readonly Color ElementColorFireSecondary = new(1f, 0.45f, 0.15f);
+    private static readonly Color ElementColorWaterPrimary = new(0.2f, 0.45f, 1f);
+    private static readonly Color ElementColorWaterSecondary = new(0.72f, 0.9f, 1f);
+    private static readonly Color ElementColorWindPrimary = new(0.92f, 0.95f, 1f);
+    private static readonly Color ElementColorWindSecondary = Color.white;
+    private static readonly Color ElementColorEarthPrimary = new(0.05f, 0.05f, 0.05f);
+    private static readonly Color ElementColorEarthSecondary = new(0.18f, 0.18f, 0.2f);
+    private static readonly Color ElementColorLightningPrimary = new(1f, 0.92f, 0.15f);
+    private static readonly Color ElementColorLightningSecondary = new(1f, 0.78f, 0.05f);
     private static readonly Color BossBlackParticle = new(0.02f, 0.02f, 0.025f);
+
+    private const float VisualAreaScale = 2f;
+    private const float VisualSizeScale = 1.75f;
+    private const float EmissionRateScale = 1.55f;
+    private const float VelocityScale = 1f;
 
     public enum PresetKind
     {
@@ -47,25 +44,25 @@ public class ElementalParticleBootstrap : MonoBehaviour
         if (ps == null)
             ps = gameObject.AddComponent<ParticleSystem>();
 
-        ApplyCommon(ps);
         switch (kind)
         {
             case PresetKind.Fire:
-                ConfigureFire(ps);
+                ConfigureElementHailFall(ps, ElementColorFirePrimary, ElementColorFireSecondary);
                 break;
             case PresetKind.Water:
-                ConfigureWater(ps);
+                ConfigureElementHailFall(ps, ElementColorWaterPrimary, ElementColorWaterSecondary);
                 break;
             case PresetKind.Wind:
-                ConfigureWind(ps);
+                ConfigureElementHailFall(ps, ElementColorWindPrimary, ElementColorWindSecondary);
                 break;
             case PresetKind.Earth:
-                ConfigureEarth(ps);
+                ConfigureElementHailFall(ps, ElementColorEarthPrimary, ElementColorEarthSecondary);
                 break;
             case PresetKind.Lightning:
-                ConfigureLightning(ps);
+                ConfigureElementHailFall(ps, ElementColorLightningPrimary, ElementColorLightningSecondary);
                 break;
             case PresetKind.BossRisingCone:
+                ApplyCommon(ps);
                 ConfigureBossRisingCone(ps);
                 AddBossBlackTriangleDispersal();
                 break;
@@ -83,6 +80,15 @@ public class ElementalParticleBootstrap : MonoBehaviour
         }
     }
 
+    private static void ConfigureElementHailFall(ParticleSystem ps, Color primary, Color secondary)
+    {
+        HailFallParticleUtility.ApplyHailFall(
+            ps,
+            primary,
+            secondary,
+            HailFallParticleUtility.ElementStatusZone);
+    }
+
     private static void ApplyCommon(ParticleSystem ps)
     {
         ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -96,112 +102,11 @@ public class ElementalParticleBootstrap : MonoBehaviour
         main.startSpeed = 0f;
         main.startSize = 0.1f * VisualSizeScale;
         main.simulationSpace = ParticleSystemSimulationSpace.Local;
-        main.maxParticles = Mathf.RoundToInt(80f * MaxParticlesScale);
+        main.maxParticles = Mathf.RoundToInt(80f * HailFallParticleUtility.MaxParticlesScale);
         main.gravityModifier = 0f;
 
         var em = ps.emission;
         em.rateOverTime = 28f * EmissionRateScale;
-    }
-
-    private static void ConfigureFire(ParticleSystem ps)
-    {
-        var c = ElementColorFire;
-        var main = ps.main;
-        main.startColor = c;
-
-        var shape = ps.shape;
-        shape.enabled = true;
-        shape.shapeType = ParticleSystemShapeType.Box;
-        shape.scale = new Vector3(FireWaterStripWidth * VisualAreaScale, 0.14f, 0.2f);
-        shape.position = new Vector3(0f, -0.32f * VisualAreaScale, 0f);
-
-        var vel = ps.velocityOverLifetime;
-        vel.enabled = true;
-        vel.space = ParticleSystemSimulationSpace.Local;
-        vel.y = new ParticleSystem.MinMaxCurve(2.2f * VelocityScale);
-
-        EnableSolidColorOverLifetime(ps, c);
-    }
-
-    private static void ConfigureWater(ParticleSystem ps)
-    {
-        var c = ElementColorWater;
-        var main = ps.main;
-        main.startColor = c;
-
-        var shape = ps.shape;
-        shape.enabled = true;
-        shape.shapeType = ParticleSystemShapeType.Box;
-        shape.scale = new Vector3(FireWaterStripWidth * VisualAreaScale, 0.14f, 0.2f);
-        shape.position = new Vector3(0f, 0.32f * VisualAreaScale, 0f);
-
-        var vel = ps.velocityOverLifetime;
-        vel.enabled = true;
-        vel.space = ParticleSystemSimulationSpace.Local;
-        vel.y = new ParticleSystem.MinMaxCurve(-2f * VelocityScale);
-
-        EnableSolidColorOverLifetime(ps, c);
-    }
-
-    private static void ConfigureWind(ParticleSystem ps)
-    {
-        var c = ElementColorWind;
-        var main = ps.main;
-        main.startColor = c;
-
-        var shape = ps.shape;
-        shape.enabled = true;
-        shape.shapeType = ParticleSystemShapeType.Circle;
-        shape.radius = 0.22f * VisualAreaScale;
-
-        var vel = ps.velocityOverLifetime;
-        vel.enabled = true;
-        vel.space = ParticleSystemSimulationSpace.Local;
-        vel.orbitalZ = new ParticleSystem.MinMaxCurve(-5.5f * VelocityScale);
-        vel.radial = new ParticleSystem.MinMaxCurve(0.15f * VelocityScale);
-
-        EnableSolidColorOverLifetime(ps, c);
-    }
-
-    private static void ConfigureEarth(ParticleSystem ps)
-    {
-        var c = ElementColorEarth;
-        var main = ps.main;
-        main.startColor = c;
-
-        var shape = ps.shape;
-        shape.enabled = true;
-        shape.shapeType = ParticleSystemShapeType.Circle;
-        shape.radius = 0.28f * VisualAreaScale;
-
-        var vel = ps.velocityOverLifetime;
-        vel.enabled = true;
-        vel.space = ParticleSystemSimulationSpace.Local;
-        vel.orbitalZ = new ParticleSystem.MinMaxCurve(2.8f * VelocityScale);
-        vel.radial = new ParticleSystem.MinMaxCurve(-0.25f * VelocityScale);
-
-        EnableSolidColorOverLifetime(ps, c);
-    }
-
-    private static void ConfigureLightning(ParticleSystem ps)
-    {
-        var c = ElementColorLightning;
-        var main = ps.main;
-        main.startColor = c;
-        main.startSpeed = new ParticleSystem.MinMaxCurve(1.2f * VelocityScale, 3.2f * VelocityScale);
-        main.startLifetime = 0.35f;
-
-        var shape = ps.shape;
-        shape.enabled = true;
-        shape.shapeType = ParticleSystemShapeType.Sphere;
-        shape.radius = 0.04f * VisualAreaScale;
-
-        var vel = ps.velocityOverLifetime;
-        vel.enabled = true;
-        vel.space = ParticleSystemSimulationSpace.Local;
-        vel.radial = new ParticleSystem.MinMaxCurve(0.8f * VelocityScale, 2.4f * VelocityScale);
-
-        EnableSolidColorOverLifetime(ps, c);
     }
 
     /// <summary>
@@ -214,11 +119,11 @@ public class ElementalParticleBootstrap : MonoBehaviour
         palette.SetKeys(
             new[]
             {
-                new GradientColorKey(ElementColorFire, 0f),
-                new GradientColorKey(ElementColorWater, 0.25f),
-                new GradientColorKey(ElementColorWind, 0.5f),
-                new GradientColorKey(ElementColorEarth, 0.75f),
-                new GradientColorKey(ElementColorLightning, 1f)
+                new GradientColorKey(ElementColorFirePrimary, 0f),
+                new GradientColorKey(ElementColorWaterPrimary, 0.25f),
+                new GradientColorKey(ElementColorWindPrimary, 0.5f),
+                new GradientColorKey(ElementColorEarthPrimary, 0.75f),
+                new GradientColorKey(ElementColorLightningPrimary, 1f)
             },
             new[] { new GradientAlphaKey(1f, 0f), new GradientAlphaKey(1f, 1f) }
         );
@@ -316,17 +221,4 @@ public class ElementalParticleBootstrap : MonoBehaviour
         mesh.RecalculateBounds();
         return mesh;
     }
-
-    private static void EnableSolidColorOverLifetime(ParticleSystem ps, Color color)
-    {
-        var col = ps.colorOverLifetime;
-        col.enabled = true;
-        var grad = new Gradient();
-        grad.SetKeys(
-            new[] { new GradientColorKey(color, 0f), new GradientColorKey(color, 1f) },
-            new[] { new GradientAlphaKey(color.a, 0f), new GradientAlphaKey(color.a, 1f) }
-        );
-        col.color = new ParticleSystem.MinMaxGradient(grad);
-    }
-
 }

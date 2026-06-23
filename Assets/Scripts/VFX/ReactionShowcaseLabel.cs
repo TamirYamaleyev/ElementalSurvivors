@@ -15,10 +15,20 @@ public static class ReactionShowcaseLabel
 
     public static void Create(Transform anchor, string reactionName, StatusType a, StatusType b)
     {
+        CreateLabel(anchor, $"{reactionName}\n{a} + {b}", "ReactionLabel");
+    }
+
+    public static void CreateSingleLine(Transform anchor, string labelText, string objectName = "ShowcaseLabel")
+    {
+        CreateLabel(anchor, labelText, objectName);
+    }
+
+    private static void CreateLabel(Transform anchor, string labelText, string objectName)
+    {
         if (anchor == null)
             return;
 
-        var go = new GameObject("ReactionLabel");
+        var go = new GameObject(objectName);
         go.transform.SetParent(anchor, false);
         go.transform.localPosition = new Vector3(0f, LabelHeight, 0f);
 
@@ -31,7 +41,7 @@ public static class ReactionShowcaseLabel
 
         var text = go.AddComponent<TextMesh>();
         text.font = font;
-        text.text = $"{reactionName}\n{a} + {b}";
+        text.text = labelText;
         text.fontSize = FontSize;
         text.characterSize = CharacterSize;
         text.anchor = TextAnchor.MiddleCenter;
