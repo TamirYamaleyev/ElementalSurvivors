@@ -736,6 +736,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDefaultWeapon
   spear: {fileID: 4385793726486163027}
   cam: {fileID: 519420031}
+  characterAnimation: {fileID: 0}
   attackCooldown: 1
   attackRadius: 5
   activeTime: 0.12
@@ -1623,6 +1624,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelUpUI
   levelUpPanel: {fileID: 376262324}
   expRef: {fileID: 181845791}
+  spearWeapon: {fileID: 0}
+  orbitWeapon: {fileID: 0}
+  boomerangWeapon: {fileID: 0}
+  option1Button: {fileID: 0}
+  option2Button: {fileID: 0}
+  option3Button: {fileID: 0}
 --- !u!1 &819761847
 GameObject:
   m_ObjectHideFlags: 0
@@ -2544,6 +2551,10 @@ MonoBehaviour:
   spawnInterval: 1
   spawnRadius: 10
   spawnJitter: 0.5
+  spawnBodyRadius: 0.35
+  spawnClearancePadding: 0.08
+  spawnClearMaxAttempts: 32
+  spawnSearchRadiusExtra: 3
 --- !u!114 &1627141333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3039,9 +3050,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a53ddcfc33a937468991b12ff60175b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AreaSystem
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 512
 --- !u!114 &1859789189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3105,6 +3113,7 @@ MonoBehaviour:
   projectileSpawnPoint: {fileID: 405520221}
   orbitCenter: {fileID: 1969635670}
   areaSpawnPoint: {fileID: 0}
+  playerTransformPoint: {fileID: 0}
   weaponSystem: {fileID: 181845793}
 --- !u!1 &1929810247
 GameObject:
@@ -3424,6 +3433,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2121204046}
   m_CullTransparentMesh: 1
+--- !u!1 &888777666555001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 888777666555002}
+  - component: {fileID: 888777666555003}
+  m_Layer: 0
+  m_Name: ReactionVfxShowcase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &888777666555002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888777666555001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &888777666555003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888777666555001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0e0f0a0b0c0d0e0f0a0b0c0d0e0f0a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ReactionVfxShowcaseBootstrap
+  enemyPrefab: {fileID: 1111111111111111101, guid: 77c68128e80259940a8a7848e64cca13, type: 3}
+  columns: 5
+  columnSpacing: 5
+  rowSpacing: 5
+  statusDurationSeconds: 9999
+  loopReactionVfx: 1
 --- !u!1001 &3212964729943304090
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3595,56 +3654,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2923133445809161551, guid: 6d89700316818dc45a88c9c0d5952ced, type: 3}
   m_PrefabInstance: {fileID: 4385793726486163026}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &888777666555001
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 888777666555002}
-  - component: {fileID: 888777666555003}
-  m_Layer: 0
-  m_Name: ReactionVfxShowcase
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &888777666555002
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 888777666555001}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &888777666555003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 888777666555001}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0e0f0a0b0c0d0e0f0a0b0c0d0e0f0a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ReactionVfxShowcaseBootstrap
-  enemyPrefab: {fileID: 1111111111111111101, guid: 77c68128e80259940a8a7848e64cca13, type: 3}
-  columns: 5
-  columnSpacing: 2.2
-  rowSpacing: 2.6
-  statusDurationSeconds: 9999
-  loopReactionVfx: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

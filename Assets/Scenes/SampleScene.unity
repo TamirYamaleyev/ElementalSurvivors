@@ -770,7 +770,7 @@ MonoBehaviour:
   - definition: {fileID: 11400000, guid: 6c35ab8dc527e474287ea1f5cdd83d98, type: 2}
     level: 1
   - definition: {fileID: 11400000, guid: 6f519e1c2b660154ba9d8e6fa4a4ea1a, type: 2}
-    level: 5
+    level: 1
   - definition: {fileID: 11400000, guid: f24871ee27bd4ec439a7598e3b81029a, type: 2}
     level: 1
 --- !u!114 &181845794
