@@ -65,6 +65,8 @@ public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
         }
 
         DisableSceneInterruptions();
+        TmpFontUtility.EnsureAllInScene();
+        HideGameplayUi();
 
         var origin = transform.position;
         var n = Pairs.Length;
@@ -98,6 +100,17 @@ public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
                 StartCoroutine(LoopReactionVfx(status, enemy, a, b, interval));
             }
         }
+    }
+
+    private static void HideGameplayUi()
+    {
+        var hud = GameObject.Find("HUD");
+        if (hud != null)
+            hud.SetActive(false);
+
+        var levelUpRoot = GameObject.Find("LevelUpUIRoot");
+        if (levelUpRoot != null)
+            levelUpRoot.SetActive(false);
     }
 
     private static void DisableSceneInterruptions()

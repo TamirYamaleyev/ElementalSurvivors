@@ -21,6 +21,8 @@ public class DamageNumberView : MonoBehaviour
 
         if (canvasGroup == null)
             canvasGroup = GetComponent<CanvasGroup>();
+
+        TmpFontUtility.EnsureAssigned(text);
     }
 
     public void Play(int damage, Color color, Vector3 worldPosition, float lifetime, Action<DamageNumberView> onComplete)
