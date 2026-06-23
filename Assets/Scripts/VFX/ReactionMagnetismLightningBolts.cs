@@ -2,19 +2,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Short lightning bolts from the shrinking field edge pulled into enemies inside the field.
+/// Small direct inward lightning segments along the pull axis (field edge toward each enemy).
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class ReactionMagnetismLightningBolts : MonoBehaviour, IReactionWorldVfx
 {
     [SerializeField] private ChaingLightningVisual lightningVisualPrefab;
-    [SerializeField] private float boltInterval = 0.07f;
-    [SerializeField] private int boltsPerEnemy = 2;
-    [SerializeField] private int maxBoltsPerWave = 14;
-    [SerializeField] private float boltLifetime = 0.09f;
-    [SerializeField] private float endpointInset = 0.04f;
-    [SerializeField] private float boltThickness = 0.42f;
-    [SerializeField] private Color boltTint = new(0.7f, 0.94f, 1f, 1f);
+    [SerializeField] private float boltInterval = 0.06f;
+    [SerializeField] private int segmentsPerEnemy = 3;
+    [SerializeField] private float segmentLength = 0.2f;
+    [SerializeField] private int maxSegmentsPerWave = 18;
+    [SerializeField] private float boltLifetime = 0.07f;
+    [SerializeField] private float endpointInset = 0.02f;
+    [SerializeField] private float boltThickness = 0.28f;
+    [SerializeField] private Color boltTint = new(0.72f, 0.95f, 1f, 1f);
     [SerializeField] private int sortingOrderOffset = 58;
 
     private readonly List<Enemy> scratchTargets = new();
@@ -68,24 +69,45 @@ public sealed class ReactionMagnetismLightningBolts : MonoBehaviour, IReactionWo
             if (target == null)
                 continue;
 
-            for (var i = 0; i < boltsPerEnemy; i++)
-            {
-                if (spawned >= maxBoltsPerWave)
-                    return;
-
-                SpawnBoltToEnemy(target, fieldRadius);
-                spawned++;
-            }
+            spawned += SpawnDirectPullSegments(target, fieldRadius, spawned);
+            if (spawned >= maxSegmentsPerWave)
+                return;
         }
     }
 
-    private void SpawnBoltToEnemy(Enemy target, float fieldRadius)
+    private int SpawnDirectPullSegments(Enemy target, float fieldRadius, int spawnedSoFar)
     {
         var end = (Vector2)target.transform.position + Vector2.up * 0.25f;
-        var angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
-        var ringDir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-        var start = (Vector2)center + ringDir * fieldRadius;
+        var delta = end - (Vector2)center;
+        if (delta.sqrMagnitude < 1e-6f)
+            return 0;
 
+        var pullDir = delta.normalized;
+        var ringPoint = (Vector2)center + pullDir * fieldRadius;
+        var pullSpan = Vector2.Distance(ringPoint, end);
+        if (pullSpan < 0.08f)
+            return 0;
+
+        var spawned = 0;
+        var step = pullSpan / segmentsPerEnemy;
+        var segLen = Mathf.Min(segmentLength, step * 0.85f);
+
+        for (var i = 0; i < segmentsPerEnemy; i++)
+        {
+            if (spawnedSoFar + spawned >= maxSegmentsPerWave)
+                break;
+
+            var segStart = ringPoint + pullDir * (step * i);
+            var segEnd = segStart + pullDir * segLen;
+            SpawnBoltSegment(segStart, segEnd);
+            spawned++;
+        }
+
+        return spawned;
+    }
+
+    private void SpawnBoltSegment(Vector2 start, Vector2 end)
+    {
         var visual = Instantiate(lightningVisualPrefab);
         visual.Initialize(start, end, null, boltLifetime, endpointInset);
 
