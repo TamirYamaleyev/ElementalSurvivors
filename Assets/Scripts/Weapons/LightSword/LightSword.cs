@@ -5,6 +5,7 @@ using UnityEngine;
 public class LightSword : MonoBehaviour
 {
     [SerializeField] private float rotationDuration = 0.5f;
+    [SerializeField] private float rotAngle = 90f;
     [SerializeField] private SpriteRenderer sr;
 
     private float damage;
@@ -59,9 +60,9 @@ public class LightSword : MonoBehaviour
     private void Rotate90(bool isClockwise)
     {
         if (isClockwise)
-            StartCoroutine(RotateRoutine(90f));
+            StartCoroutine(RotateRoutine(rotAngle));
         else
-            StartCoroutine(RotateRoutine(-90f));
+            StartCoroutine(RotateRoutine(-rotAngle));
     }
 
     private IEnumerator RotateRoutine(float angle)
