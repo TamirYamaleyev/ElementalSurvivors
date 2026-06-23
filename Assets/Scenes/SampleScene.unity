@@ -694,7 +694,7 @@ CapsuleCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 181845783}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 6200000, guid: 44725902e03407941a77ca746c105032, type: 2}
@@ -4917,7 +4917,7 @@ MonoBehaviour:
   container: {fileID: 276119234}
   worldCamera: {fileID: 519420031}
   prewarmCount: 16
-  color: {r: 1, g: 0.95, b: 0.4, a: 1}
+  color: {r: 1, g: 1, b: 1, a: 1}
   lifetime: 0.8
   worldOffset: {x: 0, y: 0.5}
   randomSpread: {x: 0.35, y: 0.15}
