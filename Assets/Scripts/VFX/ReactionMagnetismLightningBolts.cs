@@ -108,7 +108,7 @@ public sealed class ReactionMagnetismLightningBolts : MonoBehaviour, IReactionWo
 
     private void SpawnBoltSegment(Vector2 start, Vector2 end)
     {
-        var visual = Instantiate(lightningVisualPrefab);
+        var visual = Instantiate(lightningVisualPrefab, transform);
         visual.Initialize(start, end, null, boltLifetime, endpointInset);
 
         var sr = visual.GetComponent<SpriteRenderer>();

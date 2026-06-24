@@ -58,7 +58,10 @@ public class StatusSystem : MonoBehaviour
     private void SpawnReactionVfxInstance(Enemy enemy, GameObject prefab)
     {
         var pos = enemy.transform.position + Vector3.up * 0.25f;
-        var instance = Object.Instantiate(prefab, pos, Quaternion.identity);
+        var parent = ReactionVfxShowcaseBootstrap.VfxContainer;
+        var instance = parent != null
+            ? Object.Instantiate(prefab, pos, Quaternion.identity, parent)
+            : Object.Instantiate(prefab, pos, Quaternion.identity);
 
         var ctx = new ReactionVfxContext(pos, enemy, enemyRegistry);
         foreach (var behaviour in instance.GetComponentsInChildren<MonoBehaviour>())
