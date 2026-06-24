@@ -6,6 +6,8 @@ public class StatusSystem : MonoBehaviour
     private ReactionVfxCatalogSO reactionVfxCatalog;
     private EnemyRegistry enemyRegistry;
 
+    public ReactionVfxCatalogSO ReactionCatalog => reactionVfxCatalog;
+
     public void SetReactionVfxCatalog(ReactionVfxCatalogSO catalog)
     {
         reactionVfxCatalog = catalog;
@@ -37,17 +39,10 @@ public class StatusSystem : MonoBehaviour
 
     private void TryTriggerInteraction(Enemy enemy, StatusType a, StatusType b)
     {
-        if (reactionVfxCatalog == null || enemy == null)
-            return;
-
-        var prefab = reactionVfxCatalog.GetPrefab(a, b);
-        if (prefab == null)
-            return;
-
-        SpawnReactionVfxInstance(enemy, prefab);
+        // Gameplay proc hook for elemental pairs; visuals are owned by ElementalStatusVfxPresenter.
     }
 
-    /// <summary>Spawns reaction burst VFX for a pair without changing enemy statuses.</summary>
+    /// <summary>Spawns a one-shot world reaction burst (showcase / debug).</summary>
     public void SpawnReactionVfx(Enemy enemy, StatusType a, StatusType b)
     {
         if (reactionVfxCatalog == null || enemy == null)

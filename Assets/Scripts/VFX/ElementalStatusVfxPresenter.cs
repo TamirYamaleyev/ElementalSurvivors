@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Spawns one elemental particle prefab per <see cref="StatusType"/> while ref-count &gt; 0.
+/// Diff-based orchestrator: one base VFX when a single element is active; reaction VFX for all valid pairs when 2+.
 /// </summary>
 public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
 {
@@ -12,6 +12,7 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
 
     [SerializeField] private Transform optionalAnchor;
     [SerializeField] private Vector3 vfxLocalOffset = new(0f, -0.6f, 0f);
+    [SerializeField] private ReactionVfxCatalogSO reactionCatalog;
 
     [Header("Status prefabs (root with ParticleSystem)")]
     [SerializeField] private GameObject fireStatusPrefab;
@@ -20,11 +21,12 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
     [SerializeField] private GameObject earthStatusPrefab;
     [SerializeField] private GameObject lightningStatusPrefab;
 
-    private readonly Dictionary<StatusType, int> refCounts = new();
-    private readonly Dictionary<StatusType, GameObject> activeRoots = new();
+    private readonly Dictionary<StatusType, GameObject> baseRoots = new();
+    private readonly Dictionary<StatusPair, GameObject> reactionRoots = new();
 
     private SpriteRenderer bodySprite;
     private Enemy owner;
+    private EnemyRegistry enemyRegistry;
     private bool lastFlipX;
 
     private Transform Anchor => optionalAnchor != null ? optionalAnchor : transform;
@@ -32,6 +34,7 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
     private void Awake()
     {
         owner = GetComponent<Enemy>();
+        enemyRegistry = FindAnyObjectByType<EnemyRegistry>();
         bodySprite = Anchor.GetComponent<SpriteRenderer>();
         if (bodySprite == null)
             bodySprite = Anchor.GetComponentInChildren<SpriteRenderer>(true);
@@ -39,7 +42,7 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
 
     private void LateUpdate()
     {
-        if (bodySprite == null || activeRoots.Count == 0)
+        if (bodySprite == null || (baseRoots.Count == 0 && reactionRoots.Count == 0))
             return;
 
         if (bodySprite.flipX == lastFlipX)
@@ -55,32 +58,97 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
         lastFlipX = bodySprite != null && bodySprite.flipX;
     }
 
-    public void OnStatusApplied(StatusType type)
+    public void RefreshStatusVisuals(StatusVfxPlan plan)
     {
-        if (!refCounts.TryGetValue(type, out var count))
-            count = 0;
-        refCounts[type] = count + 1;
+        SyncBaseVisuals(plan.SoloElement);
+        SyncReactionVisuals(plan.ReactionPairs);
+        SyncFlipMirror();
+    }
 
-        if (count > 0)
+    private void SyncBaseVisuals(StatusType? soloElement)
+    {
+        var toRemove = new List<StatusType>();
+        foreach (var kv in baseRoots)
+        {
+            if (!soloElement.HasValue || kv.Key != soloElement.Value)
+                toRemove.Add(kv.Key);
+        }
+
+        foreach (var type in toRemove)
+            DestroyRoot(baseRoots, type);
+
+        if (!soloElement.HasValue || soloElement.Value == StatusType.None)
             return;
 
-        var prefab = GetPrefab(type);
+        var element = soloElement.Value;
+        if (baseRoots.ContainsKey(element))
+            return;
+
+        var prefab = GetBasePrefab(element);
         if (prefab == null)
         {
-            Debug.LogWarning($"[ElementalStatusVfxPresenter] Missing status prefab for {type} on {name}.", this);
+            Debug.LogWarning($"[ElementalStatusVfxPresenter] Missing status prefab for {element} on {name}.", this);
             return;
         }
 
-        var parent = Anchor;
-        var instance = Instantiate(prefab, parent, worldPositionStays: false);
+        var instance = SpawnBaseChild(prefab);
+        baseRoots[element] = instance;
+        StartCoroutine(FinalizeSpawn(instance));
+    }
+
+    private void SyncReactionVisuals(StatusPair[] desiredPairs)
+    {
+        var desired = new HashSet<StatusPair>();
+        if (desiredPairs != null)
+        {
+            foreach (var pair in desiredPairs)
+                desired.Add(pair);
+        }
+
+        var toRemove = new List<StatusPair>();
+        foreach (var kv in reactionRoots)
+        {
+            if (!desired.Contains(kv.Key))
+                toRemove.Add(kv.Key);
+        }
+
+        foreach (var pair in toRemove)
+            DestroyRoot(reactionRoots, pair);
+
+        if (desiredPairs == null || reactionCatalog == null)
+            return;
+
+        foreach (var pair in desiredPairs)
+        {
+            if (reactionRoots.ContainsKey(pair))
+                continue;
+
+            var prefab = reactionCatalog.GetPrefab(pair.First, pair.Second);
+            if (prefab == null)
+                continue;
+
+            var offset = vfxLocalOffset;
+            offset.z = VfxDepthBiasZ;
+            var instance = ReactionVfxAttachUtility.AttachToEnemy(
+                prefab,
+                Anchor,
+                offset,
+                owner,
+                enemyRegistry);
+
+            reactionRoots[pair] = instance;
+            ApplySorting(instance);
+        }
+    }
+
+    private GameObject SpawnBaseChild(GameObject prefab)
+    {
+        var instance = Instantiate(prefab, Anchor, worldPositionStays: false);
         var offset = vfxLocalOffset;
         offset.z = VfxDepthBiasZ;
         instance.transform.SetLocalPositionAndRotation(offset, Quaternion.identity);
-        instance.layer = parent.gameObject.layer;
-
-        activeRoots[type] = instance;
-        SyncFlipMirror();
-        StartCoroutine(FinalizeSpawn(instance));
+        instance.layer = Anchor.gameObject.layer;
+        return instance;
     }
 
     private IEnumerator FinalizeSpawn(GameObject instance)
@@ -94,42 +162,38 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
         ApplySorting(instance);
     }
 
-    public void OnStatusRemoved(StatusType type)
-    {
-        if (!refCounts.TryGetValue(type, out var count))
-            return;
-
-        count--;
-        if (count <= 0)
-        {
-            refCounts.Remove(type);
-            if (activeRoots.TryGetValue(type, out var root) && root != null)
-            {
-                foreach (var ps in root.GetComponentsInChildren<ParticleSystem>())
-                {
-                    ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-                }
-
-                Destroy(root);
-                activeRoots.Remove(type);
-            }
-        }
-        else
-        {
-            refCounts[type] = count;
-        }
-    }
-
     private void ClearAllInstances()
     {
-        foreach (var kv in activeRoots)
+        foreach (var kv in baseRoots)
         {
             if (kv.Value != null)
                 Destroy(kv.Value);
         }
 
-        activeRoots.Clear();
-        refCounts.Clear();
+        foreach (var kv in reactionRoots)
+        {
+            if (kv.Value != null)
+                Destroy(kv.Value);
+        }
+
+        baseRoots.Clear();
+        reactionRoots.Clear();
+    }
+
+    private static void DestroyRoot<TKey>(Dictionary<TKey, GameObject> roots, TKey key)
+    {
+        if (!roots.TryGetValue(key, out var root))
+            return;
+
+        if (root != null)
+        {
+            foreach (var ps in root.GetComponentsInChildren<ParticleSystem>())
+                ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+            Destroy(root);
+        }
+
+        roots.Remove(key);
     }
 
     private void ApplySorting(GameObject vfxRoot)
@@ -150,6 +214,30 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
         }
     }
 
+    private void SyncFlipMirror()
+    {
+        if (bodySprite == null)
+            return;
+
+        var mirrorX = bodySprite.flipX ? -1f : 1f;
+        MirrorRoots(baseRoots.Values, mirrorX);
+        MirrorRoots(reactionRoots.Values, mirrorX);
+    }
+
+    private static void MirrorRoots(IEnumerable<GameObject> roots, float mirrorX)
+    {
+        foreach (var root in roots)
+        {
+            if (root == null)
+                continue;
+
+            var t = root.transform;
+            var localScale = t.localScale;
+            localScale.x = Mathf.Abs(localScale.x) * mirrorX;
+            t.localScale = localScale;
+        }
+    }
+
     private static void PlayAllParticles(GameObject vfxRoot)
     {
         foreach (var ps in vfxRoot.GetComponentsInChildren<ParticleSystem>(true))
@@ -159,25 +247,7 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
         }
     }
 
-    private void SyncFlipMirror()
-    {
-        if (bodySprite == null)
-            return;
-
-        var mirrorX = bodySprite.flipX ? -1f : 1f;
-        foreach (var kv in activeRoots)
-        {
-            if (kv.Value == null)
-                continue;
-
-            var t = kv.Value.transform;
-            var localScale = t.localScale;
-            localScale.x = Mathf.Abs(localScale.x) * mirrorX;
-            t.localScale = localScale;
-        }
-    }
-
-    private GameObject GetPrefab(StatusType type)
+    private GameObject GetBasePrefab(StatusType type)
     {
         return type switch
         {
