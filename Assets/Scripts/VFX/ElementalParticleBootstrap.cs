@@ -85,7 +85,7 @@ public class ElementalParticleBootstrap : MonoBehaviour
             return;
         }
 
-        ElementalVfxParticleMaterials.ApplyBillboardMaterial(ps, VfxParticleShapeLibrary.GetElementShape(kind));
+        ElementStatusParticleMaterials.ApplyBillboardMaterial(ps, VfxParticleShapeLibrary.GetElementShape(kind));
     }
 
     private void OnDestroy()
@@ -99,14 +99,7 @@ public class ElementalParticleBootstrap : MonoBehaviour
 
     private static void ConfigureElementHailFall(ParticleSystem ps, Color primary, Color secondary)
     {
-        HailFallParticleUtility.ApplyHailFall(
-            ps,
-            primary,
-            secondary,
-            HailFallParticleUtility.ElementStatusZone,
-            HailFallParticleUtility.ElementStatusSizeScale,
-            HailFallParticleUtility.ElementStatusEmissionScale,
-            HailFallParticleUtility.ElementStatusFallSpeedScale);
+        ElementStatusHailFallUtility.Apply(ps, primary, secondary);
     }
 
     private static void ApplyCommon(ParticleSystem ps)

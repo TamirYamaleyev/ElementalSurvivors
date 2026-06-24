@@ -1,9 +1,9 @@
 using UnityEngine;
 
 /// <summary>
-/// Shared URP/builtin particle material setup for elemental status and reaction burst VFX.
+/// Particle materials for elemental status VFX only. Not used by reaction burst VFX.
 /// </summary>
-public static class ElementalVfxParticleMaterials
+public static class ElementStatusParticleMaterials
 {
     public static void ApplyBillboardMaterial(ParticleSystem ps, VfxParticleShapeLibrary.Shape shape)
     {
@@ -17,6 +17,7 @@ public static class ElementalVfxParticleMaterials
             return;
 
         rnd.renderMode = ParticleSystemRenderMode.Billboard;
+        rnd.enableGPUInstancing = false;
 
         Texture tex = null;
         if (particleSprite != null)
@@ -24,36 +25,11 @@ public static class ElementalVfxParticleMaterials
 
         var mat = CreateParticleMaterial(tex);
         if (mat != null)
-        {
             rnd.material = mat;
-            return;
-        }
-
-        if (tex == null)
-            return;
-
-        var shader = Shader.Find("Sprites/Default") ?? Shader.Find("Unlit/Texture");
-        if (shader == null)
-            return;
-
-        var fallback = new Material(shader);
-        fallback.mainTexture = tex;
-        rnd.material = fallback;
     }
 
-    public static Material CreateParticleMaterial(Texture tex)
+    static Material CreateParticleMaterial(Texture tex)
     {
-        if (tex != null)
-        {
-            var spriteShader = Shader.Find("Sprites/Default");
-            if (spriteShader != null)
-            {
-                var spriteMat = new Material(spriteShader);
-                spriteMat.mainTexture = tex;
-                return spriteMat;
-            }
-        }
-
         var shader =
             Shader.Find("Universal Render Pipeline/Particles/Unlit")
             ?? Shader.Find("Particles/Standard Unlit")
