@@ -47,11 +47,6 @@ public static class VfxParticleShapeLibrary
     {
         return kind switch
         {
-            ElementalParticleBootstrap.PresetKind.Fire => Shape.Triangle,
-            ElementalParticleBootstrap.PresetKind.Water => Shape.Circle,
-            ElementalParticleBootstrap.PresetKind.Wind => Shape.Circle,
-            ElementalParticleBootstrap.PresetKind.Earth => Shape.Square,
-            ElementalParticleBootstrap.PresetKind.Lightning => Shape.Triangle,
             ElementalParticleBootstrap.PresetKind.BossRisingCone => Shape.Square,
             _ => Shape.Square
         };

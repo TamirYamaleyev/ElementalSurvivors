@@ -7,6 +7,7 @@ public class DamageNumberView : MonoBehaviour
 {
     [SerializeField] private TMP_Text text;
     [SerializeField] private CanvasGroup canvasGroup;
+    [SerializeField] private Material outlineMaterial;
     [SerializeField] private float driftWorldUnits = 0.35f;
 
     private Transform cachedTransform;
@@ -21,6 +22,11 @@ public class DamageNumberView : MonoBehaviour
 
         if (canvasGroup == null)
             canvasGroup = GetComponent<CanvasGroup>();
+
+        TmpFontUtility.EnsureAssigned(text);
+
+        if (text != null && outlineMaterial != null)
+            text.fontSharedMaterial = outlineMaterial;
     }
 
     public void Play(int damage, Color color, Vector3 worldPosition, float lifetime, Action<DamageNumberView> onComplete)

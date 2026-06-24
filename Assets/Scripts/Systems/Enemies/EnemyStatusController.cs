@@ -10,7 +10,16 @@ public class EnemyStatusController : MonoBehaviour
     private StatusSystem system;
     private Enemy owner;
 
-    private IEnemyStatusVisualSink VisualSink => statusVisualSink as IEnemyStatusVisualSink;
+    private IEnemyStatusVisualSink VisualSink
+    {
+        get
+        {
+            if (statusVisualSink is IEnemyStatusVisualSink sink)
+                return sink;
+
+            return GetComponent<ElementalStatusVfxPresenter>();
+        }
+    }
 
     public void Initialize(StatusSystem statusSystem, Enemy enemy)
     {

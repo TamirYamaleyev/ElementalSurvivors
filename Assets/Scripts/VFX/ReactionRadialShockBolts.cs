@@ -7,7 +7,7 @@ using UnityEngine;
 public sealed class ReactionRadialShockBolts : MonoBehaviour, IReactionWorldVfx
 {
     [SerializeField] private ChaingLightningVisual lightningVisualPrefab;
-    [SerializeField] private int boltCount = 11;
+    [SerializeField] private int boltCount = 3;
     [SerializeField] private float minBoltLength = 0.75f;
     [SerializeField] private float maxBoltLength = 1.25f;
     [SerializeField] private float originRadius = 0.08f;

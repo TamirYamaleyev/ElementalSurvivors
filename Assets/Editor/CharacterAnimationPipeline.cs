@@ -19,6 +19,9 @@ public static class CharacterAnimationPipeline
     const int FrameCount = 8;
     /// <summary>Uniform scale on child Visual (high-res sprites use large PPU).</summary>
     const float VisualDisplayScale = 0.24f;
+    const int EnemyCycleFrameCount = 9;
+    const float EnemyIdleCycleDuration = 0.9f;
+    const float EnemyWalkCycleDuration = 0.65f;
 
     /// <summary>
     /// Rebuilds player clips from dev SampleScene art (Assets/Sprites/IMG_0600.png).
@@ -104,10 +107,25 @@ public static class CharacterAnimationPipeline
             var playerWalk = BuildSpriteClip("Assets/Animation/Clips/player_walk.anim", playerSprites, new[] { 2, 3, 4 }, 0.35f, loop: true);
             var playerAttack = BuildSpriteClip("Assets/Animation/Clips/player_attack.anim", playerSprites, new[] { 5, 6 }, 0.25f, loop: false);
 
-            var enemyIdle = BuildSpriteClip("Assets/Animation/Clips/enemy_idle.anim", enemySprites, new[] { 0, 1 }, 0.5f, loop: true);
-            var enemyWalk = BuildSpriteClip("Assets/Animation/Clips/enemy_walk.anim", enemySprites, new[] { 2, 3, 4 }, 0.35f, loop: true);
-            var enemyAttack = BuildSpriteClip("Assets/Animation/Clips/enemy_attack.anim", enemySprites, new[] { 5, 6 }, 0.25f, loop: false);
-            var enemyDeath = BuildSpriteClip("Assets/Animation/Clips/enemy_death.anim", enemySprites, new[] { 7 }, 0.4f, loop: false);
+            var enemyCycleIndices = EnemyCycleFrameIndices(enemySprites);
+            var enemyIdle = BuildSpriteClip(
+                "Assets/Animation/Clips/enemy_idle.anim", enemySprites, enemyCycleIndices, EnemyIdleCycleDuration, loop: true);
+            var enemyWalk = BuildSpriteClip(
+                "Assets/Animation/Clips/enemy_walk.anim", enemySprites, enemyCycleIndices, EnemyWalkCycleDuration, loop: true);
+            var enemyAttack = BuildSpriteClip(
+                "Assets/Animation/Clips/enemy_attack.anim",
+                enemySprites,
+                enemyCycleIndices.Length >= 3
+                    ? new[] { enemyCycleIndices[^3], enemyCycleIndices[^2], enemyCycleIndices[^1] }
+                    : enemyCycleIndices,
+                0.25f,
+                loop: false);
+            var enemyDeath = BuildSpriteClip(
+                "Assets/Animation/Clips/enemy_death.anim",
+                enemySprites,
+                new[] { enemyCycleIndices[^1] },
+                0.4f,
+                loop: false);
 
             BuildController(
                 "Assets/Animation/Controllers/AC_Player.controller",
@@ -217,35 +235,17 @@ public static class CharacterAnimationPipeline
                 throw new FileNotFoundException("Missing " + sheetPath);
 
             EnsureEnemySheetSpriteSheet(sheetPath);
+            EnsureSpriteSheetPixelsPerUnit(sheetPath, 400f);
 
             var enemySprites = LoadSpritesOrdered(sheetPath)
                 .Where(s => s.rect.width >= 64 && s.rect.height >= 64)
                 .ToList();
 
-            if (enemySprites.Count < 7)
+            if (enemySprites.Count < EnemyCycleFrameCount)
                 throw new System.InvalidOperationException(
-                    $"Expected at least 7 enemy sprites in enemy_sheet.png, got {enemySprites.Count}.");
+                    $"Expected at least {EnemyCycleFrameCount} enemy sprites in enemy_sheet.png, got {enemySprites.Count}.");
 
-            var enemyIdle = BuildOrUpdateSpriteClipFromFrames(
-                "Assets/Animation/Clips/enemy_idle.anim",
-                enemySprites.GetRange(0, 2),
-                0.5f,
-                loop: true);
-            var enemyWalk = BuildOrUpdateSpriteClipFromFrames(
-                "Assets/Animation/Clips/enemy_walk.anim",
-                enemySprites.GetRange(2, System.Math.Min(3, enemySprites.Count - 2)),
-                0.35f,
-                loop: true);
-            var enemyAttack = BuildOrUpdateSpriteClipFromFrames(
-                "Assets/Animation/Clips/enemy_attack.anim",
-                enemySprites.GetRange(5, System.Math.Min(2, enemySprites.Count - 5)),
-                0.25f,
-                loop: false);
-            var enemyDeath = BuildOrUpdateSpriteClipFromFrames(
-                "Assets/Animation/Clips/enemy_death.anim",
-                new List<Sprite> { enemySprites[enemySprites.Count - 1] },
-                0.4f,
-                loop: false);
+            var (enemyIdle, enemyWalk, enemyAttack, enemyDeath) = BuildEnemyClipsFromFrames("enemy", enemySprites);
 
             AssignClipsToExistingController(
                 "Assets/Animation/Controllers/AC_Enemy.controller",
@@ -255,9 +255,20 @@ public static class CharacterAnimationPipeline
                 deathClip: enemyDeath);
 
             var defaultSprite = enemySprites[0];
-            SetupEnemyPrefab("Assets/Prefabs/Enemy/Level1Enemy.prefab", defaultSprite);
-            SetupEnemyPrefab("Assets/Prefabs/Enemy/Level2Enemy.prefab", defaultSprite);
-            SetupEnemyPrefab("Assets/Prefabs/Enemy/Level3Enemy.prefab", defaultSprite);
+            var tierBindings = new[]
+            {
+                ("level1", "Assets/Animation/Controllers/AC_Enemy_Level1.controller", "Level1Enemy.prefab"),
+                ("level2", "Assets/Animation/Controllers/AC_Enemy_Level2.controller", "Level2Enemy.prefab"),
+                ("level3", "Assets/Animation/Controllers/AC_Enemy_Level3.controller", "Level3Enemy.prefab"),
+            };
+
+            foreach (var (tierId, controllerPath, prefabFile) in tierBindings)
+            {
+                var (tierIdle, tierWalk, tierAttack, tierDeath) = BuildEnemyClipsFromFrames($"enemy_{tierId}", enemySprites);
+                AssignClipsToExistingController(controllerPath, tierIdle, tierWalk, tierAttack, deathClip: tierDeath);
+                SetupEnemyPrefab("Assets/Prefabs/Enemies/" + prefabFile, defaultSprite, controllerPath);
+                SetupEnemyPrefab("Assets/Prefabs/Enemy/" + prefabFile, defaultSprite, controllerPath);
+            }
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -330,42 +341,53 @@ public static class CharacterAnimationPipeline
         var characterSprites = FilterCharacterSprites(sprites);
         var primarySprite = PickPrimarySprite(characterSprites);
 
-        var idleFrames = characterSprites.Count >= 2
-            ? characterSprites.GetRange(0, 2)
-            : new List<Sprite> { primarySprite };
-
-        List<Sprite> walkFrames;
-        if (characterSprites.Count >= 5)
-            walkFrames = characterSprites.GetRange(2, 3);
-        else if (characterSprites.Count >= 3)
-            walkFrames = characterSprites.GetRange(1, characterSprites.Count - 1);
-        else
-            walkFrames = idleFrames;
-
-        List<Sprite> attackFrames;
-        if (characterSprites.Count >= 7)
-            attackFrames = characterSprites.GetRange(5, 2);
-        else if (characterSprites.Count >= 2)
-            attackFrames = new List<Sprite> { characterSprites[characterSprites.Count - 1] };
-        else
-            attackFrames = idleFrames;
-
-        var deathFrame = characterSprites[characterSprites.Count - 1];
-
-        var idleClip = BuildOrUpdateSpriteClipFromFrames(
-            $"Assets/Animation/Clips/enemy_{tierId}_idle.anim", idleFrames, 0.5f, loop: true);
-        var walkClip = BuildOrUpdateSpriteClipFromFrames(
-            $"Assets/Animation/Clips/enemy_{tierId}_walk.anim", walkFrames, 0.35f, loop: true);
-        var attackClip = BuildOrUpdateSpriteClipFromFrames(
-            $"Assets/Animation/Clips/enemy_{tierId}_attack.anim", attackFrames, 0.25f, loop: false);
-        var deathClip = BuildOrUpdateSpriteClipFromFrames(
-            $"Assets/Animation/Clips/enemy_{tierId}_death.anim",
-            new List<Sprite> { deathFrame },
-            0.4f,
-            loop: false);
+        var (idleClip, walkClip, attackClip, deathClip) = BuildEnemyClipsFromFrames($"enemy_{tierId}", characterSprites);
 
         EnsureEnemyTierController(controllerPath, idleClip, walkClip, attackClip, deathClip);
         SetupEnemyPrefab(prefabPath, primarySprite, controllerPath);
+    }
+
+    static List<Sprite> TakeEnemyCycleFrames(IReadOnlyList<Sprite> sprites)
+    {
+        var count = System.Math.Min(EnemyCycleFrameCount, sprites.Count);
+        return sprites.Take(count).ToList();
+    }
+
+    static int[] EnemyCycleFrameIndices(IReadOnlyList<Sprite> sprites)
+    {
+        var count = System.Math.Min(EnemyCycleFrameCount, sprites.Count);
+        return Enumerable.Range(0, count).ToArray();
+    }
+
+    static (AnimationClip idle, AnimationClip walk, AnimationClip attack, AnimationClip death) BuildEnemyClipsFromFrames(
+        string clipIdPrefix,
+        IReadOnlyList<Sprite> sprites)
+    {
+        var cycle = TakeEnemyCycleFrames(sprites);
+        var idle = BuildOrUpdateSpriteClipFromFrames(
+            $"Assets/Animation/Clips/{clipIdPrefix}_idle.anim",
+            cycle,
+            EnemyIdleCycleDuration,
+            loop: true);
+        var walk = BuildOrUpdateSpriteClipFromFrames(
+            $"Assets/Animation/Clips/{clipIdPrefix}_walk.anim",
+            cycle,
+            EnemyWalkCycleDuration,
+            loop: true);
+        var attackFrames = cycle.Count >= 3
+            ? cycle.GetRange(cycle.Count - 3, 3)
+            : cycle;
+        var attack = BuildOrUpdateSpriteClipFromFrames(
+            $"Assets/Animation/Clips/{clipIdPrefix}_attack.anim",
+            attackFrames,
+            0.25f,
+            loop: false);
+        var death = BuildOrUpdateSpriteClipFromFrames(
+            $"Assets/Animation/Clips/{clipIdPrefix}_death.anim",
+            new List<Sprite> { cycle[cycle.Count - 1] },
+            0.4f,
+            loop: false);
+        return (idle, walk, attack, death);
     }
 
     static List<Sprite> FilterCharacterSprites(IReadOnlyList<Sprite> sprites)
@@ -424,7 +446,20 @@ public static class CharacterAnimationPipeline
             new Rect(1583f, 744f, 333f, 320f),
             new Rect(108f, 741f, 313f, 319f),
             new Rect(814f, 125f, 338f, 321f),
-        });
+        }, pixelsPerUnit: 400f);
+    }
+
+    static void EnsureSpriteSheetPixelsPerUnit(string assetPath, float pixelsPerUnit)
+    {
+        var importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+        if (importer == null)
+            throw new System.InvalidOperationException("No TextureImporter for " + assetPath);
+
+        if (Mathf.Approximately(importer.spritePixelsPerUnit, pixelsPerUnit))
+            return;
+
+        importer.spritePixelsPerUnit = pixelsPerUnit;
+        importer.SaveAndReimport();
     }
 
     static void EnsurePlayerWalkSpriteSheet(string assetPath)
@@ -442,7 +477,7 @@ public static class CharacterAnimationPipeline
         });
     }
 
-    static void ApplyManualSpriteRects(string assetPath, string prefix, Rect[] rects)
+    static void ApplyManualSpriteRects(string assetPath, string prefix, Rect[] rects, float pixelsPerUnit = 100f)
     {
         AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
         var importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
@@ -454,7 +489,7 @@ public static class CharacterAnimationPipeline
         importer.filterMode = FilterMode.Point;
         importer.textureCompression = TextureImporterCompression.Uncompressed;
         importer.mipmapEnabled = false;
-        importer.spritePixelsPerUnit = 100f;
+        importer.spritePixelsPerUnit = pixelsPerUnit;
 
         var spriteRects = new SpriteRect[rects.Length];
         for (var i = 0; i < rects.Length; i++)
@@ -488,10 +523,25 @@ public static class CharacterAnimationPipeline
             var playerWalk = BuildSpriteClip("Assets/Animation/Clips/player_walk.anim", playerSprites, new[] { 2, 3, 4 }, 0.35f, loop: true);
             var playerAttack = BuildSpriteClip("Assets/Animation/Clips/player_attack.anim", playerSprites, new[] { 5, 6 }, 0.25f, loop: false);
 
-            var enemyIdle = BuildSpriteClip("Assets/Animation/Clips/enemy_idle.anim", enemySprites, new[] { 0, 1 }, 0.5f, loop: true);
-            var enemyWalk = BuildSpriteClip("Assets/Animation/Clips/enemy_walk.anim", enemySprites, new[] { 2, 3, 4 }, 0.35f, loop: true);
-            var enemyAttack = BuildSpriteClip("Assets/Animation/Clips/enemy_attack.anim", enemySprites, new[] { 5, 6 }, 0.25f, loop: false);
-            var enemyDeath = BuildSpriteClip("Assets/Animation/Clips/enemy_death.anim", enemySprites, new[] { 7 }, 0.4f, loop: false);
+            var enemyCycleIndices = EnemyCycleFrameIndices(enemySprites);
+            var enemyIdle = BuildSpriteClip(
+                "Assets/Animation/Clips/enemy_idle.anim", enemySprites, enemyCycleIndices, EnemyIdleCycleDuration, loop: true);
+            var enemyWalk = BuildSpriteClip(
+                "Assets/Animation/Clips/enemy_walk.anim", enemySprites, enemyCycleIndices, EnemyWalkCycleDuration, loop: true);
+            var enemyAttack = BuildSpriteClip(
+                "Assets/Animation/Clips/enemy_attack.anim",
+                enemySprites,
+                enemyCycleIndices.Length >= 3
+                    ? new[] { enemyCycleIndices[^3], enemyCycleIndices[^2], enemyCycleIndices[^1] }
+                    : enemyCycleIndices,
+                0.25f,
+                loop: false);
+            var enemyDeath = BuildSpriteClip(
+                "Assets/Animation/Clips/enemy_death.anim",
+                enemySprites,
+                new[] { enemyCycleIndices[^1] },
+                0.4f,
+                loop: false);
 
             BuildController(
                 "Assets/Animation/Controllers/AC_Player.controller",
@@ -561,14 +611,7 @@ public static class CharacterAnimationPipeline
             var playerAttack = BuildOrUpdateSpriteClipFromFrames(
                 "Assets/Animation/Clips/player_attack.anim", playerAttackSprites, 0.25f, loop: false);
 
-            var enemyIdle = BuildOrUpdateSpriteClipFromFrames(
-                "Assets/Animation/Clips/enemy_idle.anim", enemySprites.GetRange(0, 2), 0.5f, loop: true);
-            var enemyWalk = BuildOrUpdateSpriteClipFromFrames(
-                "Assets/Animation/Clips/enemy_walk.anim", enemySprites.GetRange(2, 4), 0.35f, loop: true);
-            var enemyAttack = BuildOrUpdateSpriteClipFromFrames(
-                "Assets/Animation/Clips/enemy_attack.anim", enemySprites.GetRange(6, 2), 0.25f, loop: false);
-            var enemyDeath = BuildOrUpdateSpriteClipFromFrames(
-                "Assets/Animation/Clips/enemy_death.anim", enemySprites.GetRange(8, 1), 0.4f, loop: false);
+            var (enemyIdle, enemyWalk, enemyAttack, enemyDeath) = BuildEnemyClipsFromFrames("enemy", enemySprites);
 
             AssignClipsToExistingController(
                 "Assets/Animation/Controllers/AC_Player.controller",
@@ -593,6 +636,12 @@ public static class CharacterAnimationPipeline
             if (Application.isBatchMode)
                 EditorApplication.Exit(1);
         }
+    }
+
+    [MenuItem("Tools/Elemental/Bind Enemy Sheet Sprites")]
+    static void BindArtFolderEnemySpritesMenu()
+    {
+        BindArtFolderEnemySprites();
     }
 
     [MenuItem("Tools/Elemental/Bind Production Character Sprites")]

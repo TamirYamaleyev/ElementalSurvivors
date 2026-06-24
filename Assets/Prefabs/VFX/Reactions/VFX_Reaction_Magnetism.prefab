@@ -77,11 +77,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ReactionMagnetismLightningBolts
   lightningVisualPrefab: {fileID: 1169245859301116722, guid: 542cfb66a3997b5498af20c5a0a7c068, type: 3}
-  boltInterval: 0.07
-  boltsPerEnemy: 2
-  maxBoltsPerWave: 14
-  boltLifetime: 0.09
-  endpointInset: 0.04
-  boltThickness: 0.42
-  boltTint: {r: 0.7, g: 0.94, b: 1, a: 1}
+  boltInterval: 0.06
+  segmentsPerEnemy: 3
+  segmentLength: 0.2
+  maxSegmentsPerWave: 18
+  boltLifetime: 0.07
+  endpointInset: 0.02
+  boltThickness: 0.28
+  boltTint: {r: 0.72, g: 0.95, b: 1, a: 1}
   sortingOrderOffset: 58

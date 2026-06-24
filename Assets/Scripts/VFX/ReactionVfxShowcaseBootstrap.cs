@@ -2,8 +2,8 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// Spawns one enemy per reaction pair and applies both statuses so <see cref="StatusSystem"/>
-/// triggers reaction burst VFX from <see cref="ReactionVfxCatalogSO"/>.
+/// Spawns one enemy per reaction pair and plays reaction burst VFX from
+/// <see cref="ReactionVfxCatalogSO"/> without applying base elemental status visuals.
 /// </summary>
 public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
 {
@@ -11,7 +11,6 @@ public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
     [SerializeField] private int columns = 5;
     [SerializeField] private float columnSpacing = 2.2f;
     [SerializeField] private float rowSpacing = 2.6f;
-    [SerializeField] private float statusDurationSeconds = 9999f;
     [SerializeField] private bool loopReactionVfx = true;
 
     private static readonly (StatusType A, StatusType B)[] Pairs =
@@ -45,7 +44,7 @@ public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
     // Matches ReactionBurstParticleBootstrap destroy-after values per pair above.
     private static readonly float[] ReactionLoopSeconds =
     {
-        2.4f, 2.4f, 0.5f, 0.85f, 2.4f, 2.4f, 0.5f, 2.6f, 1.2f, 1.8f,
+        4f, 2.4f, 0.5f, 0.85f, 2.4f, 2.4f, 0.5f, 2.6f, 1.2f, 1.8f,
     };
 
     private void Start()
@@ -65,6 +64,8 @@ public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
         }
 
         DisableSceneInterruptions();
+        TmpFontUtility.EnsureAllInScene();
+        HideGameplayUi();
 
         var origin = transform.position;
         var n = Pairs.Length;
@@ -89,8 +90,7 @@ public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
             var reactionName = i < ReactionNames.Length ? ReactionNames[i] : $"{a} + {b}";
             ReactionShowcaseLabel.Create(enemy.transform, reactionName, a, b);
 
-            status.Apply(enemy, a, statusDurationSeconds);
-            status.Apply(enemy, b, statusDurationSeconds);
+            status.SpawnReactionVfx(enemy, a, b);
 
             if (loopReactionVfx)
             {
@@ -98,6 +98,17 @@ public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
                 StartCoroutine(LoopReactionVfx(status, enemy, a, b, interval));
             }
         }
+    }
+
+    private static void HideGameplayUi()
+    {
+        var hud = GameObject.Find("HUD");
+        if (hud != null)
+            hud.SetActive(false);
+
+        var levelUpRoot = GameObject.Find("LevelUpUIRoot");
+        if (levelUpRoot != null)
+            levelUpRoot.SetActive(false);
     }
 
     private static void DisableSceneInterruptions()
@@ -116,6 +127,10 @@ public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
         var ai = enemy.GetComponent<EnemyAI>();
         if (ai != null)
             ai.SetGameplayEnabled(false);
+
+        var statusPresenter = enemy.GetComponent<ElementalStatusVfxPresenter>();
+        if (statusPresenter != null)
+            statusPresenter.enabled = false;
 
         registry.Register(enemy);
     }

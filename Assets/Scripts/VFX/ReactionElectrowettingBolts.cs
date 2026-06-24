@@ -9,9 +9,9 @@ public sealed class ReactionElectrowettingBolts : MonoBehaviour, IReactionWorldV
 {
     [SerializeField] private ChaingLightningVisual lightningVisualPrefab;
     [SerializeField] private float pullRingRadius = 0.95f;
-    [SerializeField] private int pullBoltsOnSource = 5;
+    [SerializeField] private int pullBoltsOnSource = 1;
     [SerializeField] private float effectRadius = 2.4f;
-    [SerializeField] private int maxNearbyTargets = 4;
+    [SerializeField] private int maxNearbyTargets = 1;
     [SerializeField] private float boltLifetime = 0.12f;
     [SerializeField] private float endpointInset = 0.04f;
     [SerializeField] private float boltThickness = 0.45f;

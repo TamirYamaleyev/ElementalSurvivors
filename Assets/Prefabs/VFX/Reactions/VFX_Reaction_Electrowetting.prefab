@@ -62,9 +62,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ReactionElectrowettingBolts
   lightningVisualPrefab: {fileID: 1169245859301116722, guid: 542cfb66a3997b5498af20c5a0a7c068, type: 3}
   pullRingRadius: 0.95
-  pullBoltsOnSource: 5
+  pullBoltsOnSource: 1
   effectRadius: 2.4
-  maxNearbyTargets: 4
+  maxNearbyTargets: 1
   boltLifetime: 0.12
   endpointInset: 0.04
   boltThickness: 0.45
@@ -83,7 +83,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ReactionRadialShockBolts
   lightningVisualPrefab: {fileID: 1169245859301116722, guid: 542cfb66a3997b5498af20c5a0a7c068, type: 3}
-  boltCount: 11
+  boltCount: 3
   minBoltLength: 0.75
   maxBoltLength: 1.25
   originRadius: 0.08
