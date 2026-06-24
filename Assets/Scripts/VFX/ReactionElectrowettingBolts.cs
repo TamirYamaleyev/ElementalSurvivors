@@ -1,69 +1,51 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Electrowetting lightning: radial pull into the affected enemy plus bolts to nearby targets.
+/// Electrowetting: one lightning bolt from the source enemy to each target in range.
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class ReactionElectrowettingBolts : MonoBehaviour, IReactionWorldVfx
 {
     [SerializeField] private ChaingLightningVisual lightningVisualPrefab;
-    [SerializeField] private float pullRingRadius = 0.95f;
-    [SerializeField] private int pullBoltsOnSource = 1;
-    [SerializeField] private float effectRadius = 2.4f;
-    [SerializeField] private int maxNearbyTargets = 1;
-    [SerializeField] private float boltLifetime = 0.12f;
-    [SerializeField] private float endpointInset = 0.04f;
-    [SerializeField] private float boltThickness = 0.45f;
+    [SerializeField] private float effectRadius = 4f;
+    [SerializeField] private float boltLifetime = 0.14f;
+    [SerializeField] private float endpointInset = 0.05f;
+    [SerializeField] private float boltThickness = 0.42f;
     [SerializeField] private Color boltTint = new(0.55f, 0.9f, 1f, 1f);
     [SerializeField] private int sortingOrderOffset = 54;
 
-    private readonly List<Enemy> scratchTargets = new();
-
-    private Vector3 center;
-    private Enemy sourceEnemy;
-    private EnemyRegistry registry;
     private int sortingLayerId;
     private int sortingOrder;
 
     public void Initialize(ReactionVfxContext ctx)
     {
-        center = ctx.Center;
-        sourceEnemy = ctx.SourceEnemy;
-        registry = ctx.Registry;
+        var sourceEnemy = ctx.SourceEnemy;
+        var registry = ctx.Registry;
+        if (lightningVisualPrefab == null || registry == null || sourceEnemy == null)
+            return;
+
         CacheSortingFromEnemy(sourceEnemy);
 
-        if (lightningVisualPrefab == null)
-            return;
+        var start = (Vector2)sourceEnemy.transform.position + Vector2.up * 0.25f;
+        var center = (Vector2)sourceEnemy.transform.position;
+        var radiusSq = effectRadius * effectRadius;
 
-        if (sourceEnemy != null)
+        foreach (var enemy in registry.ActiveEnemies)
         {
-            for (var i = 0; i < pullBoltsOnSource; i++)
-                SpawnPullBolt((Vector2)sourceEnemy.transform.position + Vector2.up * 0.25f);
-        }
+            if (enemy == null || !enemy.gameObject.activeInHierarchy || enemy == sourceEnemy)
+                continue;
 
-        if (registry == null)
-            return;
+            var delta = (Vector2)enemy.transform.position - center;
+            if (delta.sqrMagnitude > radiusSq)
+                continue;
 
-        ReactionAreaVfxUtility.CollectEnemiesInRadius(registry, center, effectRadius, scratchTargets, sourceEnemy);
-
-        var count = 0;
-        foreach (var target in scratchTargets)
-        {
-            if (count >= maxNearbyTargets)
-                break;
-
-            SpawnPullBolt((Vector2)target.transform.position + Vector2.up * 0.25f);
-            count++;
+            var end = (Vector2)enemy.transform.position + Vector2.up * 0.25f;
+            SpawnBolt(start, end);
         }
     }
 
-    private void SpawnPullBolt(Vector2 end)
+    private void SpawnBolt(Vector2 start, Vector2 end)
     {
-        var angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
-        var ringDir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-        var start = (Vector2)center + ringDir * pullRingRadius;
-
         var visual = Instantiate(lightningVisualPrefab);
         visual.Initialize(start, end, null, boltLifetime, endpointInset);
 

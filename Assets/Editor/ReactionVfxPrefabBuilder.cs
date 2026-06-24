@@ -184,13 +184,9 @@ public static class ReactionVfxPrefabBuilder
             sprite,
             go =>
             {
-                var shock = go.AddComponent<ReactionRadialShockBolts>();
                 var bolts = go.AddComponent<ReactionElectrowettingBolts>();
                 if (lightningPrefab != null)
-                {
-                    WireLightningPrefab(shock, lightningPrefab);
                     WireLightningPrefab(bolts, lightningPrefab);
-                }
             });
     }
 

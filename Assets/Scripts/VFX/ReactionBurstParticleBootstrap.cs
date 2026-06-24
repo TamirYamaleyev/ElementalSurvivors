@@ -91,7 +91,9 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
                 break;
         }
 
-        if (kind != ReactionBurstKind.StaticCharge && kind != ReactionBurstKind.ScorchingWind)
+        if (kind != ReactionBurstKind.StaticCharge
+            && kind != ReactionBurstKind.ScorchingWind
+            && kind != ReactionBurstKind.Electrowetting)
             ElementalVfxParticleMaterials.ApplyBillboardMaterial(ps, VfxParticleShapeLibrary.GetReactionShape(kind));
     }
 
@@ -334,82 +336,16 @@ public class ReactionBurstParticleBootstrap : MonoBehaviour
 
     private static void ConfigureElectrowetting(ParticleSystem ps)
     {
-        ConfigureElectrowettingBurst(ps);
-        ConfigureElectrowettingGlow(CreateCoreChild(ps.transform, "CoreGlow"));
-    }
-
-    private static void ConfigureElectrowettingBurst(ParticleSystem ps)
-    {
         ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
         var main = ps.main;
-        main.playOnAwake = false;
-        main.loop = false;
-        main.duration = 0.28f;
-        main.startLifetime = new ParticleSystem.MinMaxCurve(0.14f, 0.24f);
-        main.startSpeed = new ParticleSystem.MinMaxCurve(1.2f * VelocityScale, 3f * VelocityScale);
-        main.startSize = new ParticleSystem.MinMaxCurve(0.05f * VisualSizeScale, 0.1f * VisualSizeScale);
-        main.simulationSpace = ParticleSystemSimulationSpace.Local;
-        main.maxParticles = Mathf.RoundToInt(30f * MaxParticlesScale);
-        main.gravityModifier = 0f;
-        RandomTwoColor(main, new Color(0.2f, 0.55f, 1f), new Color(1f, 0.92f, 0.25f));
+        main.maxParticles = 0;
 
         var em = ps.emission;
-        em.rateOverTime = 0f;
-        em.SetBursts(new[] { new ParticleSystem.Burst(0f, 18, 24) });
+        em.enabled = false;
 
         var shape = ps.shape;
-        shape.enabled = true;
-        shape.shapeType = ParticleSystemShapeType.Circle;
-        shape.radius = 0.38f * VisualAreaScale;
-
-        var vel = ps.velocityOverLifetime;
-        ApplyVelocityOverLifetime(
-            vel,
-            VelConst(0f),
-            VelConst(0f),
-            VelConst(0f),
-            VelConst(0f),
-            VelConst(0f),
-            VelConst(2.4f * VelocityScale),
-            VelRange(1.2f * VelocityScale, 2.4f * VelocityScale));
-
-        FadeAlphaOverLife(ps);
-    }
-
-    private static void ConfigureElectrowettingGlow(Transform coreTransform)
-    {
-        var ps = coreTransform.gameObject.AddComponent<ParticleSystem>();
-        var glowColor = new Color(0.55f, 0.82f, 1f);
-
-        ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-
-        var main = ps.main;
-        main.playOnAwake = false;
-        main.loop = false;
-        main.duration = 0.15f;
-        main.startLifetime = 0.12f;
-        main.startSpeed = 0f;
-        main.startSize = 0.12f * VisualSizeScale;
-        main.simulationSpace = ParticleSystemSimulationSpace.Local;
-        main.maxParticles = 5;
-        main.gravityModifier = 0f;
-        main.startColor = glowColor;
-
-        var em = ps.emission;
-        em.rateOverTime = 0f;
-        em.SetBursts(new[] { new ParticleSystem.Burst(0f, 2, 3) });
-
-        var shape = ps.shape;
-        shape.enabled = true;
-        shape.shapeType = ParticleSystemShapeType.Circle;
-        shape.radius = 0.12f * VisualAreaScale;
-
-        var vel = ps.velocityOverLifetime;
-        vel.enabled = false;
-
-        SolidColorOverLife(ps, glowColor);
-        ElementalVfxParticleMaterials.ApplyBillboardMaterial(ps, VfxParticleShapeLibrary.Shape.Circle);
+        shape.enabled = false;
     }
 
     private static void ConfigureDustSandStorm(ParticleSystem ps)
