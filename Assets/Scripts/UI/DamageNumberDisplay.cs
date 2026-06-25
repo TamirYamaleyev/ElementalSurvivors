@@ -40,6 +40,11 @@ public class DamageNumberDisplay : MonoBehaviour
 
     public void DisplayDamageNumber(float damage, Vector3 worldPosition)
     {
+        DisplayDamageNumber(damage, worldPosition, null);
+    }
+
+    public void DisplayDamageNumber(float damage, Vector3 worldPosition, Color? overrideColor)
+    {
         if (prefab == null || container == null || damage <= 0f)
             return;
 
@@ -48,7 +53,7 @@ public class DamageNumberDisplay : MonoBehaviour
         spawnPosition.y += Random.Range(-randomSpread.y, randomSpread.y);
 
         DamageNumberView view = Acquire();
-        view.Play(Mathf.RoundToInt(damage), color, spawnPosition, lifetime, Release);
+        view.Play(Mathf.RoundToInt(damage), overrideColor ?? color, spawnPosition, lifetime, Release);
     }
 
     private void Prewarm()

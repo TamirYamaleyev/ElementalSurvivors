@@ -21,13 +21,14 @@ public sealed class ReactionElectrowettingBolts : MonoBehaviour, IReactionWorldV
     {
         var sourceEnemy = ctx.SourceEnemy;
         var registry = ctx.Registry;
-        if (lightningVisualPrefab == null || registry == null || sourceEnemy == null)
+        if (lightningVisualPrefab == null || registry == null)
             return;
 
-        CacheSortingFromEnemy(sourceEnemy);
+        if (sourceEnemy != null && sourceEnemy.gameObject.activeInHierarchy)
+            CacheSortingFromEnemy(sourceEnemy);
 
-        var start = (Vector2)sourceEnemy.transform.position + Vector2.up * 0.25f;
-        var center = (Vector2)sourceEnemy.transform.position;
+        var start = (Vector2)ctx.Center;
+        var center = start;
         var radiusSq = effectRadius * effectRadius;
 
         foreach (var enemy in registry.ActiveEnemies)

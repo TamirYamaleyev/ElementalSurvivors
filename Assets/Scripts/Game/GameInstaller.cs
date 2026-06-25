@@ -8,7 +8,10 @@ public class GameInstaller : MonoBehaviour
     [SerializeField] private AreaSystem area;
     [SerializeField] private OrbitSystem orbit;
     [SerializeField] private StatusSystem status;
+    [SerializeField] private ReactionEffectSystem reactionEffectSystem;
     [SerializeField] private ReactionVfxCatalogSO reactionVfxCatalog;
+    [SerializeField] private ReactionGameplayCatalogSO reactionGameplayCatalog;
+    [SerializeField] private ElementalStatusGameplayCatalogSO elementalStatusGameplayCatalog;
 
     [Header("World State")]
     [SerializeField] private EnemyRegistry registry;
@@ -30,8 +33,17 @@ public class GameInstaller : MonoBehaviour
     {
         if (status != null)
         {
+            if (reactionEffectSystem == null)
+                reactionEffectSystem = status.GetComponent<ReactionEffectSystem>();
+
+            if (reactionEffectSystem == null)
+                reactionEffectSystem = status.gameObject.AddComponent<ReactionEffectSystem>();
+
             status.SetReactionVfxCatalog(reactionVfxCatalog);
+            status.SetReactionGameplayCatalog(reactionGameplayCatalog);
+            status.SetElementalStatusGameplayCatalog(elementalStatusGameplayCatalog);
             status.SetEnemyRegistry(registry);
+            status.SetEffectSystem(reactionEffectSystem);
         }
 
         weaponSystem.Initialize(BuildWeaponContext());

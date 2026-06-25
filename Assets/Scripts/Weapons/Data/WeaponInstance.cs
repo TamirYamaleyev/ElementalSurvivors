@@ -84,7 +84,8 @@ public class WeaponInstance
                     definition.appliedStatus,
                     data.statusDuration,
                     ctx.StatusSystem,
-                    data.visualSprite);
+                    data.visualSprite,
+                    data.lifetime);
 
                 return true;
             }

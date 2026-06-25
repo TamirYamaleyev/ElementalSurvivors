@@ -24,6 +24,13 @@ public class EnemyAI : MonoBehaviour
     private float dotDamage = 1f;
     private float dotTickInterval = 0.5f;
     private float fearTimer;
+    private float stunTimer;
+    private float hailStunImmunityTimer;
+    private Vector2 externalVelocity;
+    private float externalVelocityDecay = 12f;
+    private Vector2 pullTarget;
+    private float pullStrength;
+    private float pullTimer;
     private Transform player;
     private Vector2 direction;
     private bool gameplayEnabled = true;
@@ -50,10 +57,23 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
-        if (!gameplayEnabled || dotDuration <= 0f)
-            return;
+        if (stunTimer > 0f)
+        {
+            stunTimer -= Time.deltaTime;
+            if (stunTimer <= 0f)
+                gameplayEnabled = true;
+        }
 
-        DealDoT();
+        if (pullTimer > 0f)
+            pullTimer -= Time.deltaTime;
+        else
+            pullStrength = 0f;
+
+        if (hailStunImmunityTimer > 0f)
+            hailStunImmunityTimer -= Time.deltaTime;
+
+        if (dotDuration > 0f)
+            DealDoT();
     }
 
     public void ApplyFear(float duration)
@@ -74,6 +94,50 @@ public class EnemyAI : MonoBehaviour
         dotTickTimer = 0f;
     }
 
+    public void ApplyStun(float duration)
+    {
+        if (duration <= 0f)
+            return;
+
+        stunTimer = Mathf.Max(stunTimer, duration);
+        gameplayEnabled = false;
+
+        if (rb != null)
+            rb.linearVelocity = Vector2.zero;
+
+        externalVelocity = Vector2.zero;
+    }
+
+    public void ApplyKnockback(Vector2 direction, float impulse)
+    {
+        if (impulse <= 0f || direction.sqrMagnitude < 1e-6f || rb == null)
+            return;
+
+        externalVelocity = direction.normalized * impulse;
+    }
+
+    public void ApplyPullToward(Vector2 target, float strength, float duration)
+    {
+        if (strength <= 0f || duration <= 0f)
+            return;
+
+        pullTarget = target;
+        pullStrength = strength;
+        pullTimer = Mathf.Max(pullTimer, duration);
+    }
+
+    public bool CanBeStunnedByHail() => hailStunImmunityTimer <= 0f;
+
+    public void AddHailStunImmunity(float duration)
+    {
+        if (duration <= 0f)
+            return;
+
+        hailStunImmunityTimer = Mathf.Min(
+            hailStunImmunityTimer + duration,
+            10f);
+    }
+
     private void DealDoT()
     {
         dotDuration -= Time.deltaTime;
@@ -88,6 +152,27 @@ public class EnemyAI : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (rb == null)
+            return;
+
+        if (pullTimer > 0f && pullStrength > 0f)
+        {
+            var delta = pullTarget - rb.position;
+            if (delta.sqrMagnitude > 1e-6f)
+                rb.linearVelocity = delta.normalized * pullStrength;
+            return;
+        }
+
+        if (externalVelocity.sqrMagnitude > 1e-6f)
+        {
+            rb.linearVelocity = externalVelocity;
+            externalVelocity = Vector2.Lerp(
+                externalVelocity,
+                Vector2.zero,
+                externalVelocityDecay * Time.fixedDeltaTime);
+            return;
+        }
+
         if (!gameplayEnabled)
             return;
 
@@ -145,8 +230,13 @@ public class EnemyAI : MonoBehaviour
     {
         slowTimer = 0f;
         fearTimer = 0f;
+        stunTimer = 0f;
+        hailStunImmunityTimer = 0f;
         dotDuration = 0f;
         dotTickTimer = 0f;
+        externalVelocity = Vector2.zero;
+        pullStrength = 0f;
+        pullTimer = 0f;
         gameplayEnabled = true;
 
         if (rb != null)

@@ -54,12 +54,16 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
 
     public void ResetForPool()
     {
+        StopAllCoroutines();
         ClearAllInstances();
         lastFlipX = bodySprite != null && bodySprite.flipX;
     }
 
     public void RefreshStatusVisuals(StatusVfxPlan plan)
     {
+        if (!isActiveAndEnabled)
+            return;
+
         SyncBaseVisuals(plan.SoloElement);
         SyncReactionVisuals(plan.ReactionPairs);
         SyncFlipMirror();
@@ -93,7 +97,7 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
 
         var instance = SpawnBaseChild(prefab);
         baseRoots[element] = instance;
-        StartCoroutine(FinalizeSpawn(instance));
+        ScheduleFinalizeSpawn(instance);
     }
 
     private void SyncReactionVisuals(StatusPair[] desiredPairs)
@@ -151,12 +155,53 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
         return instance;
     }
 
-    private IEnumerator FinalizeSpawn(GameObject instance)
+    private void ScheduleFinalizeSpawn(GameObject instance)
     {
-        PlayAllParticles(instance);
-        ApplySorting(instance);
+        if (isActiveAndEnabled)
+            StartCoroutine(FinalizeSpawnDelayed(instance));
+        else
+            FinalizeSpawn(instance);
+    }
+
+    private IEnumerator FinalizeSpawnDelayed(GameObject instance)
+    {
+        if (instance == null)
+            yield break;
+
+        FinalizeSpawn(instance);
 
         yield return null;
+
+        if (instance == null || !IsTrackedInstance(instance))
+            yield break;
+
+        FinalizeSpawn(instance);
+    }
+
+    private bool IsTrackedInstance(GameObject instance)
+    {
+        if (instance == null)
+            return false;
+
+        foreach (var kv in baseRoots)
+        {
+            if (kv.Value == instance)
+                return true;
+        }
+
+        foreach (var kv in reactionRoots)
+        {
+            if (kv.Value == instance)
+                return true;
+        }
+
+        return false;
+    }
+
+    private void FinalizeSpawn(GameObject instance)
+    {
+        if (instance == null)
+            return;
 
         PlayAllParticles(instance);
         ApplySorting(instance);
@@ -198,6 +243,9 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
 
     private void ApplySorting(GameObject vfxRoot)
     {
+        if (vfxRoot == null)
+            return;
+
         if (owner != null)
         {
             ReactionVfxSortingUtility.ApplyAboveEnemy(vfxRoot, owner, SortingOrderOffset);
@@ -240,6 +288,9 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
 
     private static void PlayAllParticles(GameObject vfxRoot)
     {
+        if (vfxRoot == null)
+            return;
+
         foreach (var ps in vfxRoot.GetComponentsInChildren<ParticleSystem>(true))
         {
             ps.Clear(true);

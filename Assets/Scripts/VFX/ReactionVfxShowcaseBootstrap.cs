@@ -2,8 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// Spawns one enemy per reaction pair and plays reaction burst VFX from
-/// <see cref="ReactionVfxCatalogSO"/> without applying base elemental status visuals.
+/// Spawns one enemy per reaction pair and plays reaction gameplay + VFX.
 /// </summary>
 public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
 {
@@ -14,6 +13,7 @@ public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
     [SerializeField] private float columnSpacing = 2.2f;
     [SerializeField] private float rowSpacing = 2.6f;
     [SerializeField] private bool loopReactionVfx = true;
+    [SerializeField] private float statusDurationSeconds = 30f;
 
     private static readonly (StatusType A, StatusType B)[] Pairs =
     {
@@ -43,10 +43,14 @@ public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
         "Static Charge",
     };
 
-    // Matches ReactionBurstParticleBootstrap destroy-after values per pair above.
     private static readonly float[] ReactionLoopSeconds =
     {
         4f, 2.4f, 0.5f, 0.85f, 2.4f, 2.4f, 0.5f, 2.6f, 1.2f, 1.8f,
+    };
+
+    private static readonly bool[] ReactionGameplayEnabled =
+    {
+        true, false, true, true, true, false, true, false, true, false,
     };
 
     private void Awake()
@@ -103,14 +107,29 @@ public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
             var reactionName = i < ReactionNames.Length ? ReactionNames[i] : $"{a} + {b}";
             ReactionShowcaseLabel.Create(enemy.transform, reactionName, a, b);
 
-            status.SpawnReactionVfx(enemy, a, b);
+            var gameplayEnabled = i < ReactionGameplayEnabled.Length && ReactionGameplayEnabled[i];
+            if (gameplayEnabled)
+                ProcReactionPair(status, enemy, a, b, statusDurationSeconds);
+            else
+                status.SpawnReactionVfx(enemy, a, b);
 
-            if (loopReactionVfx)
+            if (loopReactionVfx && gameplayEnabled)
+            {
+                var interval = i < ReactionLoopSeconds.Length ? ReactionLoopSeconds[i] : 2.4f;
+                StartCoroutine(LoopReactionGameplay(status, enemy, a, b, interval, statusDurationSeconds));
+            }
+            else if (loopReactionVfx)
             {
                 var interval = i < ReactionLoopSeconds.Length ? ReactionLoopSeconds[i] : 2.4f;
                 StartCoroutine(LoopReactionVfx(status, enemy, a, b, interval));
             }
         }
+    }
+
+    private static void ProcReactionPair(StatusSystem status, Enemy enemy, StatusType a, StatusType b, float duration)
+    {
+        status.Apply(enemy, a, duration);
+        status.Apply(enemy, b, duration);
     }
 
     private static void HideGameplayUi()
@@ -146,6 +165,22 @@ public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
             statusPresenter.enabled = false;
 
         registry.Register(enemy);
+    }
+
+    private static IEnumerator LoopReactionGameplay(
+        StatusSystem status,
+        Enemy enemy,
+        StatusType a,
+        StatusType b,
+        float interval,
+        float duration)
+    {
+        while (enemy != null)
+        {
+            yield return new WaitForSeconds(interval);
+            if (enemy != null)
+                ProcReactionPair(status, enemy, a, b, duration);
+        }
     }
 
     private static IEnumerator LoopReactionVfx(
