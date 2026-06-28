@@ -26,14 +26,13 @@ public static class EnemyCombatPrefabBuilder
         EnsureFolder("Assets/Prefabs/Enemies");
 
         var darkFlame = BuildDarkFlameProjectile();
-        var ranged = BuildRangedEnemy(darkFlame);
         var boss = BuildBossEnemy(darkFlame);
-        WireTierSet(ranged, boss);
+        WireTierSetBoss(boss);
         BuildBossTestScene(boss);
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log("[EnemyCombatPrefabBuilder] Built dark flame, ranged enemy, boss enemy, tier set, and BossCombatTest scene.");
+        Debug.Log("[EnemyCombatPrefabBuilder] Built dark flame projectile, boss enemy, tier set, and BossCombatTest scene.");
     }
 
     /// <summary>Unity -batchmode -executeMethod EnemyCombatPrefabBuilder.BuildAllFromCli</summary>
@@ -241,17 +240,13 @@ public static class EnemyCombatPrefabBuilder
         return saved.GetComponent<Enemy>();
     }
 
-    private static void WireTierSet(Enemy ranged, Enemy boss)
+    private static void WireTierSetBoss(Enemy boss)
     {
         var tierSet = AssetDatabase.LoadAssetAtPath<EnemyTierSetSO>(TierSetPath);
         if (tierSet == null)
             throw new System.InvalidOperationException("Missing EnemyTierSet.asset");
 
         var so = new SerializedObject(tierSet);
-        var tiers = so.FindProperty("tiers");
-        if (tiers.arraySize > 1)
-            tiers.GetArrayElementAtIndex(1).FindPropertyRelative("prototype").objectReferenceValue = ranged;
-
         so.FindProperty("bossPrototype").objectReferenceValue = boss;
         so.ApplyModifiedPropertiesWithoutUndo();
     }
