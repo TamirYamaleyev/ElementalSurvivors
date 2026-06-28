@@ -54,8 +54,8 @@ public class EnemySpawner : MonoBehaviour
 
         if (RunDifficultyEvaluator.ShouldSpawnBoss(runProfile, elapsedTime, ref nextBossAt))
         {
-            int bossPoolTier = Mathf.Max(0, tierSet.tiers.Length - 1);
-            SpawnEnemy(bossPoolTier, isBoss: true);
+            SpawnEnemy(0, isBoss: true);
+            return;
         }
 
         timer -= Time.deltaTime;
@@ -74,7 +74,7 @@ public class EnemySpawner : MonoBehaviour
         if (prefabRef == null)
             return;
 
-        Enemy instance = enemyPool.Acquire(tierIndex);
+        Enemy instance = isBoss ? enemyPool.AcquireBoss() : enemyPool.Acquire(tierIndex);
         if (instance == null)
             return;
 

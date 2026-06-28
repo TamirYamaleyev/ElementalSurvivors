@@ -1,0 +1,261 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1270935617353713525
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 576947643538986003}
+  m_Layer: 0
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &576947643538986003
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1270935617353713525}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.35, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6696606194363270869}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &5768172113367374207
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6696606194363270869}
+    m_Modifications:
+    - target: {fileID: 3785949763502695238, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3785949763502695238, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3785949763502695238, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3785949763502695238, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3785949763502695238, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3785949763502695238, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3785949763502695238, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3785949763502695238, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3785949763502695238, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3785949763502695238, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5634336729478383400, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
+      propertyPath: m_Name
+      value: TelegraphVfx
+      objectReference: {fileID: 0}
+    - target: {fileID: 5634336729478383400, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
+--- !u!1 &2179045810395504215 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5634336729478383400, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
+  m_PrefabInstance: {fileID: 5768172113367374207}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7243702148223924793 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3785949763502695238, guid: 5a2a538938817482b9986d8c13f5d1bd, type: 3}
+  m_PrefabInstance: {fileID: 5768172113367374207}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8021752546020824729
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1111111111111111102, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      propertyPath: maxHealth
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 1111111111111111102, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      propertyPath: contactDamage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3651129979494247448, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      propertyPath: m_Name
+      value: BossEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 7250192618332092065, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -6.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7250192618332092065, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.86
+      objectReference: {fileID: 0}
+    - target: {fileID: 7250192618332092065, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7250192618332092065, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7250192618332092065, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7250192618332092065, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7250192618332092065, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7250192618332092065, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7250192618332092065, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7250192618332092065, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 3728385286340350028, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 576947643538986003}
+    - targetCorrespondingSourceObject: {fileID: 3728385286340350028, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7243702148223924793}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3651129979494247448, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6444250015525867761}
+    - targetCorrespondingSourceObject: {fileID: 3651129979494247448, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4587097918954661063}
+    - targetCorrespondingSourceObject: {fileID: 3651129979494247448, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6116855580254196680}
+  m_SourcePrefab: {fileID: 100100000, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+--- !u!4 &6696606194363270869 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3728385286340350028, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+  m_PrefabInstance: {fileID: 8021752546020824729}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6771608646374701697 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3651129979494247448, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
+  m_PrefabInstance: {fileID: 8021752546020824729}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6444250015525867761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6771608646374701697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26d53d3cb77ee40d7aa6066615587668, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossAttackController
+  windUpDuration: 1
+  delayBetweenVolleys: 2
+  initialDelay: 1.5
+  projectilePrefab: {fileID: 1270097732734394434, guid: efc41bcefb29940088568cbee18ce853, type: 3}
+  projectileSpeed: 7
+  projectileDamage: 12
+  projectileLifetime: 5
+  firePoint: {fileID: 576947643538986003}
+  patternCycle: 000000000100000002000000
+  triangleCone:
+    rows: 7
+    coneHalfAngle: 35
+    rowSpacing: 0.55
+    delayBetweenRows: 0.08
+  singleLine:
+    count: 10
+    spacing: 0.45
+    delayBetweenShots: 0.06
+  rotatingArc:
+    arcAngle: 70
+    rows: 4
+    projectilesPerRow: 5
+    rowSpacing: 0.5
+    rotationStepDegrees: 45
+  telegraphVfx: {fileID: 6116855580254196680}
+  characterAnimation: {fileID: 0}
+--- !u!114 &4587097918954661063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6771608646374701697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c41f0105a00f453e95303cd2bf9c296, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossAI
+  preferredDistance: 6
+  distanceTolerance: 1
+  strafeDirectionChangeInterval: 2.5
+--- !u!114 &6116855580254196680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6771608646374701697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 187259210dfdc4aa18e9a340b0b37fb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossAttackTelegraphVfx
+  vfxRoot: {fileID: 2179045810395504215}
+  stopHideDelay: 0.15

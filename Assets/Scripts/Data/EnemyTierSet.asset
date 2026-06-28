@@ -15,8 +15,8 @@ MonoBehaviour:
   tiers:
   - prototype: {fileID: 1111111111111111101, guid: 77c68128e80259940a8a7848e64cca13, type: 3}
     prewarmCount: 16
-  - prototype: {fileID: 1111111111111111101, guid: c82025751f6fd1642b6cc22facad5fa8, type: 3}
+  - prototype: {fileID: 8686547194469913604, guid: dbcc4d6fef5ce41c38c1c12878cdbab2, type: 3}
     prewarmCount: 16
   - prototype: {fileID: 1111111111111111101, guid: c94d1a28659ac074c9873707d14c84b7, type: 3}
     prewarmCount: 16
-  bossPrototype: {fileID: 0}
+  bossPrototype: {fileID: 6933723578419144484, guid: 6a804684d15a1418baf5a8ef1dbc345f, type: 3}

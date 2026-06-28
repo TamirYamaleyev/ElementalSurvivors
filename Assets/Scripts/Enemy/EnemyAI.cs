@@ -1,5 +1,12 @@
 using UnityEngine;
 
+public enum DistanceBand
+{
+    TooFar,
+    InRange,
+    TooClose
+}
+
 [RequireComponent(typeof(Rigidbody2D))]
 public class EnemyAI : MonoBehaviour
 {
@@ -34,6 +41,14 @@ public class EnemyAI : MonoBehaviour
     private Transform player;
     private Vector2 direction;
     private bool gameplayEnabled = true;
+    private bool movementOverrideEnabled = true;
+    private bool useDistanceMaintenance;
+    private float preferredDistance;
+    private float distanceTolerance;
+    private Vector2 strafeDirection;
+    private bool useStrafe;
+
+    public bool IsGameplayEnabled => gameplayEnabled;
 
     private void Awake()
     {
@@ -132,6 +147,48 @@ public class EnemyAI : MonoBehaviour
 
     public bool CanBeStunnedByHail() => hailStunImmunityTimer <= 0f;
 
+    public void SetMovementOverride(bool enabled)
+    {
+        movementOverrideEnabled = enabled;
+
+        if (!enabled && rb != null && externalVelocity.sqrMagnitude < 1e-6f && pullTimer <= 0f)
+            rb.linearVelocity = Vector2.zero;
+    }
+
+    public void SetDistanceMaintenance(float preferred, float tolerance, bool enabled)
+    {
+        useDistanceMaintenance = enabled;
+        preferredDistance = preferred;
+        distanceTolerance = Mathf.Max(0.05f, tolerance);
+    }
+
+    public void SetStrafeDirection(Vector2 dir)
+    {
+        if (dir.sqrMagnitude < 1e-6f)
+        {
+            useStrafe = false;
+            return;
+        }
+
+        useStrafe = true;
+        strafeDirection = dir.normalized;
+    }
+
+    public DistanceBand EvaluateDistanceBand()
+    {
+        EnsureInitialized();
+        if (player == null || rb == null)
+            return DistanceBand.InRange;
+
+        var dist = Vector2.Distance(rb.position, player.position);
+        if (dist > preferredDistance + distanceTolerance)
+            return DistanceBand.TooFar;
+        if (dist < preferredDistance - distanceTolerance)
+            return DistanceBand.TooClose;
+
+        return DistanceBand.InRange;
+    }
+
     public void AddHailStunImmunity(float duration)
     {
         if (duration <= 0f)
@@ -180,7 +237,76 @@ public class EnemyAI : MonoBehaviour
         if (!gameplayEnabled)
             return;
 
+        if (useDistanceMaintenance && movementOverrideEnabled)
+        {
+            MaintainDistanceMovement();
+            return;
+        }
+
+        if (!movementOverrideEnabled)
+        {
+            if (rb.linearVelocity.sqrMagnitude > 1e-6f)
+                rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
         FollowPlayer();
+    }
+
+    private void MaintainDistanceMovement()
+    {
+        EnsureInitialized();
+        if (player == null)
+            return;
+
+        var band = EvaluateDistanceBand();
+        Vector2 moveDir;
+
+        if (band == DistanceBand.InRange && useStrafe)
+        {
+            moveDir = strafeDirection;
+        }
+        else if (band == DistanceBand.TooFar)
+        {
+            moveDir = ((Vector2)player.position - rb.position).normalized;
+        }
+        else if (band == DistanceBand.TooClose)
+        {
+            moveDir = (rb.position - (Vector2)player.position).normalized;
+        }
+        else
+        {
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
+        MoveInDirection(moveDir);
+    }
+
+    private void MoveInDirection(Vector2 moveDir)
+    {
+        if (moveDir.sqrMagnitude < 1e-6f || rb == null)
+            return;
+
+        var currentSpeed = moveSpeed;
+        if (slowTimer > 0f)
+        {
+            currentSpeed *= slowMultiplier;
+            slowTimer -= Time.fixedDeltaTime;
+        }
+
+        if (Physics2D.OverlapCircle(rb.position, bodyCastRadius, obstacleMask))
+            EnemyObstacleSteering.SeparateFromObstacles(rb, bodyCastRadius, obstacleMask);
+
+        var steerDir = EnemyObstacleSteering.ResolveSteerDirection(
+            rb.position,
+            bodyCastRadius,
+            moveDir,
+            probeDistance,
+            obstacleMask,
+            steerAnglesDeg);
+
+        EnemyObstacleSteering.MoveWithCollision(rb, bodyCastRadius, steerDir, currentSpeed, obstacleMask);
     }
 
     private void SetDirection()
@@ -208,26 +334,7 @@ public class EnemyAI : MonoBehaviour
         if (direction.sqrMagnitude < 1e-6f || rb == null)
             return;
 
-        float currentSpeed = moveSpeed;
-
-        if (slowTimer > 0f)
-        {
-            currentSpeed *= slowMultiplier;
-            slowTimer -= Time.fixedDeltaTime;
-        }
-
-        if (Physics2D.OverlapCircle(rb.position, bodyCastRadius, obstacleMask))
-            EnemyObstacleSteering.SeparateFromObstacles(rb, bodyCastRadius, obstacleMask);
-
-        Vector2 steerDir = EnemyObstacleSteering.ResolveSteerDirection(
-            rb.position,
-            bodyCastRadius,
-            direction,
-            probeDistance,
-            obstacleMask,
-            steerAnglesDeg);
-
-        EnemyObstacleSteering.MoveWithCollision(rb, bodyCastRadius, steerDir, currentSpeed, obstacleMask);
+        MoveInDirection(direction);
     }
 
     public void ResetState()
@@ -242,6 +349,9 @@ public class EnemyAI : MonoBehaviour
         pullStrength = 0f;
         pullTimer = 0f;
         gameplayEnabled = true;
+        movementOverrideEnabled = true;
+        useDistanceMaintenance = false;
+        useStrafe = false;
 
         if (rb != null)
             rb.linearVelocity = Vector2.zero;

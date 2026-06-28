@@ -98,6 +98,10 @@ public class Enemy : MonoBehaviour
         health.ResetState();
         status?.ClearAllStatuses();
         GetComponent<ElementalStatusVfxPresenter>()?.ResetForPool();
+
+        foreach (var reset in GetComponents<IEnemyPoolReset>())
+            reset.ResetForPool();
+
         transform.localScale = defaultLocalScale;
         gameObject.SetActive(false);
     }
