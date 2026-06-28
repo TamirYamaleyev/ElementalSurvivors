@@ -113,6 +113,10 @@ public class EnemyAI : MonoBehaviour
         if (impulse <= 0f || direction.sqrMagnitude < 1e-6f || rb == null)
             return;
 
+        pullTimer = 0f;
+        pullStrength = 0f;
+        pullTarget = Vector2.zero;
+
         externalVelocity = direction.normalized * impulse;
     }
 
@@ -155,14 +159,6 @@ public class EnemyAI : MonoBehaviour
         if (rb == null)
             return;
 
-        if (pullTimer > 0f && pullStrength > 0f)
-        {
-            var delta = pullTarget - rb.position;
-            if (delta.sqrMagnitude > 1e-6f)
-                rb.linearVelocity = delta.normalized * pullStrength;
-            return;
-        }
-
         if (externalVelocity.sqrMagnitude > 1e-6f)
         {
             rb.linearVelocity = externalVelocity;
@@ -170,6 +166,14 @@ public class EnemyAI : MonoBehaviour
                 externalVelocity,
                 Vector2.zero,
                 externalVelocityDecay * Time.fixedDeltaTime);
+            return;
+        }
+
+        if (pullTimer > 0f && pullStrength > 0f)
+        {
+            var delta = pullTarget - rb.position;
+            if (delta.sqrMagnitude > 1e-6f)
+                rb.linearVelocity = delta.normalized * pullStrength;
             return;
         }
 

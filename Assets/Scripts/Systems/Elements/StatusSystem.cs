@@ -47,6 +47,7 @@ public class StatusSystem : MonoBehaviour
         if (effectSystem == null)
             return;
 
+        effectSystem.SetStatusSystem(this);
         if (reactionGameplayCatalog != null)
             effectSystem.SetGameplayCatalog(reactionGameplayCatalog);
         if (reactionVfxCatalog != null)
@@ -55,15 +56,28 @@ public class StatusSystem : MonoBehaviour
             effectSystem.SetEnemyRegistry(enemyRegistry);
     }
 
-    public void Apply(Enemy enemy, StatusType type, float duration)
+    /// <summary>Applies a debuff without resolving elemental reactions (electrowetting spread, etc.).</summary>
+    public void ApplySpreadStatus(Enemy enemy, StatusType type, float duration)
     {
         if (type == StatusType.None || enemy == null || !enemy.gameObject.activeInHierarchy)
             return;
 
-        enemy.StatusController.AddStatus(type, duration);
+        enemy.StatusController.AddSpreadStatus(type, duration);
     }
 
-    public bool ResolveInteractions(Enemy enemy, List<StatusInstance> existing, StatusType incomingType)
+    public void Apply(Enemy enemy, StatusType type, float duration, float pendingDamage = 0f)
+    {
+        if (type == StatusType.None || enemy == null || !enemy.gameObject.activeInHierarchy)
+            return;
+
+        enemy.StatusController.AddStatus(type, duration, pendingDamage);
+    }
+
+    public bool ResolveInteractions(
+        Enemy enemy,
+        List<StatusInstance> existing,
+        StatusType incomingType,
+        float pendingDamage = 0f)
     {
         if (enemy == null || effectSystem == null || incomingType == StatusType.None)
             return false;
@@ -85,7 +99,7 @@ public class StatusSystem : MonoBehaviour
             if (!enemy.StatusController.IsPairAvailable(pair.First, pair.Second, incomingType))
                 continue;
 
-            if (!effectSystem.TryProcReaction(enemy, pair.First, pair.Second))
+            if (!effectSystem.TryProcReaction(enemy, pair.First, pair.Second, pendingDamage))
                 continue;
 
             if (pair.First == incomingType || pair.Second == incomingType)

@@ -47,7 +47,7 @@ public class ReactionGameplayCatalogSO : ScriptableObject
     [SerializeField] private ReactionGameplayDefinition explosion = new() { radius = 2.8f, flatDamage = 20f, knockbackImpulse = 7f };
     [SerializeField] private ReactionGameplayDefinition hail = new() { mode = ReactionGameplayMode.Sustained, radius = 2.5f, duration = 2.4f, stunDuration = 1.2f, hailImmunityGain = 2f };
     [SerializeField] private ReactionGameplayDefinition growth = new() { enabled = false };
-    [SerializeField] private ReactionGameplayDefinition electrowetting = new() { radius = 4f, damageMultiplier = 1f };
+    [SerializeField] private ReactionGameplayDefinition electrowetting = new() { radius = 4f, duration = 10f, laserCount = 3, damageMultiplier = 1f };
     [SerializeField] private ReactionGameplayDefinition dustSandStorm = new() { enabled = false };
     [SerializeField] private ReactionGameplayDefinition magnetism = new() { mode = ReactionGameplayMode.Sustained, radius = 3f, duration = 2.5f, pullSpeed = 3.5f };
     [SerializeField] private ReactionGameplayDefinition staticCharge = new() { enabled = false };

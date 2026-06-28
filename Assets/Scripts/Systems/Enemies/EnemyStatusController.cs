@@ -40,18 +40,32 @@ public class EnemyStatusController : MonoBehaviour
         health = owner != null ? owner.GetComponent<EnemyHealth>() : null;
     }
 
-    public void AddStatus(StatusType type, float duration)
+    public void AddStatus(StatusType type, float duration, float pendingReactionDamage = 0f)
     {
         if (type == StatusType.None || owner == null || !owner.gameObject.activeInHierarchy)
             return;
 
-        var incomingConsumed = system.ResolveInteractions(owner, statuses, type);
+        var incomingConsumed = system.ResolveInteractions(owner, statuses, type, pendingReactionDamage);
         if (incomingConsumed)
         {
             RefreshVisuals();
             return;
         }
 
+        ApplyOrRefreshStatus(type, duration);
+    }
+
+    /// <summary>Applies a debuff without triggering elemental reaction resolution.</summary>
+    public void AddSpreadStatus(StatusType type, float duration)
+    {
+        if (type == StatusType.None || owner == null || !owner.gameObject.activeInHierarchy)
+            return;
+
+        ApplyOrRefreshStatus(type, duration);
+    }
+
+    private void ApplyOrRefreshStatus(StatusType type, float duration)
+    {
         if (TryRefreshExistingStatus(type, duration))
         {
             RefreshVisuals();

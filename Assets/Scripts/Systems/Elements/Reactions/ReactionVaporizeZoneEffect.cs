@@ -2,41 +2,69 @@ using UnityEngine;
 
 public sealed class ReactionVaporizeZoneEffect : MonoBehaviour, IReactionGameplayEffect
 {
-    private ReactionEffectContext ctx;
-    private ReactionGameplayDefinition def;
+    private Vector3 zoneCenter;
+    private StatusPair pair;
+    private EnemyRegistry registry;
+    private float duration;
+    private float radius;
+    private float tickInterval;
+    private float tickDamage;
     private float elapsed;
     private float tickTimer;
 
     public void Initialize(ReactionEffectContext context, ReactionGameplayDefinition definition)
     {
-        ctx = context;
-        def = definition;
-        transform.position = ctx.Center;
+        zoneCenter = ReactionGameplayEffectUtility.ResolveReactionOrigin(context);
+        pair = context.Pair;
+        registry = ReactionGameplayEffectUtility.ResolveRegistry(context.Registry);
+        duration = Mathf.Max(0.1f, definition.duration);
+        radius = definition.radius;
+        tickInterval = Mathf.Max(0.05f, definition.tickInterval);
+        tickDamage = definition.contactDps * tickInterval;
+
+        transform.position = zoneCenter;
+
+        var burstDamage = ReactionGameplayEffectUtility.ResolveDamage(definition, context.TriggerDamage);
+        if (burstDamage > 0f)
+            ApplyDamageToZone(burstDamage);
+
+        tickTimer = 0f;
+        ApplyDamageToZone(tickDamage);
     }
 
     private void Update()
     {
-        if (def == null)
+        if (duration <= 0f)
+            return;
+
+        registry = ReactionGameplayEffectUtility.ResolveRegistry(registry);
+        if (registry == null)
             return;
 
         elapsed += Time.deltaTime;
-        if (elapsed >= def.duration)
+        if (elapsed >= duration)
         {
             Destroy(gameObject);
             return;
         }
 
         tickTimer += Time.deltaTime;
-        if (tickTimer < def.tickInterval)
+        if (tickTimer < tickInterval)
             return;
 
-        tickTimer = 0f;
-        var tickDamage = def.contactDps * def.tickInterval;
+        tickTimer -= tickInterval;
+        ApplyDamageToZone(tickDamage);
+    }
+
+    private void ApplyDamageToZone(float amount)
+    {
+        if (amount <= 0f)
+            return;
 
         ReactionGameplayEffectUtility.ForEachEnemyInRadius(
-            ctx.Registry,
-            transform.position,
-            def.radius,
-            enemy => ReactionGameplayEffectUtility.ApplyDamage(enemy, tickDamage, ctx.Pair));
+            registry,
+            zoneCenter,
+            radius,
+            enemy => ReactionGameplayEffectUtility.ApplyDamage(enemy, amount, pair));
     }
 }

@@ -15,8 +15,9 @@ MonoBehaviour:
   weaponName: Fireball
   behaviorType: 0
   appliedStatus: 0
-  projectilePrefab: {fileID: 2678153578455736258, guid: e56ad4b8db070804b8f71064b33eb561, type: 3}
+  projectilePrefab: {fileID: 2678153578455736263, guid: e56ad4b8db070804b8f71064b33eb561, type: 3}
   orbitPrefab: {fileID: 0}
+  areaPrefab: {fileID: 0}
   customWeaponPrefab: {fileID: 0}
   levels:
   - damage: 10

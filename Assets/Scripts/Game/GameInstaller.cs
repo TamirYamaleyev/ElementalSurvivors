@@ -31,6 +31,8 @@ public class GameInstaller : MonoBehaviour
 
     void Awake()
     {
+        EnsureReactionAnchor();
+
         if (status != null)
         {
             if (reactionEffectSystem == null)
@@ -47,6 +49,25 @@ public class GameInstaller : MonoBehaviour
         }
 
         weaponSystem.Initialize(BuildWeaponContext());
+    }
+
+    private void OnDestroy()
+    {
+        if (reactionAnchorRoot != null)
+            ReactionRuntimeAnchor.ClearRoot(reactionAnchorRoot);
+    }
+
+    private Transform reactionAnchorRoot;
+
+    private void EnsureReactionAnchor()
+    {
+        if (ReactionRuntimeAnchor.Root != null)
+            return;
+
+        var anchorGo = new GameObject("ReactionEffects");
+        anchorGo.transform.SetParent(transform, false);
+        reactionAnchorRoot = anchorGo.transform;
+        ReactionRuntimeAnchor.SetRoot(reactionAnchorRoot);
     }
 
     public WeaponSystemContext BuildWeaponContext()

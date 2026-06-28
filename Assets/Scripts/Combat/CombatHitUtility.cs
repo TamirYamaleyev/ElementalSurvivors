@@ -61,7 +61,7 @@ public static class CombatHitUtility
             return;
 
         if (statusSystem != null && status != StatusType.None && statusDuration > 0f)
-            statusSystem.Apply(enemy, status, statusDuration);
+            statusSystem.Apply(enemy, status, statusDuration, damage);
 
         if (damage > 0f)
             enemy.TakeDamage(damage);

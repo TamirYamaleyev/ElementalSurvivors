@@ -8,6 +8,7 @@ public readonly struct ReactionEffectContext
     public EnemyRegistry Registry { get; }
     public Transform PlayerTransform { get; }
     public float TriggerDamage { get; }
+    public StatusSystem StatusSystem { get; }
 
     public ReactionEffectContext(
         Enemy sourceEnemy,
@@ -15,7 +16,8 @@ public readonly struct ReactionEffectContext
         Vector3 center,
         EnemyRegistry registry,
         Transform playerTransform,
-        float triggerDamage)
+        float triggerDamage,
+        StatusSystem statusSystem = null)
     {
         SourceEnemy = sourceEnemy;
         Pair = pair;
@@ -23,5 +25,6 @@ public readonly struct ReactionEffectContext
         Registry = registry;
         PlayerTransform = playerTransform;
         TriggerDamage = triggerDamage;
+        StatusSystem = statusSystem;
     }
 }

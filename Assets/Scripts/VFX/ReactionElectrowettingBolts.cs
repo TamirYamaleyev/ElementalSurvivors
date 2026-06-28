@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Electrowetting: one lightning bolt from the source enemy to each target in range.
+/// Electrowetting: sequential chain lightning bolts along the gameplay jump path.
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class ReactionElectrowettingBolts : MonoBehaviour, IReactionWorldVfx
@@ -19,17 +19,48 @@ public sealed class ReactionElectrowettingBolts : MonoBehaviour, IReactionWorldV
 
     public void Initialize(ReactionVfxContext ctx)
     {
-        var sourceEnemy = ctx.SourceEnemy;
-        var registry = ctx.Registry;
-        if (lightningVisualPrefab == null || registry == null)
+        if (lightningVisualPrefab == null)
             return;
 
-        if (sourceEnemy != null && sourceEnemy.gameObject.activeInHierarchy)
-            CacheSortingFromEnemy(sourceEnemy);
+        if (ctx.SourceEnemy != null && ctx.SourceEnemy.gameObject.activeInHierarchy)
+            CacheSortingFromEnemy(ctx.SourceEnemy);
+
+        var effect = GetComponentInParent<ReactionElectrowettingEffect>();
+        if (effect != null && effect.ChainTargets.Count > 0)
+        {
+            SpawnChainBolts(ctx.Center, effect.ChainTargets);
+            return;
+        }
+
+        SpawnRadialFallbackBolts(ctx);
+    }
+
+    private void SpawnChainBolts(Vector3 center, System.Collections.Generic.IReadOnlyList<Enemy> targets)
+    {
+        var previous = (Vector2)center;
+
+        for (var i = 0; i < targets.Count; i++)
+        {
+            var enemy = targets[i];
+            if (enemy == null || !enemy.gameObject.activeInHierarchy)
+                continue;
+
+            var end = (Vector2)enemy.transform.position + Vector2.up * 0.25f;
+            SpawnBolt(previous, end);
+            previous = end;
+        }
+    }
+
+    private void SpawnRadialFallbackBolts(ReactionVfxContext ctx)
+    {
+        var registry = ctx.Registry;
+        if (registry == null)
+            return;
 
         var start = (Vector2)ctx.Center;
         var center = start;
         var radiusSq = effectRadius * effectRadius;
+        var sourceEnemy = ctx.SourceEnemy;
 
         foreach (var enemy in registry.ActiveEnemies)
         {
