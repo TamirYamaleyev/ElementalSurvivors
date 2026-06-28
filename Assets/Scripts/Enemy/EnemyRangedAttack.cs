@@ -20,13 +20,13 @@ public sealed class EnemyRangedAttack : MonoBehaviour, IEnemyPoolReset
     [SerializeField] private float projectileLifetime = 4f;
 
     private EnemyAI ai;
-    private EnemyCharacterAnimation animation;
+    private EnemyCharacterAnimation characterAnimation;
     private Coroutine loop;
 
     private void Awake()
     {
         ai = GetComponent<EnemyAI>();
-        animation = GetComponent<EnemyCharacterAnimation>();
+        characterAnimation = GetComponent<EnemyCharacterAnimation>();
     }
 
     private void OnEnable()
@@ -70,7 +70,7 @@ public sealed class EnemyRangedAttack : MonoBehaviour, IEnemyPoolReset
                 continue;
 
             ai.SetMovementOverride(false);
-            animation?.NotifyAttack();
+            characterAnimation?.NotifyAttack();
 
             var elapsed = 0f;
             while (elapsed < windUpDuration)

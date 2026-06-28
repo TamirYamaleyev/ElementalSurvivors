@@ -115,6 +115,9 @@ public class EnemySpawner : MonoBehaviour
             ScaledContactDamage = prefabRef.BaselineContactDamage * multiplier,
             VisualScaleMultiplier = visualScale,
         });
+
+        if (isBoss)
+            EnemyWorldHealthBar.EnsureAttached(instance);
     }
 
     private Vector3 FindClearSpawnPosition(Vector3 desired, float checkRadius)

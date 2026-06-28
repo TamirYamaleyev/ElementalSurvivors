@@ -4,6 +4,8 @@ using UnityEngine;
 public sealed class BossCombatTestBootstrap : MonoBehaviour
 {
     [SerializeField] private Enemy bossPrefab;
+    [SerializeField] private Transform spawnAnchor;
+    [SerializeField] private GameObject decorativeBossRoot;
     [SerializeField] private Vector3 spawnOffset = new(0f, 8f, 0f);
     [SerializeField] private float bossVisualScale = 1.5f;
     [SerializeField] private float respawnDelay = 3f;
@@ -15,8 +17,8 @@ public sealed class BossCombatTestBootstrap : MonoBehaviour
 
     private void Start()
     {
-        statusSystem = FindAnyObjectByType<StatusSystem>();
-        registry = FindAnyObjectByType<EnemyRegistry>();
+        statusSystem = FindAnyObjectByType<StatusSystem>(FindObjectsInactive.Include);
+        registry = FindAnyObjectByType<EnemyRegistry>(FindObjectsInactive.Include);
 
         DisableSceneInterruptions();
         TmpFontUtility.EnsureAllInScene();
@@ -39,16 +41,22 @@ public sealed class BossCombatTestBootstrap : MonoBehaviour
             return;
         }
 
+        if (registry == null)
+        {
+            Debug.LogWarning("[BossCombatTest] EnemyRegistry not found; boss will not be targetable.", this);
+        }
+
         var player = PlayerController.Instance;
         var origin = player != null ? player.transform.position : Vector3.zero;
-        var pos = origin + spawnOffset;
+        var pos = spawnAnchor != null ? spawnAnchor.position : origin + spawnOffset;
 
         activeBoss = Instantiate(bossPrefab, pos, Quaternion.identity);
-        if (statusSystem != null && registry != null)
-        {
+
+        if (registry != null)
             activeBoss.ConfigureSystems(statusSystem, registry);
+
+        if (statusSystem != null && registry != null)
             activeBoss.Initialize(statusSystem, registry);
-        }
 
         activeBoss.OnAcquire(new SpawnContext
         {
@@ -57,6 +65,11 @@ public sealed class BossCombatTestBootstrap : MonoBehaviour
             ScaledContactDamage = 0f,
             VisualScaleMultiplier = bossVisualScale
         });
+
+        if (decorativeBossRoot != null)
+            decorativeBossRoot.SetActive(false);
+
+        EnemyWorldHealthBar.EnsureAttached(activeBoss);
 
         var health = activeBoss.GetComponent<EnemyHealth>();
         if (health != null)

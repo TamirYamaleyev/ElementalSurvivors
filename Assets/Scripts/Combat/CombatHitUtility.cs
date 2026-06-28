@@ -8,10 +8,20 @@ using UnityEngine;
 /// </summary>
 public static class CombatHitUtility
 {
+    public static bool IsWeaponHitCollider(Collider2D collider)
+    {
+        return collider != null && !collider.isTrigger;
+    }
+
+    public static bool TryResolveEnemyFromHit(Collider2D collider, out Enemy enemy)
+    {
+        return TryResolveEnemy(collider, out enemy);
+    }
+
     public static bool TryResolveEnemy(Collider2D collider, out Enemy enemy)
     {
         enemy = null;
-        if (collider == null /*|| collider.isTrigger*/)
+        if (!IsWeaponHitCollider(collider))
             return false;
 
         enemy = collider.GetComponentInParent<Enemy>();
@@ -21,7 +31,7 @@ public static class CombatHitUtility
     public static bool TryResolveEnemyHealth(Collider2D collider, out EnemyHealth health)
     {
         health = null;
-        if (collider == null || collider.isTrigger)
+        if (!IsWeaponHitCollider(collider))
             return false;
 
         health = collider.GetComponentInParent<EnemyHealth>();

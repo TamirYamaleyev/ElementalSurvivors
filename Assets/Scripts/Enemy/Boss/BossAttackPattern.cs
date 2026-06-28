@@ -18,16 +18,18 @@ public struct BossTriangleConeConfig
 public struct BossSingleLineConfig
 {
     public int count;
-    public float spacing;
     public float delayBetweenShots;
 }
 
 [System.Serializable]
 public struct BossRotatingArcConfig
 {
-    public float arcAngle;
-    public int rows;
+    public int segmentCount;
+    public float segmentArcDegrees;
     public int projectilesPerRow;
+    public int radialRows;
     public float rowSpacing;
+    public float delayBetweenSegments;
     public float rotationStepDegrees;
+    public bool startFromAim;
 }

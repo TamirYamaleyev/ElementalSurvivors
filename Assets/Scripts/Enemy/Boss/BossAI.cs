@@ -2,7 +2,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(EnemyAI))]
 [RequireComponent(typeof(BossAttackController))]
-public sealed class BossAI : MonoBehaviour, IEnemyPoolReset, IEnemyPoolReset
+public sealed class BossAI : MonoBehaviour, IEnemyPoolReset
 {
     [Header("Movement")]
     [SerializeField] private float preferredDistance = 6f;

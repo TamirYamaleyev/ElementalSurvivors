@@ -34,12 +34,7 @@ public sealed class BossAttackTelegraphVfx : MonoBehaviour
 
         hideAt = -1f;
         vfxRoot.SetActive(true);
-
-        if (aimDirection.sqrMagnitude > 1e-6f)
-        {
-            var angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg - 90f;
-            vfxRoot.transform.rotation = Quaternion.Euler(0f, 0f, angle);
-        }
+        ApplyDirectionRotation(aimDirection);
 
         if (particleSystems == null || particleSystems.Length == 0)
             particleSystems = vfxRoot.GetComponentsInChildren<ParticleSystem>(true);
@@ -49,6 +44,14 @@ public sealed class BossAttackTelegraphVfx : MonoBehaviour
             ps.Clear(true);
             ps.Play(true);
         }
+    }
+
+    public void SetDirection(Vector2 direction)
+    {
+        if (vfxRoot == null || !vfxRoot.activeSelf)
+            return;
+
+        ApplyDirectionRotation(direction);
     }
 
     public void Stop()
@@ -79,5 +82,14 @@ public sealed class BossAttackTelegraphVfx : MonoBehaviour
             ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
         vfxRoot.SetActive(false);
+    }
+
+    private void ApplyDirectionRotation(Vector2 aimDirection)
+    {
+        if (aimDirection.sqrMagnitude <= 1e-6f)
+            return;
+
+        var angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg - 90f;
+        vfxRoot.transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 }

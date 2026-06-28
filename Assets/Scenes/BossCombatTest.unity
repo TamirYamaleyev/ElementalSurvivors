@@ -2409,6 +2409,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossCombatTestBootstrap
   bossPrefab: {fileID: 6933723578419144484, guid: 6a804684d15a1418baf5a8ef1dbc345f, type: 3}
+  spawnAnchor: {fileID: 1017471717}
+  decorativeBossRoot: {fileID: 1017471715}
   spawnOffset: {x: 0, y: 8, z: 0}
   bossVisualScale: 1.5
   respawnDelay: 3

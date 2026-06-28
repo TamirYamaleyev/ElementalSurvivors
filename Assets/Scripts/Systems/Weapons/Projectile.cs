@@ -15,6 +15,10 @@ public class Projectile : MonoBehaviour
     private float statusDuration;
     private StatusSystem statusSystem;
 
+    [SerializeField] private float overlapHitRadius = 0.22f;
+
+    private bool consumed;
+
     private void Awake()
     {
         if (sr == null)
@@ -34,6 +38,8 @@ public class Projectile : MonoBehaviour
         this.statusDuration = statusDuration;
         this.statusSystem = statusSystem;
 
+        consumed = false;
+
         if (sr != null && visualSprite != null)
             sr.sprite = visualSprite;
 
@@ -43,9 +49,10 @@ public class Projectile : MonoBehaviour
             Destroy(gameObject, lifetime);
     }
 
-    void Update()
+    private void FixedUpdate()
     {
-        transform.position += (Vector3)(direction * speed * Time.deltaTime);
+        transform.position += (Vector3)(direction * speed * Time.fixedDeltaTime);
+        TryOverlapHit();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -53,9 +60,28 @@ public class Projectile : MonoBehaviour
         if (!CombatHitUtility.TryResolveEnemy(other, out Enemy enemy))
             return;
 
-        CombatHitUtility.ApplyStatusThenDamage(enemy, statusSystem, status, statusDuration, damage);
+        ApplyHit(enemy);
+    }
 
-        // replace with pooling(?)
+    private void TryOverlapHit()
+    {
+        if (consumed)
+            return;
+
+        var hit = Physics2D.OverlapCircle(transform.position, overlapHitRadius, enemyLayer);
+        if (hit == null || !CombatHitUtility.TryResolveEnemy(hit, out Enemy enemy))
+            return;
+
+        ApplyHit(enemy);
+    }
+
+    private void ApplyHit(Enemy enemy)
+    {
+        if (consumed || enemy == null)
+            return;
+
+        consumed = true;
+        CombatHitUtility.ApplyStatusThenDamage(enemy, statusSystem, status, statusDuration, damage);
         Destroy(gameObject);
     }
 }

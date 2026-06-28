@@ -12,13 +12,12 @@ public class TargetingSystem : MonoBehaviour
 
     public Enemy GetNearest(Vector3 position, float maxRange)
     {
-        if (registry == null || registry.ActiveEnemies == null)
+        if (registry == null || registry.ActiveEnemies == null || maxRange <= 0f)
             return null;
 
         Enemy best = null;
-        float bestDistSqr = float.MaxValue * maxRange;
-
-        Vector3 pos = position;
+        var maxRangeSqr = maxRange * maxRange;
+        var bestDistSqr = maxRangeSqr;
 
         for (int i = 0; i < registry.ActiveEnemies.Count; i++)
         {
@@ -27,14 +26,12 @@ public class TargetingSystem : MonoBehaviour
             if (e == null || !e.gameObject.activeInHierarchy)
                 continue;
 
-            Vector3 diff = e.transform.position - pos;
-            float distSqr = diff.sqrMagnitude;
+            var distSqr = ((Vector2)e.transform.position - (Vector2)position).sqrMagnitude;
+            if (distSqr > maxRangeSqr || distSqr >= bestDistSqr)
+                continue;
 
-            if (distSqr <= bestDistSqr)
-            {
-                bestDistSqr = distSqr;
-                best = e;
-            }
+            bestDistSqr = distSqr;
+            best = e;
         }
 
         return best;

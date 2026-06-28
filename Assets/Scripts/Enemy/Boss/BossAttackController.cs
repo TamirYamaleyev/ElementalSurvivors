@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset, IEnemyPoolReset
+public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset
 {
     [Header("Timing")]
     [SerializeField] private float windUpDuration = 1f;
@@ -33,18 +33,20 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset, IEnem
 
     [SerializeField] private BossSingleLineConfig singleLine = new()
     {
-        count = 10,
-        spacing = 0.45f,
-        delayBetweenShots = 0.06f
+        count = 11,
+        delayBetweenShots = 0.05f
     };
 
     [SerializeField] private BossRotatingArcConfig rotatingArc = new()
     {
-        arcAngle = 70f,
-        rows = 4,
-        projectilesPerRow = 5,
+        segmentCount = 5,
+        segmentArcDegrees = 72f,
+        projectilesPerRow = 9,
+        radialRows = 6,
         rowSpacing = 0.5f,
-        rotationStepDegrees = 45f
+        delayBetweenSegments = 0.5f,
+        rotationStepDegrees = 45f,
+        startFromAim = true
     };
 
     [Header("References")]
@@ -117,7 +119,11 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset, IEnem
         AttackStarted?.Invoke();
 
         characterAnimation?.NotifyAttack();
-        telegraphVfx?.Play(aim);
+
+        var telegraphDir = kind == BossAttackPatternKind.RotatingArc
+            ? AngleToDirection(ResolveFirstSegmentCenterAngle(aim))
+            : aim;
+        telegraphVfx?.Play(telegraphDir);
 
         if (windUpDuration > 0f)
             yield return new WaitForSeconds(windUpDuration);
@@ -133,8 +139,8 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset, IEnem
                 yield return FireSingleLine(aim);
                 break;
             case BossAttackPatternKind.RotatingArc:
-                yield return FireRotatingArc();
-                arcRotation += rotatingArc.rotationStepDegrees;
+                yield return FireRotatingArc(aim);
+                arcRotation = Mathf.Repeat(arcRotation + rotatingArc.rotationStepDegrees, 360f);
                 break;
         }
 
@@ -150,6 +156,13 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset, IEnem
         var origin = GetFireOrigin();
         var delta = (Vector2)PlayerController.Instance.transform.position - origin;
         return delta.sqrMagnitude > 1e-6f ? delta.normalized : Vector2.down;
+    }
+
+    private float ResolveFirstSegmentCenterAngle(Vector2 aim)
+    {
+        var aimAngle = Mathf.Atan2(aim.y, aim.x) * Mathf.Rad2Deg;
+        var baseAngle = rotatingArc.startFromAim ? aimAngle : 0f;
+        return baseAngle + arcRotation;
     }
 
     private Vector2 GetFireOrigin()
@@ -200,42 +213,52 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset, IEnem
     {
         var count = Mathf.Max(1, singleLine.count);
         var origin = GetFireOrigin();
+        var direction = aim.sqrMagnitude > 1e-6f ? aim.normalized : Vector2.down;
 
         for (var i = 0; i < count; i++)
         {
-            var offset = aim * (i * singleLine.spacing);
-            SpawnProjectile(origin + offset, aim);
+            SpawnProjectile(origin, direction);
 
             if (singleLine.delayBetweenShots > 0f && i < count - 1)
                 yield return new WaitForSeconds(singleLine.delayBetweenShots);
         }
     }
 
-    private IEnumerator FireRotatingArc()
+    private IEnumerator FireRotatingArc(Vector2 aim)
     {
-        var rows = Mathf.Max(1, rotatingArc.rows);
+        var segments = Mathf.Max(1, rotatingArc.segmentCount);
+        var segmentArc = rotatingArc.segmentArcDegrees > 0f
+            ? rotatingArc.segmentArcDegrees
+            : 360f / segments;
+        var radialRows = Mathf.Max(1, rotatingArc.radialRows);
         var perRow = Mathf.Max(1, rotatingArc.projectilesPerRow);
         var origin = GetFireOrigin();
-        var baseAngle = arcRotation;
+        var aimAngle = Mathf.Atan2(aim.y, aim.x) * Mathf.Rad2Deg;
+        var baseAngle = rotatingArc.startFromAim ? aimAngle : 0f;
+        var halfSegment = segmentArc * 0.5f;
+        var sweepSign = Random.value < 0.5f ? 1f : -1f;
 
-        for (var row = 0; row < rows; row++)
+        for (var seg = 0; seg < segments; seg++)
         {
-            var dist = (row + 1) * rotatingArc.rowSpacing;
-            var halfArc = rotatingArc.arcAngle * 0.5f;
+            var center = baseAngle + arcRotation + seg * segmentArc * sweepSign;
+            telegraphVfx?.SetDirection(AngleToDirection(center));
 
-            for (var i = 0; i < perRow; i++)
+            for (var radial = 0; radial < radialRows; radial++)
             {
-                var t = perRow == 1 ? 0.5f : i / (float)(perRow - 1);
-                var angle = baseAngle + Mathf.Lerp(-halfArc, halfArc, t);
-                var dir = AngleToDirection(angle);
-                SpawnProjectile(origin + dir * dist * 0.12f, dir);
+                var dist = (radial + 1) * rotatingArc.rowSpacing;
+
+                for (var i = 0; i < perRow; i++)
+                {
+                    var t = perRow == 1 ? 0.5f : i / (float)(perRow - 1);
+                    var angle = center + Mathf.Lerp(-halfSegment, halfSegment, t);
+                    var dir = AngleToDirection(angle);
+                    SpawnProjectile(origin + dir * dist * 0.12f, dir);
+                }
             }
 
-            if (triangleCone.delayBetweenRows > 0f && row < rows - 1)
-                yield return new WaitForSeconds(0.06f);
+            if (rotatingArc.delayBetweenSegments > 0f && seg < segments - 1)
+                yield return new WaitForSeconds(rotatingArc.delayBetweenSegments);
         }
-
-        yield break;
     }
 
     private static Vector2 AngleToDirection(float angleDeg)
