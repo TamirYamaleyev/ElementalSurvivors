@@ -52,3 +52,4 @@ MonoBehaviour:
   spawnInterval: 1
   spawnRadius: 10
   spawnJitter: 0.5
+  rangedEveryNormalSpawns: 5
