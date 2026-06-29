@@ -21,6 +21,12 @@ public sealed class ReactionVaporizeAreaOverlay : MonoBehaviour, IReactionWorldV
     private float refreshTimer;
     private bool initialized;
 
+    public void Configure(float effectDuration, float radius)
+    {
+        duration = Mathf.Max(0.1f, effectDuration);
+        effectRadius = Mathf.Max(0.1f, radius);
+    }
+
     public void Initialize(ReactionVfxContext ctx)
     {
         center = ctx.Center;

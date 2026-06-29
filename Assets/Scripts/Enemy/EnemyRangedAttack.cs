@@ -6,7 +6,8 @@ using UnityEngine;
 /// Movement is delegated to <see cref="EnemyAI"/> via distance maintenance and movement override.
 /// </summary>
 [RequireComponent(typeof(EnemyAI))]
-public sealed class EnemyRangedAttack : MonoBehaviour, IEnemyPoolReset
+[DefaultExecutionOrder(100)]
+public sealed class EnemyRangedAttack : MonoBehaviour
 {
     [Header("Range")]
     [Tooltip("Distance X from the player before the enemy stops and channels a shot.")]
@@ -27,12 +28,19 @@ public sealed class EnemyRangedAttack : MonoBehaviour, IEnemyPoolReset
 
     private EnemyAI ai;
     private EnemyCharacterAnimation characterAnimation;
+    private SpriteRenderer bodySprite;
     private Coroutine loop;
+    private bool pendingFire;
+    private float firePointAbsX;
 
     private void Awake()
     {
         ai = GetComponent<EnemyAI>();
         characterAnimation = GetComponent<EnemyCharacterAnimation>();
+        bodySprite = GetComponentInChildren<SpriteRenderer>(true);
+
+        if (firePoint != null)
+            firePointAbsX = Mathf.Abs(firePoint.localPosition.x);
     }
 
     private void OnEnable()
@@ -42,14 +50,24 @@ public sealed class EnemyRangedAttack : MonoBehaviour, IEnemyPoolReset
 
     private void OnDisable()
     {
+        pendingFire = false;
         StopAttackLoop();
     }
 
-    public void ResetForPool()
+    private void LateUpdate()
     {
-        StopAttackLoop();
-        ai?.SetMovementOverride(true);
-        ai?.SetDistanceMaintenance(preferredDistance, distanceTolerance, true);
+        SyncFirePointTowardPlayer();
+    }
+
+    private void SyncFirePointTowardPlayer()
+    {
+        if (firePoint == null || firePointAbsX <= 0f)
+            return;
+
+        var flip = bodySprite != null && bodySprite.flipX;
+        var local = firePoint.localPosition;
+        local.x = firePointAbsX * (flip ? -1f : 1f);
+        firePoint.localPosition = local;
     }
 
     private void StopAttackLoop()
@@ -90,13 +108,15 @@ public sealed class EnemyRangedAttack : MonoBehaviour, IEnemyPoolReset
     private IEnumerator ChannelAndFire()
     {
         ai.SetMovementOverride(false);
+        pendingFire = true;
         characterAnimation?.NotifyAttack();
 
         var elapsed = 0f;
-        while (elapsed < windUpDuration)
+        while (pendingFire && elapsed < windUpDuration)
         {
             if (!CanAttack())
             {
+                pendingFire = false;
                 ai.SetMovementOverride(true);
                 yield break;
             }
@@ -105,13 +125,12 @@ public sealed class EnemyRangedAttack : MonoBehaviour, IEnemyPoolReset
             yield return null;
         }
 
-        if (!CanAttack())
+        if (pendingFire)
         {
-            ai.SetMovementOverride(true);
-            yield break;
+            pendingFire = false;
+            if (CanAttack())
+                FireAtPlayer();
         }
-
-        FireAtPlayer();
     }
 
     private bool CanAttack()

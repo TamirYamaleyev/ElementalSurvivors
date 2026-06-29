@@ -8,7 +8,10 @@ public class GameInstaller : MonoBehaviour
     [SerializeField] private AreaSystem area;
     [SerializeField] private OrbitSystem orbit;
     [SerializeField] private StatusSystem status;
+    [SerializeField] private ReactionEffectSystem reactionEffectSystem;
     [SerializeField] private ReactionVfxCatalogSO reactionVfxCatalog;
+    [SerializeField] private ReactionGameplayCatalogSO reactionGameplayCatalog;
+    [SerializeField] private ElementalStatusGameplayCatalogSO elementalStatusGameplayCatalog;
 
     [Header("World State")]
     [SerializeField] private EnemyRegistry registry;
@@ -28,13 +31,43 @@ public class GameInstaller : MonoBehaviour
 
     void Awake()
     {
+        EnsureReactionAnchor();
+
         if (status != null)
         {
+            if (reactionEffectSystem == null)
+                reactionEffectSystem = status.GetComponent<ReactionEffectSystem>();
+
+            if (reactionEffectSystem == null)
+                reactionEffectSystem = status.gameObject.AddComponent<ReactionEffectSystem>();
+
             status.SetReactionVfxCatalog(reactionVfxCatalog);
+            status.SetReactionGameplayCatalog(reactionGameplayCatalog);
+            status.SetElementalStatusGameplayCatalog(elementalStatusGameplayCatalog);
             status.SetEnemyRegistry(registry);
+            status.SetEffectSystem(reactionEffectSystem);
         }
 
         weaponSystem.Initialize(BuildWeaponContext());
+    }
+
+    private void OnDestroy()
+    {
+        if (reactionAnchorRoot != null)
+            ReactionRuntimeAnchor.ClearRoot(reactionAnchorRoot);
+    }
+
+    private Transform reactionAnchorRoot;
+
+    private void EnsureReactionAnchor()
+    {
+        if (ReactionRuntimeAnchor.Root != null)
+            return;
+
+        var anchorGo = new GameObject("ReactionEffects");
+        anchorGo.transform.SetParent(transform, false);
+        reactionAnchorRoot = anchorGo.transform;
+        ReactionRuntimeAnchor.SetRoot(reactionAnchorRoot);
     }
 
     public WeaponSystemContext BuildWeaponContext()

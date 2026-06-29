@@ -79,13 +79,14 @@ public class Enemy : MonoBehaviour
         ai.EnsureInitialized();
         health.EnsureInitialized();
         ai.SetGameplayEnabled(true);
+        GetComponent<EnemyCharacterAnimation>()?.ResetMotionSample();
 
         if (!isInitialized)
             Initialize(statusSystem, registry);
 
+        gameObject.SetActive(true);
         registry?.Register(this);
         SubscribeToDeath();
-        gameObject.SetActive(true);
     }
 
     public void OnReleaseToPool()
@@ -94,16 +95,14 @@ public class Enemy : MonoBehaviour
         registry?.Unregister(this);
 
         ai.SetGameplayEnabled(false);
+        gameObject.SetActive(false);
+
         ai.ResetState();
         health.ResetState();
         status?.ClearAllStatuses();
         GetComponent<ElementalStatusVfxPresenter>()?.ResetForPool();
-
-        foreach (var reset in GetComponents<IEnemyPoolReset>())
-            reset.ResetForPool();
-
         transform.localScale = defaultLocalScale;
-        gameObject.SetActive(false);
+        ai.SetGameplayEnabled(false);
     }
 
     public void TakeDamage(float amount)
