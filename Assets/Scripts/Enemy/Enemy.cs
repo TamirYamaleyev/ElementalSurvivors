@@ -80,7 +80,7 @@ public class Enemy : MonoBehaviour
         health.EnsureInitialized();
         ai.SetGameplayEnabled(true);
 
-        if (!isInitialized)
+        if (!isInitialized && statusSystem != null)
             Initialize(statusSystem, registry);
 
         registry?.Register(this);

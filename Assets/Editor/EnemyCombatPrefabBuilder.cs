@@ -8,12 +8,10 @@ using UnityEngine.SceneManagement;
 public static class EnemyCombatPrefabBuilder
 {
     private const string DarkFlamePath = "Assets/Prefabs/Enemies/EnemyDarkFlameProjectile.prefab";
-    private const string RangedEnemyPath = "Assets/Prefabs/Enemies/RangedEnemy.prefab";
     private const string BossEnemyPath = "Assets/Prefabs/Enemies/BossEnemy.prefab";
     private const string TierSetPath = "Assets/Scripts/Data/EnemyTierSet.asset";
     private const string BossVfxPath = "Assets/Prefabs/VFX/VFX_Boss_ElementalCone.prefab";
     private const string FireballPath = "Assets/Scripts/Weapons/SO/testWep/FireProjectilePrefab.prefab";
-    private const string Level2Path = "Assets/Prefabs/Enemies/Level2Enemy.prefab";
     private const string Level3Path = "Assets/Prefabs/Enemies/Level3Enemy.prefab";
     private const string BossSpritePath = "Assets/Sprites/final binal/Untitled_Artwork.png";
     private const string LightSwordSpritePath = "Assets/Sprites/LightSword.png";
@@ -90,56 +88,6 @@ public static class EnemyCombatPrefabBuilder
         var saved = PrefabUtility.SaveAsPrefabAsset(root, DarkFlamePath);
         Object.DestroyImmediate(root);
         return saved.GetComponent<EnemyProjectile>();
-    }
-
-    private static Enemy BuildRangedEnemy(EnemyProjectile projectile)
-    {
-        var source = AssetDatabase.LoadAssetAtPath<GameObject>(Level2Path);
-        if (source == null)
-            throw new System.InvalidOperationException("Missing Level2Enemy prefab.");
-
-        var instance = PrefabUtility.InstantiatePrefab(source) as GameObject;
-        instance.name = "RangedEnemy";
-
-        var health = instance.GetComponent<EnemyHealth>();
-        if (health != null)
-        {
-            var so = new SerializedObject(health);
-            so.FindProperty("contactDamage").floatValue = 0f;
-            so.ApplyModifiedPropertiesWithoutUndo();
-        }
-
-        var visual = instance.transform.Find("Visual");
-        Transform firePoint = null;
-        if (visual != null)
-        {
-            var fp = visual.Find("FirePoint");
-            if (fp == null)
-            {
-                var fpGo = new GameObject("FirePoint");
-                fpGo.transform.SetParent(visual, false);
-                fpGo.transform.localPosition = new Vector3(0.4f, 0f, 0f);
-                firePoint = fpGo.transform;
-            }
-            else
-            {
-                firePoint = fp;
-            }
-        }
-
-        var ranged = instance.GetComponent<EnemyRangedAttack>();
-        if (ranged == null)
-            ranged = instance.AddComponent<EnemyRangedAttack>();
-
-        var rangedSo = new SerializedObject(ranged);
-        rangedSo.FindProperty("projectilePrefab").objectReferenceValue = projectile;
-        if (firePoint != null)
-            rangedSo.FindProperty("firePoint").objectReferenceValue = firePoint;
-        rangedSo.ApplyModifiedPropertiesWithoutUndo();
-
-        var saved = PrefabUtility.SaveAsPrefabAsset(instance, RangedEnemyPath);
-        Object.DestroyImmediate(instance);
-        return saved.GetComponent<Enemy>();
     }
 
     private static Enemy BuildBossEnemy(EnemyProjectile projectile)

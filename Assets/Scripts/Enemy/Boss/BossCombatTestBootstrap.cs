@@ -52,10 +52,9 @@ public sealed class BossCombatTestBootstrap : MonoBehaviour
 
         activeBoss = Instantiate(bossPrefab, pos, Quaternion.identity);
 
-        if (registry != null)
-            activeBoss.ConfigureSystems(statusSystem, registry);
+        activeBoss.ConfigureSystems(statusSystem, registry);
 
-        if (statusSystem != null && registry != null)
+        if (statusSystem != null)
             activeBoss.Initialize(statusSystem, registry);
 
         activeBoss.OnAcquire(new SpawnContext

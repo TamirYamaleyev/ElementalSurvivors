@@ -27,10 +27,17 @@ public sealed class ReactionElectrowettingEffect : MonoBehaviour, IReactionGamep
             chainTargets,
             ctx.SourceEnemy);
 
-        if (chainTargets.Count == 0 || ctx.StatusSystem == null)
+        if (ctx.StatusSystem == null)
             return;
 
         var statusDuration = def.duration > 0f ? def.duration : DefaultStatusDuration;
+
+        if (chainTargets.Count == 0)
+        {
+            if (ctx.SourceEnemy != null)
+                ctx.StatusSystem.ApplySpreadStatus(ctx.SourceEnemy, StatusType.Lightning, statusDuration);
+            return;
+        }
 
         for (var i = 0; i < chainTargets.Count; i++)
             ctx.StatusSystem.ApplySpreadStatus(chainTargets[i], StatusType.Lightning, statusDuration);

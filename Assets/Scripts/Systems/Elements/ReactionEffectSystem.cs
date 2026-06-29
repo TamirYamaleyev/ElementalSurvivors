@@ -124,6 +124,8 @@ public sealed class ReactionEffectSystem : MonoBehaviour
 
         return pair == new StatusPair(StatusType.Fire, StatusType.Water)
             || pair == new StatusPair(StatusType.Water, StatusType.Wind)
+            || pair == new StatusPair(StatusType.Water, StatusType.Earth)
+            || pair == new StatusPair(StatusType.Wind, StatusType.Earth)
             || pair == new StatusPair(StatusType.Wind, StatusType.Lightning);
     }
 
@@ -137,6 +139,12 @@ public sealed class ReactionEffectSystem : MonoBehaviour
 
         if (pair.First == StatusType.Water && pair.Second == StatusType.Lightning)
             return 0.25f;
+
+        if (pair.First == StatusType.Fire && pair.Second == StatusType.Earth)
+            return 0.35f;
+
+        if (pair.First == StatusType.Earth && pair.Second == StatusType.Lightning)
+            return 1.8f;
 
         return 0.2f;
     }
@@ -163,11 +171,15 @@ public sealed class ReactionEffectSystem : MonoBehaviour
         return (pair.First, pair.Second) switch
         {
             (StatusType.Fire, StatusType.Water) => root.AddComponent<ReactionVaporizeZoneEffect>(),
+            (StatusType.Fire, StatusType.Earth) => root.AddComponent<ReactionCrystallizeEffect>(),
             (StatusType.Fire, StatusType.Wind) => root.AddComponent<ReactionScorchingWindEffect>(),
             (StatusType.Fire, StatusType.Lightning) => root.AddComponent<ReactionExplosionEffect>(),
             (StatusType.Water, StatusType.Wind) => root.AddComponent<ReactionHailEffect>(),
+            (StatusType.Water, StatusType.Earth) => root.AddComponent<ReactionGrowthZoneEffect>(),
             (StatusType.Water, StatusType.Lightning) => root.AddComponent<ReactionElectrowettingEffect>(),
+            (StatusType.Wind, StatusType.Earth) => root.AddComponent<ReactionDustSandStormEffect>(),
             (StatusType.Wind, StatusType.Lightning) => root.AddComponent<ReactionMagnetismEffect>(),
+            (StatusType.Earth, StatusType.Lightning) => root.AddComponent<ReactionStaticChargeEffect>(),
             _ => null,
         };
     }

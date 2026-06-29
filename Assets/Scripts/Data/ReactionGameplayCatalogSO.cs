@@ -42,15 +42,15 @@ public class ReactionGameplayDefinition
 public class ReactionGameplayCatalogSO : ScriptableObject
 {
     [SerializeField] private ReactionGameplayDefinition vaporize = new() { mode = ReactionGameplayMode.Sustained, radius = 2.2f, duration = 3f, contactDps = 22f };
-    [SerializeField] private ReactionGameplayDefinition crystallize = new() { enabled = false };
+    [SerializeField] private ReactionGameplayDefinition crystallize = new() { radius = 2.5f, flatDamage = 14f, duration = 2f };
     [SerializeField] private ReactionGameplayDefinition scorchingWind = new() { laserCount = 3, laserLength = 6f, flatDamage = 10f, damageMultiplier = 1f };
     [SerializeField] private ReactionGameplayDefinition explosion = new() { radius = 2.8f, flatDamage = 20f, knockbackImpulse = 7f };
     [SerializeField] private ReactionGameplayDefinition hail = new() { mode = ReactionGameplayMode.Sustained, radius = 2.5f, duration = 2.4f, stunDuration = 1.2f, hailImmunityGain = 2f };
-    [SerializeField] private ReactionGameplayDefinition growth = new() { enabled = false };
+    [SerializeField] private ReactionGameplayDefinition growth = new() { mode = ReactionGameplayMode.Sustained, radius = 2.5f, duration = 2.5f, contactDps = 16f };
     [SerializeField] private ReactionGameplayDefinition electrowetting = new() { radius = 4f, duration = 10f, laserCount = 3, damageMultiplier = 1f };
-    [SerializeField] private ReactionGameplayDefinition dustSandStorm = new() { enabled = false };
+    [SerializeField] private ReactionGameplayDefinition dustSandStorm = new() { mode = ReactionGameplayMode.Sustained, radius = 2.8f, duration = 2.6f, contactDps = 14f };
     [SerializeField] private ReactionGameplayDefinition magnetism = new() { mode = ReactionGameplayMode.Sustained, radius = 3f, duration = 2.5f, pullSpeed = 3.5f };
-    [SerializeField] private ReactionGameplayDefinition staticCharge = new() { enabled = false };
+    [SerializeField] private ReactionGameplayDefinition staticCharge = new() { radius = 2.5f, flatDamage = 16f, stunDuration = 1.4f, hailImmunityGain = 2f };
 
     public bool TryGetDefinition(StatusType a, StatusType b, out ReactionGameplayDefinition definition)
     {

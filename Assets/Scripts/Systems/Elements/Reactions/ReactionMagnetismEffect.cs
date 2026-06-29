@@ -43,13 +43,9 @@ public sealed class ReactionMagnetismEffect : MonoBehaviour, IReactionGameplayEf
             def.radius,
             enemy =>
             {
-                if (enemy == ctx.SourceEnemy)
-                    return;
-
                 enemy.AI?.ApplyPullToward(target, def.pullSpeed, 0.2f);
                 ReactionGameplayEffectUtility.ApplyDamage(enemy, tickDamage, ctx.Pair);
-            },
-            ctx.SourceEnemy);
+            });
     }
 
     private Vector2 ResolvePullCenter()

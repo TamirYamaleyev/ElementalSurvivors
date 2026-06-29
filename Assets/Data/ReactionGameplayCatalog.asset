@@ -30,12 +30,12 @@ MonoBehaviour:
     stunDuration: 1.2
     hailImmunityGain: 2
   crystallize:
-    enabled: 0
+    enabled: 1
     mode: 0
     vfxPrefab: {fileID: 0}
     radius: 2.5
     duration: 2
-    flatDamage: 12
+    flatDamage: 14
     damageMultiplier: 1
     contactDps: 18
     tickInterval: 0.25
@@ -98,14 +98,14 @@ MonoBehaviour:
     stunDuration: 1.2
     hailImmunityGain: 2
   growth:
-    enabled: 0
-    mode: 0
+    enabled: 1
+    mode: 1
     vfxPrefab: {fileID: 0}
     radius: 2.5
-    duration: 2
+    duration: 2.5
     flatDamage: 12
     damageMultiplier: 1
-    contactDps: 18
+    contactDps: 16
     tickInterval: 0.25
     knockbackImpulse: 6
     pullSpeed: 3.5
@@ -132,14 +132,14 @@ MonoBehaviour:
     stunDuration: 1.2
     hailImmunityGain: 2
   dustSandStorm:
-    enabled: 0
-    mode: 0
+    enabled: 1
+    mode: 1
     vfxPrefab: {fileID: 0}
-    radius: 2.5
-    duration: 2
+    radius: 2.8
+    duration: 2.6
     flatDamage: 12
     damageMultiplier: 1
-    contactDps: 18
+    contactDps: 14
     tickInterval: 0.25
     knockbackImpulse: 6
     pullSpeed: 3.5
@@ -166,12 +166,12 @@ MonoBehaviour:
     stunDuration: 1.2
     hailImmunityGain: 2
   staticCharge:
-    enabled: 0
+    enabled: 1
     mode: 0
     vfxPrefab: {fileID: 0}
     radius: 2.5
     duration: 2
-    flatDamage: 12
+    flatDamage: 16
     damageMultiplier: 1
     contactDps: 18
     tickInterval: 0.25
@@ -180,5 +180,5 @@ MonoBehaviour:
     laserCount: 3
     laserLength: 5
     laserHalfWidth: 0.35
-    stunDuration: 1.2
+    stunDuration: 1.4
     hailImmunityGain: 2

@@ -49,7 +49,7 @@ public sealed class BossAI : MonoBehaviour, IEnemyPoolReset
 
     private void Update()
     {
-        if (ai == null || attack == null || attack.IsAttacking)
+        if (ai == null || attack == null || attack.IsAttacking || !ai.IsGameplayEnabled)
             return;
 
         strafeTimer -= Time.deltaTime;

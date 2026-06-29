@@ -14,6 +14,12 @@ public sealed class ReactionScorchingWindEffect : MonoBehaviour, IReactionGamepl
         var damage = ReactionGameplayEffectUtility.ResolveDamage(def, ctx.TriggerDamage);
         var hit = new HashSet<Enemy>();
 
+        if (ctx.SourceEnemy != null && ctx.SourceEnemy.gameObject.activeInHierarchy)
+        {
+            ReactionGameplayEffectUtility.ApplyDamage(ctx.SourceEnemy, damage, ctx.Pair);
+            hit.Add(ctx.SourceEnemy);
+        }
+
         for (var i = 0; i < def.laserCount; i++)
         {
             var angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
