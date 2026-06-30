@@ -775,6 +775,8 @@ MonoBehaviour:
     level: 1
   - definition: {fileID: 11400000, guid: 453c2e2d90fab4649b1b068adeef7f99, type: 2}
     level: 1
+  - definition: {fileID: 11400000, guid: 26a6659b18e150042aa7593df16128de, type: 2}
+    level: 1
 --- !u!114 &181845794
 MonoBehaviour:
   m_ObjectHideFlags: 0

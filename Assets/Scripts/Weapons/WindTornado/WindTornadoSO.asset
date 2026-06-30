@@ -27,7 +27,7 @@ MonoBehaviour:
     height: 1
     lifetime: 5
     speed: 1
-    projectileCount: 1
+    projectileCount: 2
     statusDuration: 10
     visualSprite: {fileID: 0}
   - damage: 0
