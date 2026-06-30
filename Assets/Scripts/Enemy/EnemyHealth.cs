@@ -14,6 +14,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     public float BaselineMaxHealth => maxHealth;
     public float BaselineContactDamage => contactDamage;
+    public float LastDamageReceived { get; private set; }
 
     public void Initialize(Enemy enemy)
     {
@@ -36,12 +37,18 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     public void TakeDamage(float amount)
     {
+        TakeDamage(amount, null);
+    }
+
+    public void TakeDamage(float amount, Color? damageColor)
+    {
         if (currentHealth <= 0f || amount <= 0f)
             return;
 
+        LastDamageReceived = amount;
         currentHealth -= amount;
 
-        DamageNumberDisplay.Instance?.DisplayDamageNumber(amount, transform.position);
+        DamageNumberDisplay.Instance?.DisplayDamageNumber(amount, transform.position, damageColor);
 
         if (currentHealth <= 0f)
             OnDied?.Invoke();
@@ -77,5 +84,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public void ResetState()
     {
         currentHealth = maxHealth;
+        LastDamageReceived = 0f;
     }
 }

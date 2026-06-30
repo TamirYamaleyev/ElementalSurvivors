@@ -8,6 +8,14 @@ using UnityEngine;
 /// </summary>
 public static class CombatHitUtility
 {
+    public static bool IsEnemyTargetable(Enemy enemy)
+    {
+        return enemy != null
+            && enemy.gameObject.activeInHierarchy
+            && enemy.AI != null
+            && enemy.AI.IsGameplayEnabled;
+    }
+
     public static bool TryResolveEnemy(Collider2D collider, out Enemy enemy)
     {
         enemy = null;
@@ -15,7 +23,7 @@ public static class CombatHitUtility
             return false;
 
         enemy = collider.GetComponentInParent<Enemy>();
-        return enemy != null;
+        return IsEnemyTargetable(enemy);
     }
 
     public static bool TryResolveEnemyHealth(Collider2D collider, out EnemyHealth health)
@@ -47,5 +55,23 @@ public static class CombatHitUtility
 
             onEnemy(enemy);
         }
+    }
+
+    /// <summary>Applies elemental status before damage so reaction procs can run before a lethal hit deactivates the enemy.</summary>
+    public static void ApplyStatusThenDamage(
+        Enemy enemy,
+        StatusSystem statusSystem,
+        StatusType status,
+        float statusDuration,
+        float damage)
+    {
+        if (!IsEnemyTargetable(enemy))
+            return;
+
+        if (statusSystem != null && status != StatusType.None && statusDuration > 0f)
+            statusSystem.Apply(enemy, status, statusDuration, damage);
+
+        if (damage > 0f)
+            enemy.TakeDamage(damage);
     }
 }

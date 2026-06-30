@@ -1211,5 +1211,186 @@ public static class CharacterAnimationPipeline
             vfxSo.ApplyModifiedPropertiesWithoutUndo();
         }
     }
+
+    const string RangedEnemyWalkTexturePath = "Assets/Art/Characters/Enemy/Enemy2_Walk.png";
+    const string RangedEnemyShootTexturePath = "Assets/Art/Characters/Enemy/Enemy2_Shoot.png";
+    const string RangedEnemySpritePrefix = "Enemy2";
+    const string RangedEnemyShootSpritePrefix = "Enemy2_Shoot";
+    const string RangedEnemyControllerPath = "Assets/Animation/Controllers/AC_Enemy_Ranged.controller";
+    const string RangedEnemyPrefabPath = "Assets/Prefabs/Enemies/RangedEnemy.prefab";
+    const float RangedWalkCycleDuration = 0.35f;
+    const float RangedAttackPlaceholderDuration = 0.75f;
+    const float RangedShootFrameDuration = 0.2f;
+
+    [MenuItem("Tools/Elemental/Build Ranged Enemy Animation")]
+    public static void BuildRangedEnemyAnimationMenu()
+    {
+        try
+        {
+            BuildRangedEnemyAnimation();
+            Debug.Log("[CharacterAnimationPipeline] Built ranged enemy sprites, clips, controller, and prefab.");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError(ex);
+        }
+    }
+
+    /// <summary>Unity -batchmode -quit -executeMethod CharacterAnimationPipeline.BuildRangedEnemyAnimationFromCli</summary>
+    public static void BuildRangedEnemyAnimationFromCli()
+    {
+        try
+        {
+            BuildRangedEnemyAnimation();
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError(ex);
+            EditorApplication.Exit(1);
+            return;
+        }
+
+        EditorApplication.Exit(0);
+    }
+
+    public static void BuildRangedEnemyAnimation()
+    {
+        EnsureFolders();
+
+        EnsureRangedEnemyWalkSprites();
+
+        var walkFrames = LoadSpritesOrdered(RangedEnemyWalkTexturePath)
+            .Where(s => s.name.StartsWith(RangedEnemySpritePrefix + "_", System.StringComparison.Ordinal))
+            .Where(s => s.rect.width >= 64 && s.rect.height >= 64)
+            .ToList();
+
+        if (walkFrames.Count != 5)
+            throw new System.InvalidOperationException(
+                $"Expected 5 walk sprites in {RangedEnemyWalkTexturePath}, got {walkFrames.Count}.");
+
+        var idleFrame = new List<Sprite> { walkFrames[0] };
+
+        var shootFrames = TryLoadRangedShootFrames();
+        List<Sprite> attackFrames;
+        float attackDuration;
+        if (shootFrames != null && shootFrames.Count > 0)
+        {
+            attackFrames = shootFrames;
+            attackDuration = Mathf.Max(0.25f, shootFrames.Count * RangedShootFrameDuration);
+        }
+        else
+        {
+            attackFrames = idleFrame;
+            attackDuration = RangedAttackPlaceholderDuration;
+        }
+
+        var idle = BuildOrUpdateSpriteClipFromFrames(
+            "Assets/Animation/Clips/enemy_ranged_idle.anim", idleFrame, 0.5f, loop: true);
+        var walk = BuildOrUpdateSpriteClipFromFrames(
+            "Assets/Animation/Clips/enemy_ranged_walk.anim", walkFrames, RangedWalkCycleDuration, loop: true);
+        var attack = BuildOrUpdateSpriteClipFromFrames(
+            "Assets/Animation/Clips/enemy_ranged_attack.anim", attackFrames, attackDuration, loop: false);
+        var death = BuildOrUpdateSpriteClipFromFrames(
+            "Assets/Animation/Clips/enemy_ranged_death.anim", idleFrame, 0.4f, loop: false);
+
+        EnsureEnemyTierController(RangedEnemyControllerPath, idle, walk, attack, death);
+        SetupRangedEnemyPrefab(walkFrames[0], attackDuration);
+        AssetDatabase.SaveAssets();
+    }
+
+    static void EnsureRangedEnemyWalkSprites()
+    {
+        var existing = LoadSpritesOrdered(RangedEnemyWalkTexturePath)
+            .Where(s => s.name.StartsWith(RangedEnemySpritePrefix + "_", System.StringComparison.Ordinal))
+            .Where(s => s.rect.width >= 64 && s.rect.height >= 64)
+            .ToList();
+
+        if (existing.Count >= 5)
+            return;
+
+        ApplyManualSpriteRects(RangedEnemyWalkTexturePath, RangedEnemySpritePrefix, new[]
+        {
+            new Rect(0f, 1024f, 682f, 1024f),
+            new Rect(682f, 1024f, 682f, 1024f),
+            new Rect(1364f, 1024f, 684f, 1024f),
+            new Rect(0f, 0f, 682f, 1024f),
+            new Rect(682f, 0f, 682f, 1024f),
+        }, pixelsPerUnit: 400f);
+    }
+
+    static List<Sprite> TryLoadRangedShootFrames()
+    {
+        if (!File.Exists(RangedEnemyShootTexturePath))
+            return null;
+
+        var byPrefix = LoadSpritesOrdered(RangedEnemyShootTexturePath)
+            .Where(s => s.name.StartsWith(RangedEnemyShootSpritePrefix + "_", System.StringComparison.Ordinal))
+            .Where(s => s.rect.width >= 64 && s.rect.height >= 64)
+            .ToList();
+
+        if (byPrefix.Count > 0)
+            return byPrefix;
+
+        var all = LoadSpritesOrdered(RangedEnemyShootTexturePath)
+            .Where(s => s.rect.width >= 64 && s.rect.height >= 64)
+            .ToList();
+
+        return all.Count > 0 ? all : null;
+    }
+
+    static void SetupRangedEnemyPrefab(Sprite defaultSprite, float attackDuration)
+    {
+        if (!File.Exists(RangedEnemyPrefabPath))
+            throw new FileNotFoundException("Missing " + RangedEnemyPrefabPath);
+
+        var root = PrefabUtility.LoadPrefabContents(RangedEnemyPrefabPath);
+        try
+        {
+            EnsureVisualAnimator(root, RangedEnemyControllerPath, addPlayerCharacterAnimation: false);
+
+            var visual = root.transform.Find("Visual");
+            if (visual != null)
+            {
+                if (defaultSprite != null)
+                {
+                    var sr = visual.GetComponent<SpriteRenderer>();
+                    if (sr != null)
+                    {
+                        sr.sprite = defaultSprite;
+                        sr.drawMode = SpriteDrawMode.Simple;
+                        sr.spriteSortPoint = SpriteSortPoint.Center;
+                    }
+                }
+
+                var animator = visual.GetComponent<Animator>();
+                if (animator != null)
+                    animator.enabled = true;
+
+            }
+
+            var ranged = root.GetComponent<EnemyRangedAttack>();
+            if (ranged != null)
+            {
+                var rangedSo = new SerializedObject(ranged);
+                rangedSo.FindProperty("windUpDuration").floatValue = attackDuration;
+                rangedSo.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            var anim = root.GetComponent<EnemyCharacterAnimation>();
+            if (anim != null)
+            {
+                var animSo = new SerializedObject(anim);
+                animSo.FindProperty("attackAnimCooldown").floatValue = attackDuration;
+                animSo.FindProperty("invertFacingFlip").boolValue = true;
+                animSo.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            PrefabUtility.SaveAsPrefabAsset(root, RangedEnemyPrefabPath);
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+        }
+    }
 }
 #endif

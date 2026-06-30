@@ -24,6 +24,8 @@ public class Enemy : MonoBehaviour
     public int PoolTierIndex => poolTierIndex;
     public float BaselineMaxHealth => health.BaselineMaxHealth;
     public float BaselineContactDamage => health.BaselineContactDamage;
+    public float LastDamageReceived => health.LastDamageReceived;
+    public EnemyAI AI => ai;
 
     private void Awake()
     {
@@ -59,7 +61,7 @@ public class Enemy : MonoBehaviour
         ConfigureSystems(statusSystemRef, registryRef);
 
         if (statusSystem != null)
-            status.Initialize(statusSystem, this);
+            status.Initialize(statusSystem, this, statusSystem.ElementalGameplayCatalog);
 
         health.Initialize(this);
         isInitialized = true;
@@ -77,13 +79,14 @@ public class Enemy : MonoBehaviour
         ai.EnsureInitialized();
         health.EnsureInitialized();
         ai.SetGameplayEnabled(true);
+        GetComponent<EnemyCharacterAnimation>()?.ResetMotionSample();
 
         if (!isInitialized)
             Initialize(statusSystem, registry);
 
+        gameObject.SetActive(true);
         registry?.Register(this);
         SubscribeToDeath();
-        gameObject.SetActive(true);
     }
 
     public void OnReleaseToPool()
@@ -92,12 +95,14 @@ public class Enemy : MonoBehaviour
         registry?.Unregister(this);
 
         ai.SetGameplayEnabled(false);
+        gameObject.SetActive(false);
+
         ai.ResetState();
         health.ResetState();
         status?.ClearAllStatuses();
         GetComponent<ElementalStatusVfxPresenter>()?.ResetForPool();
         transform.localScale = defaultLocalScale;
-        gameObject.SetActive(false);
+        ai.SetGameplayEnabled(false);
     }
 
     public void TakeDamage(float amount)

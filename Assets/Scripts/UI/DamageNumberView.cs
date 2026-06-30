@@ -23,7 +23,20 @@ public class DamageNumberView : MonoBehaviour
         if (canvasGroup == null)
             canvasGroup = GetComponent<CanvasGroup>();
 
-        TmpFontUtility.EnsureAssigned(text);
+        ApplyFontAndMaterial();
+    }
+
+    private void OnEnable()
+    {
+        if (text == null)
+            text = GetComponent<TMP_Text>();
+
+        ApplyFontAndMaterial();
+    }
+
+    private void ApplyFontAndMaterial()
+    {
+        TmpFontUtility.EnsureAssigned(text, preserveSharedMaterial: outlineMaterial != null);
 
         if (text != null && outlineMaterial != null)
             text.fontSharedMaterial = outlineMaterial;

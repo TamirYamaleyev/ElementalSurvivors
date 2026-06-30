@@ -14,6 +14,19 @@ public class EnemyTierSetSO : ScriptableObject
     public TierEntry[] tiers;
     public Enemy bossPrototype;
 
+    [SerializeField] private int rangedTierIndex = 1;
+
+    public int RangedTierIndex
+    {
+        get
+        {
+            if (tiers == null || tiers.Length == 0)
+                return 0;
+
+            return Mathf.Clamp(rangedTierIndex, 0, tiers.Length - 1);
+        }
+    }
+
     public Enemy GetTierPrototype(int tierIndex)
     {
         if (tiers == null || tiers.Length == 0)
