@@ -31,7 +31,6 @@ public sealed class ReactionScorchingRaysVisual : MonoBehaviour, IReactionWorldV
             var length = Random.Range(minRayLength, maxRayLength);
 
             var go = new GameObject("ScorchingRay");
-            go.transform.SetParent(transform, worldPositionStays: true);
             var ray = go.AddComponent<ScorchingRayVisual>();
             ray.Initialize(origin, dir, length, effectLifetime, sortingOrder, sortingLayerId);
         }

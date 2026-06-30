@@ -14,12 +14,8 @@ using UnityEngine.UI;
 public static class DevMergeSceneSetup
 {
     const string SampleScenePath = "Assets/Scenes/SampleScene.unity";
-    const string ElementalVfxShowcasePath = "Assets/Scenes/ElementalVfxShowcase.unity";
-    const string ReactionVfxShowcasePath = "Assets/Scenes/ReactionVfxShowcase.unity";
     const string DamageNumberPrefabPath = "Assets/Prefabs/UI/DamageNumberView.prefab";
     const string ReactionVfxCatalogPath = "Assets/Data/ReactionVfxCatalog.asset";
-    const string ReactionGameplayCatalogPath = "Assets/Data/ReactionGameplayCatalog.asset";
-    const string ElementalStatusGameplayCatalogPath = "Assets/Data/ElementalStatusGameplayCatalog.asset";
     const string BranchPrefabPath = "Assets/Prefabs/Environment/PF_Environment_Branch.prefab";
     const string BushPrefabPath = "Assets/Prefabs/Environment/PF_Environment_Bush.prefab";
     const string DamageNumbersWorldName = "DamageNumbersWorld";
@@ -403,26 +399,6 @@ public static class DevMergeSceneSetup
         }
     }
 
-    [MenuItem("Tools/Dev Merge/Wire Showcase Damage Numbers")]
-    public static void WireShowcaseDamageNumbersMenu()
-    {
-        WireDamageNumbersForScene(ElementalVfxShowcasePath, logToConsole: true);
-        WireDamageNumbersForScene(ReactionVfxShowcasePath, logToConsole: true);
-    }
-
-    static void WireDamageNumbersForScene(string scenePath, bool logToConsole)
-    {
-        var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
-        var checklist = new List<string>();
-        WireDamageNumbers(scene, checklist);
-        WireGameInstaller(scene, checklist);
-        EditorSceneManager.MarkSceneDirty(scene);
-        EditorSceneManager.SaveScene(scene);
-
-        if (logToConsole)
-            Debug.Log("[DevMergeSceneSetup] Wired " + scenePath + ": " + string.Join(", ", checklist));
-    }
-
     static void WireReleaseSystems(bool logToConsole)
     {
         var scene = EditorSceneManager.OpenScene(SampleScenePath, OpenSceneMode.Single);
@@ -584,54 +560,21 @@ public static class DevMergeSceneSetup
         if (installer == null)
             return;
 
-        var so = new SerializedObject(installer);
-        var changed = false;
-
-        changed |= AssignCatalogReference(
-            so,
-            "reactionVfxCatalog",
-            AssetDatabase.LoadAssetAtPath<ReactionVfxCatalogSO>(ReactionVfxCatalogPath),
-            checklist,
-            "GameInstaller.reactionVfxCatalog");
-
-        changed |= AssignCatalogReference(
-            so,
-            "reactionGameplayCatalog",
-            AssetDatabase.LoadAssetAtPath<ReactionGameplayCatalogSO>(ReactionGameplayCatalogPath),
-            checklist,
-            "GameInstaller.reactionGameplayCatalog");
-
-        changed |= AssignCatalogReference(
-            so,
-            "elementalStatusGameplayCatalog",
-            AssetDatabase.LoadAssetAtPath<ElementalStatusGameplayCatalogSO>(ElementalStatusGameplayCatalogPath),
-            checklist,
-            "GameInstaller.elementalStatusGameplayCatalog");
-
-        if (changed)
-            so.ApplyModifiedPropertiesWithoutUndo();
-    }
-
-    static bool AssignCatalogReference(
-        SerializedObject so,
-        string propertyName,
-        Object catalog,
-        List<string> checklist,
-        string checklistLabel)
-    {
+        var catalog = AssetDatabase.LoadAssetAtPath<ReactionVfxCatalogSO>(ReactionVfxCatalogPath);
         if (catalog == null)
         {
-            Debug.LogWarning("[DevMergeSceneSetup] Missing asset for " + propertyName);
-            return false;
+            Debug.LogWarning("[DevMergeSceneSetup] Missing asset: " + ReactionVfxCatalogPath);
+            return;
         }
 
-        var prop = so.FindProperty(propertyName);
-        if (prop == null || prop.objectReferenceValue == catalog)
-            return false;
+        var so = new SerializedObject(installer);
+        var catalogProp = so.FindProperty("reactionVfxCatalog");
+        if (catalogProp.objectReferenceValue == catalog)
+            return;
 
-        prop.objectReferenceValue = catalog;
-        checklist.Add(checklistLabel);
-        return true;
+        catalogProp.objectReferenceValue = catalog;
+        so.ApplyModifiedPropertiesWithoutUndo();
+        checklist.Add("GameInstaller.reactionVfxCatalog");
     }
 
     static void WireEnvironmentObstacleGenerator(Scene scene, List<string> checklist)
@@ -849,9 +792,6 @@ public static class DevMergeSceneSetup
         var installerSo = new SerializedObject(installer);
         if (installerSo.FindProperty("reactionVfxCatalog").objectReferenceValue == null)
             throw new System.InvalidOperationException("GameInstaller.reactionVfxCatalog not assigned.");
-
-        if (installerSo.FindProperty("elementalStatusGameplayCatalog").objectReferenceValue == null)
-            throw new System.InvalidOperationException("GameInstaller.elementalStatusGameplayCatalog not assigned.");
 
         var worldDamageNumbers = FindRootObject(scene, DamageNumbersWorldName);
         if (worldDamageNumbers == null)

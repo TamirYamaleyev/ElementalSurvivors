@@ -21,7 +21,7 @@ public class Projectile : MonoBehaviour
             sr = GetComponent<SpriteRenderer>();
     }
 
-    public void Init(Vector2 direction, float damage, float speed, StatusType status, float statusDuration, StatusSystem statusSystem, Sprite visualSprite, float lifetime = 5f)
+    public void Init(Vector2 direction, float damage, float speed, StatusType status, float statusDuration, StatusSystem statusSystem, Sprite visualSprite)
     {
         if (sr == null)
             sr = GetComponent<SpriteRenderer>();
@@ -38,9 +38,6 @@ public class Projectile : MonoBehaviour
             sr.sprite = visualSprite;
 
         DirectionFacing2D.Apply(transform, this.direction, artForward, extraRotationOffset);
-
-        if (lifetime > 0f)
-            Destroy(gameObject, lifetime);
     }
 
     void Update()
@@ -53,7 +50,8 @@ public class Projectile : MonoBehaviour
         if (!CombatHitUtility.TryResolveEnemy(other, out Enemy enemy))
             return;
 
-        CombatHitUtility.ApplyStatusThenDamage(enemy, statusSystem, status, statusDuration, damage);
+        enemy.TakeDamage(damage);
+        statusSystem.Apply(enemy, status, statusDuration);
 
         // replace with pooling(?)
         Destroy(gameObject);

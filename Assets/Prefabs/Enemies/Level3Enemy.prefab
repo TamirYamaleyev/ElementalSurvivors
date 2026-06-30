@@ -197,7 +197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   lootProfile: {fileID: 11400000, guid: 65f2499499d64ca9ae8c9a5f59a47b6d, type: 2}
-  maxHealth: 40
+  maxHealth: 20
   contactDamage: 10
 --- !u!114 &1111111111111111103
 MonoBehaviour:
@@ -231,7 +231,6 @@ MonoBehaviour:
   windStatusPrefab: {fileID: 9024943813806199681, guid: f0e1d2c3b4a5968778695a4b3c2d1002, type: 3}
   earthStatusPrefab: {fileID: 1944837503706811513, guid: f0e1d2c3b4a5968778695a4b3c2d1003, type: 3}
   lightningStatusPrefab: {fileID: 8595690380204691298, guid: f0e1d2c3b4a5968778695a4b3c2d1004, type: 3}
-  reactionCatalog: {fileID: 11400000, guid: cafecafe111111111111111111111101, type: 2}
 --- !u!114 &4443322064278117477
 MonoBehaviour:
   m_ObjectHideFlags: 0

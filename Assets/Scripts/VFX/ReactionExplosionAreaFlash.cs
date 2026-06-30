@@ -34,7 +34,6 @@ public sealed class ReactionExplosionAreaFlash : MonoBehaviour, IReactionWorldVf
     private void SpawnFlash(Enemy enemy)
     {
         var go = new GameObject("ExplosionHitFlash");
-        go.transform.SetParent(transform, worldPositionStays: true);
         go.transform.position = enemy.transform.position + Vector3.up * 0.25f;
 
         var sr = go.AddComponent<SpriteRenderer>();

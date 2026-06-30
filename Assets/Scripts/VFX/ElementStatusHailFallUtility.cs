@@ -12,12 +12,7 @@ public static class ElementStatusHailFallUtility
 
     public const float SizeScale = 1.5f;
     public const float EmissionScale = 1.35f;
-    public const float FallSpeedScale = 0.32f;
-    public const float StartSpeedScale = 0.5f;
-    public const float HorizontalDriftScale = 0.55f;
-
-    public const float ParticleCountScale = 0.15f;
-    public const float ParticleSizeScale = 0.75f;
+    public const float FallSpeedScale = 0.55f;
 
     static readonly HailFallZone StatusZone = new(0.74f, 0.74f, 0.46f, 0.064f);
 
@@ -45,21 +40,19 @@ public static class ElementStatusHailFallUtility
         main.playOnAwake = false;
         main.loop = true;
         main.duration = 6f;
-        main.startLifetime = new ParticleSystem.MinMaxCurve(0.45f, 0.72f);
-        main.startSpeed = new ParticleSystem.MinMaxCurve(
-            0.15f * VelocityScale * StartSpeedScale,
-            0.45f * VelocityScale * StartSpeedScale);
+        main.startLifetime = new ParticleSystem.MinMaxCurve(0.35f, 0.6f);
+        main.startSpeed = new ParticleSystem.MinMaxCurve(0.15f * VelocityScale, 0.45f * VelocityScale);
         main.startSize = new ParticleSystem.MinMaxCurve(
-            0.035f * VisualSizeScale * SizeScale * ParticleSizeScale,
-            0.055f * VisualSizeScale * SizeScale * ParticleSizeScale);
+            0.035f * VisualSizeScale * SizeScale,
+            0.055f * VisualSizeScale * SizeScale);
         main.simulationSpace = ParticleSystemSimulationSpace.Local;
-        main.maxParticles = Mathf.RoundToInt(120f * MaxParticlesScale * ParticleCountScale);
+        main.maxParticles = Mathf.RoundToInt(120f * MaxParticlesScale);
         main.gravityModifier = 0f;
         ApplyRandomTwoColor(main, primary, secondary);
 
         var em = ps.emission;
         em.enabled = true;
-        em.rateOverTime = 50f * EmissionRateScale * EmissionScale * ParticleCountScale;
+        em.rateOverTime = 50f * EmissionRateScale * EmissionScale;
 
         var shape = ps.shape;
         shape.enabled = true;
@@ -71,9 +64,7 @@ public static class ElementStatusHailFallUtility
         var vel = ps.velocityOverLifetime;
         vel.enabled = true;
         vel.space = ParticleSystemSimulationSpace.Local;
-        vel.x = VelRange(
-            -0.35f * VelocityScale * HorizontalDriftScale,
-            0.35f * VelocityScale * HorizontalDriftScale);
+        vel.x = VelRange(-0.35f * VelocityScale, 0.35f * VelocityScale);
         vel.y = VelRange(-4.5f * VelocityScale * FallSpeedScale, -2.8f * VelocityScale * FallSpeedScale);
         vel.z = VelConst(0f);
         vel.orbitalX = VelConst(0f);

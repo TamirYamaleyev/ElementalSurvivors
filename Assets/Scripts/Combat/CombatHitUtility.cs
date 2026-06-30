@@ -15,7 +15,7 @@ public static class CombatHitUtility
             return false;
 
         enemy = collider.GetComponentInParent<Enemy>();
-        return enemy != null && enemy.gameObject.activeInHierarchy;
+        return enemy != null;
     }
 
     public static bool TryResolveEnemyHealth(Collider2D collider, out EnemyHealth health)
@@ -47,23 +47,5 @@ public static class CombatHitUtility
 
             onEnemy(enemy);
         }
-    }
-
-    /// <summary>Applies elemental status before damage so reaction procs can run before a lethal hit deactivates the enemy.</summary>
-    public static void ApplyStatusThenDamage(
-        Enemy enemy,
-        StatusSystem statusSystem,
-        StatusType status,
-        float statusDuration,
-        float damage)
-    {
-        if (enemy == null)
-            return;
-
-        if (statusSystem != null && status != StatusType.None && statusDuration > 0f)
-            statusSystem.Apply(enemy, status, statusDuration, damage);
-
-        if (damage > 0f)
-            enemy.TakeDamage(damage);
     }
 }

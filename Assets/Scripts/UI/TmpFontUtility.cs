@@ -40,18 +40,13 @@ public static class TmpFontUtility
 
 #if UNITY_EDITOR
             cachedFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(LiberationSansAssetPath);
-            if (cachedFont == null)
-            {
-                cachedFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(
-                    "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset");
-            }
 #endif
 
             return cachedFont;
         }
     }
 
-    public static void EnsureAssigned(TMP_Text text, bool preserveSharedMaterial = false)
+    public static void EnsureAssigned(TMP_Text text)
     {
         if (text == null || text.font != null)
             return;
@@ -61,7 +56,7 @@ public static class TmpFontUtility
             return;
 
         text.font = font;
-        if (!preserveSharedMaterial && font.material != null)
+        if (font.material != null)
             text.fontSharedMaterial = font.material;
 
         text.ForceMeshUpdate(true);

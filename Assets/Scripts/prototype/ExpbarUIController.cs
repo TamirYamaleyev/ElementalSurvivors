@@ -10,11 +10,6 @@ public class ExpbarUIController : MonoBehaviour
     [SerializeField] private TMP_Text levelText;
     [SerializeField] private string levelPrefix = "LV: ";
 
-    private void OnEnable()
-    {
-        TmpFontUtility.EnsureAssigned(levelText);
-    }
-
     void Start()
     {
         UpdateExp(0f, 100f);

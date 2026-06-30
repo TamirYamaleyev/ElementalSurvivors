@@ -21,25 +21,11 @@ public sealed class ReactionVaporizeAreaOverlay : MonoBehaviour, IReactionWorldV
     private float refreshTimer;
     private bool initialized;
 
-    public void Configure(float effectDuration, float radius)
-    {
-        duration = Mathf.Max(0.1f, effectDuration);
-        effectRadius = Mathf.Max(0.1f, radius);
-    }
-
     public void Initialize(ReactionVfxContext ctx)
     {
         center = ctx.Center;
         registry = ctx.Registry;
         initialized = true;
-    }
-
-    private void LateUpdate()
-    {
-        if (!initialized)
-            return;
-
-        transform.position = center;
     }
 
     private void Update()
@@ -70,10 +56,6 @@ public sealed class ReactionVaporizeAreaOverlay : MonoBehaviour, IReactionWorldV
 
     private void RefreshOverlays()
     {
-        registry = ReactionGameplayEffectUtility.ResolveRegistry(registry);
-        if (registry == null)
-            return;
-
         ReactionAreaVfxUtility.CollectEnemiesInRadius(registry, center, effectRadius, scratchTargets);
 
         var inside = new HashSet<Enemy>(scratchTargets);

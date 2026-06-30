@@ -75,7 +75,7 @@ public class WeaponInstance
                 spawnPos = ctx.ProjectileSpawnPoint.position;
                 Vector2 dir = ResolveDirection(target, spawnPos, ctx);
 
-                var projectile = ctx.ProjectileSystem.Fire(
+                ctx.ProjectileSystem.Fire(
                     definition.projectilePrefab,
                     spawnPos,
                     dir,
@@ -84,10 +84,9 @@ public class WeaponInstance
                     definition.appliedStatus,
                     data.statusDuration,
                     ctx.StatusSystem,
-                    data.visualSprite,
-                    data.lifetime);
+                    data.visualSprite);
 
-                return projectile != null;
+                return true;
             }
 
             case WeaponBehaviorType.Area:

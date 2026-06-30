@@ -44,7 +44,7 @@ public sealed class ReactionRadialShockBolts : MonoBehaviour, IReactionWorldVfx
             var start = center + dir * originRadius;
             var end = center + dir * length;
 
-            var visual = Instantiate(lightningVisualPrefab, transform);
+            var visual = Instantiate(lightningVisualPrefab);
             visual.Initialize(start, end, null, boltLifetime, endpointInset);
 
             var sr = visual.GetComponent<SpriteRenderer>();
