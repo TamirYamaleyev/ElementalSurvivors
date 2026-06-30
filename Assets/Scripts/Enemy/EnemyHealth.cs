@@ -11,13 +11,18 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     private PlayerHealth playerRef;
 
     public event Action OnDied;
+    public event Action<float, float> OnHealthChanged;
 
+    public float CurrentHealth => currentHealth;
+    public float MaxHealth => maxHealth;
     public float BaselineMaxHealth => maxHealth;
     public float BaselineContactDamage => contactDamage;
+    public float LastDamageReceived { get; private set; }
 
     public void Initialize(Enemy enemy)
     {
         currentHealth = maxHealth;
+        NotifyHealthChanged();
     }
 
     /// <summary>Called after spawn when difficulty scaling sets max HP before full stats are applied.</summary>
@@ -25,6 +30,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         maxHealth = maxHp;
         currentHealth = maxHp;
+        NotifyHealthChanged();
     }
 
     public void ApplyScaledStats(float maxHp, float contactDmg)
@@ -32,16 +38,24 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         maxHealth = maxHp;
         currentHealth = maxHp;
         contactDamage = contactDmg;
+        NotifyHealthChanged();
     }
 
     public void TakeDamage(float amount)
     {
+        TakeDamage(amount, null);
+    }
+
+    public void TakeDamage(float amount, Color? damageColor)
+    {
         if (currentHealth <= 0f || amount <= 0f)
             return;
 
+        LastDamageReceived = amount;
         currentHealth -= amount;
 
-        DamageNumberDisplay.Instance?.DisplayDamageNumber(amount, transform.position);
+        DamageNumberDisplay.Instance?.DisplayDamageNumber(amount, transform.position, damageColor);
+        NotifyHealthChanged();
 
         if (currentHealth <= 0f)
             OnDied?.Invoke();
@@ -77,5 +91,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public void ResetState()
     {
         currentHealth = maxHealth;
+        LastDamageReceived = 0f;
+        NotifyHealthChanged();
+    }
+
+    private void NotifyHealthChanged()
+    {
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 }

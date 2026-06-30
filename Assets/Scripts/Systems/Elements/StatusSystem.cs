@@ -4,51 +4,114 @@ using UnityEngine;
 public class StatusSystem : MonoBehaviour
 {
     private ReactionVfxCatalogSO reactionVfxCatalog;
+    private ReactionGameplayCatalogSO reactionGameplayCatalog;
+    private ElementalStatusGameplayCatalogSO elementalStatusGameplayCatalog;
     private EnemyRegistry enemyRegistry;
+    private ReactionEffectSystem effectSystem;
+
+    private readonly List<StatusPair> pairScratch = new();
+
+    public ReactionVfxCatalogSO ReactionCatalog => reactionVfxCatalog;
+    public ReactionGameplayCatalogSO GameplayCatalog => reactionGameplayCatalog;
+    public ElementalStatusGameplayCatalogSO ElementalGameplayCatalog => elementalStatusGameplayCatalog;
 
     public void SetReactionVfxCatalog(ReactionVfxCatalogSO catalog)
     {
         reactionVfxCatalog = catalog;
+        if (effectSystem != null)
+            effectSystem.SetVfxCatalog(catalog);
+    }
+
+    public void SetReactionGameplayCatalog(ReactionGameplayCatalogSO catalog)
+    {
+        reactionGameplayCatalog = catalog;
+        if (effectSystem != null)
+            effectSystem.SetGameplayCatalog(catalog);
+    }
+
+    public void SetElementalStatusGameplayCatalog(ElementalStatusGameplayCatalogSO catalog)
+    {
+        elementalStatusGameplayCatalog = catalog;
     }
 
     public void SetEnemyRegistry(EnemyRegistry registry)
     {
         enemyRegistry = registry;
+        if (effectSystem != null)
+            effectSystem.SetEnemyRegistry(registry);
     }
 
-    public void Apply(Enemy enemy, StatusType type, float duration)
+    public void SetEffectSystem(ReactionEffectSystem system)
     {
-        if (type == StatusType.None)
+        effectSystem = system;
+        if (effectSystem == null)
             return;
 
-        enemy.StatusController.AddStatus(type, duration);
+        effectSystem.SetStatusSystem(this);
+        if (reactionGameplayCatalog != null)
+            effectSystem.SetGameplayCatalog(reactionGameplayCatalog);
+        if (reactionVfxCatalog != null)
+            effectSystem.SetVfxCatalog(reactionVfxCatalog);
+        if (enemyRegistry != null)
+            effectSystem.SetEnemyRegistry(enemyRegistry);
     }
 
-    public void ResolveInteractions(Enemy enemy, List<StatusInstance> existing, StatusInstance incoming)
+    /// <summary>Applies a debuff without resolving elemental reactions (electrowetting spread, etc.).</summary>
+    public void ApplySpreadStatus(Enemy enemy, StatusType type, float duration)
     {
-        foreach (var s in existing)
+        if (type == StatusType.None || enemy == null || !enemy.gameObject.activeInHierarchy)
+            return;
+
+        enemy.StatusController.AddSpreadStatus(type, duration);
+    }
+
+    public void Apply(Enemy enemy, StatusType type, float duration, float pendingDamage = 0f)
+    {
+        if (type == StatusType.None || enemy == null || !enemy.gameObject.activeInHierarchy)
+            return;
+
+        enemy.StatusController.AddStatus(type, duration, pendingDamage);
+    }
+
+    public bool ResolveInteractions(
+        Enemy enemy,
+        List<StatusInstance> existing,
+        StatusType incomingType,
+        float pendingDamage = 0f)
+    {
+        if (enemy == null || effectSystem == null || incomingType == StatusType.None)
+            return false;
+
+        pairScratch.Clear();
+        for (var i = 0; i < existing.Count; i++)
         {
-            if (s.type == incoming.type)
+            var status = existing[i];
+            if (status.type == incomingType)
                 continue;
 
-            TryTriggerInteraction(enemy, s.type, incoming.type);
+            pairScratch.Add(new StatusPair(status.type, incomingType));
         }
+
+        var usedIncoming = false;
+        for (var i = 0; i < pairScratch.Count; i++)
+        {
+            var pair = pairScratch[i];
+            if (!enemy.StatusController.IsPairAvailable(pair.First, pair.Second, incomingType))
+                continue;
+
+            if (!effectSystem.TryProcReaction(enemy, pair.First, pair.Second, pendingDamage))
+                continue;
+
+            if (pair.First == incomingType || pair.Second == incomingType)
+                usedIncoming = true;
+
+            enemy.StatusController.ConsumePairForProc(pair.First, pair.Second, incomingType);
+        }
+
+        return usedIncoming;
     }
 
-    private void TryTriggerInteraction(Enemy enemy, StatusType a, StatusType b)
-    {
-        if (reactionVfxCatalog == null || enemy == null)
-            return;
-
-        var prefab = reactionVfxCatalog.GetPrefab(a, b);
-        if (prefab == null)
-            return;
-
-        SpawnReactionVfxInstance(enemy, prefab);
-        enemy.StatusController.ClearAllStatuses();
-    }
-
-    /// <summary>Spawns reaction burst VFX for a pair without changing enemy statuses.</summary>
+    /// <summary>Spawns a one-shot world reaction burst (showcase / debug).</summary>
     public void SpawnReactionVfx(Enemy enemy, StatusType a, StatusType b)
     {
         if (reactionVfxCatalog == null || enemy == null)
@@ -64,7 +127,10 @@ public class StatusSystem : MonoBehaviour
     private void SpawnReactionVfxInstance(Enemy enemy, GameObject prefab)
     {
         var pos = enemy.transform.position + Vector3.up * 0.25f;
-        var instance = Object.Instantiate(prefab, pos, Quaternion.identity);
+        var parent = ReactionVfxShowcaseBootstrap.VfxContainer;
+        var instance = parent != null
+            ? Object.Instantiate(prefab, pos, Quaternion.identity, parent)
+            : Object.Instantiate(prefab, pos, Quaternion.identity);
 
         var ctx = new ReactionVfxContext(pos, enemy, enemyRegistry);
         foreach (var behaviour in instance.GetComponentsInChildren<MonoBehaviour>())

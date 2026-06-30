@@ -16,6 +16,8 @@ public static class DevMergeSceneSetup
     const string SampleScenePath = "Assets/Scenes/SampleScene.unity";
     const string DamageNumberPrefabPath = "Assets/Prefabs/UI/DamageNumberView.prefab";
     const string ReactionVfxCatalogPath = "Assets/Data/ReactionVfxCatalog.asset";
+    const string ReactionGameplayCatalogPath = "Assets/Data/ReactionGameplayCatalog.asset";
+    const string ElementalStatusGameplayCatalogPath = "Assets/Data/ElementalStatusGameplayCatalog.asset";
     const string BranchPrefabPath = "Assets/Prefabs/Environment/PF_Environment_Branch.prefab";
     const string BushPrefabPath = "Assets/Prefabs/Environment/PF_Environment_Bush.prefab";
     const string DamageNumbersWorldName = "DamageNumbersWorld";
@@ -560,21 +562,42 @@ public static class DevMergeSceneSetup
         if (installer == null)
             return;
 
-        var catalog = AssetDatabase.LoadAssetAtPath<ReactionVfxCatalogSO>(ReactionVfxCatalogPath);
-        if (catalog == null)
-        {
+        var vfxCatalog = AssetDatabase.LoadAssetAtPath<ReactionVfxCatalogSO>(ReactionVfxCatalogPath);
+        var gameplayCatalog = AssetDatabase.LoadAssetAtPath<ReactionGameplayCatalogSO>(ReactionGameplayCatalogPath);
+        var elementalCatalog = AssetDatabase.LoadAssetAtPath<ElementalStatusGameplayCatalogSO>(ElementalStatusGameplayCatalogPath);
+
+        if (vfxCatalog == null)
             Debug.LogWarning("[DevMergeSceneSetup] Missing asset: " + ReactionVfxCatalogPath);
-            return;
-        }
+        if (gameplayCatalog == null)
+            Debug.LogWarning("[DevMergeSceneSetup] Missing asset: " + ReactionGameplayCatalogPath);
+        if (elementalCatalog == null)
+            Debug.LogWarning("[DevMergeSceneSetup] Missing asset: " + ElementalStatusGameplayCatalogPath);
 
         var so = new SerializedObject(installer);
-        var catalogProp = so.FindProperty("reactionVfxCatalog");
-        if (catalogProp.objectReferenceValue == catalog)
-            return;
+        var changed = false;
 
-        catalogProp.objectReferenceValue = catalog;
-        so.ApplyModifiedPropertiesWithoutUndo();
-        checklist.Add("GameInstaller.reactionVfxCatalog");
+        if (vfxCatalog != null)
+            changed |= AssignIfDifferent(so, "reactionVfxCatalog", vfxCatalog, checklist, "GameInstaller.reactionVfxCatalog");
+
+        if (gameplayCatalog != null)
+            changed |= AssignIfDifferent(so, "reactionGameplayCatalog", gameplayCatalog, checklist, "GameInstaller.reactionGameplayCatalog");
+
+        if (elementalCatalog != null)
+            changed |= AssignIfDifferent(so, "elementalStatusGameplayCatalog", elementalCatalog, checklist, "GameInstaller.elementalStatusGameplayCatalog");
+
+        if (changed)
+            so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    static bool AssignIfDifferent(SerializedObject so, string propertyName, Object value, List<string> checklist, string label)
+    {
+        var prop = so.FindProperty(propertyName);
+        if (prop == null || prop.objectReferenceValue == value)
+            return false;
+
+        prop.objectReferenceValue = value;
+        checklist.Add(label);
+        return true;
     }
 
     static void WireEnvironmentObstacleGenerator(Scene scene, List<string> checklist)
@@ -792,6 +815,10 @@ public static class DevMergeSceneSetup
         var installerSo = new SerializedObject(installer);
         if (installerSo.FindProperty("reactionVfxCatalog").objectReferenceValue == null)
             throw new System.InvalidOperationException("GameInstaller.reactionVfxCatalog not assigned.");
+        if (installerSo.FindProperty("reactionGameplayCatalog").objectReferenceValue == null)
+            throw new System.InvalidOperationException("GameInstaller.reactionGameplayCatalog not assigned.");
+        if (installerSo.FindProperty("elementalStatusGameplayCatalog").objectReferenceValue == null)
+            throw new System.InvalidOperationException("GameInstaller.elementalStatusGameplayCatalog not assigned.");
 
         var worldDamageNumbers = FindRootObject(scene, DamageNumbersWorldName);
         if (worldDamageNumbers == null)

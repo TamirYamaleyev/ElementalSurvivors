@@ -61,7 +61,7 @@ public class Tornado : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.TryGetComponent(out Enemy enemy))
+        if (!CombatHitUtility.TryResolveEnemyFromHit(other, out Enemy enemy))
             return;
 
         if (hitEnemies.Contains(enemy))
@@ -69,8 +69,6 @@ public class Tornado : MonoBehaviour
 
         hitEnemies.Add(enemy);
 
-        enemy.TakeDamage(damage);
-
-        statusSystem.Apply(enemy, status, statusDuration);
+        CombatHitUtility.ApplyStatusThenDamage(enemy, statusSystem, status, statusDuration, damage);
     }
 }

@@ -2,16 +2,20 @@ using System.Collections;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public sealed class EnemyCharacterAnimation : MonoBehaviour
+public sealed class EnemyCharacterAnimation : MonoBehaviour, IEnemyPoolReset
 {
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Animator animator;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private float flipDeadzone = 0.02f;
     [SerializeField] private float attackAnimCooldown = 0.45f;
+    [Tooltip("Enable when sprite art faces left by default (e.g. Enemy2_Walk).")]
+    [SerializeField] private bool invertFacingFlip;
 
     float _nextAttackAnimTime;
     bool _deathStarted;
+    Vector2 _lastPosition;
+    bool _hasLastPosition;
 
     void Awake()
     {
@@ -25,19 +29,62 @@ public sealed class EnemyCharacterAnimation : MonoBehaviour
 
     void LateUpdate()
     {
-        if (_deathStarted || animator == null || rb == null)
+        if (_deathStarted || animator == null)
             return;
 
-        animator.SetFloat(AnimationParams.Speed, rb.linearVelocity.magnitude);
+        var current = (Vector2)transform.position;
+        var speed = 0f;
+        var deltaX = 0f;
+        if (_hasLastPosition && Time.deltaTime > 1e-6f)
+        {
+            var delta = current - _lastPosition;
+            speed = delta.magnitude / Time.deltaTime;
+            deltaX = delta.x / Time.deltaTime;
+        }
+
+        _lastPosition = current;
+        _hasLastPosition = true;
+
+        animator.SetFloat(AnimationParams.Speed, speed);
 
         if (spriteRenderer != null)
+            ApplyHorizontalFacing(deltaX);
+    }
+
+    public void ResetMotionSample()
+    {
+        _lastPosition = transform.position;
+        _hasLastPosition = false;
+    }
+
+    public void ResetForPool()
+    {
+        StopAllCoroutines();
+        _deathStarted = false;
+        _nextAttackAnimTime = 0f;
+        ResetMotionSample();
+
+        if (animator != null)
         {
-            var vx = rb.linearVelocity.x;
-            if (vx > flipDeadzone)
-                spriteRenderer.flipX = false;
-            else if (vx < -flipDeadzone)
-                spriteRenderer.flipX = true;
+            animator.ResetTrigger(AnimationParams.Die);
+            animator.ResetTrigger(AnimationParams.Attack);
+            animator.SetFloat(AnimationParams.Speed, 0f);
         }
+    }
+
+    private void ApplyHorizontalFacing(float vx)
+    {
+        if (Mathf.Abs(vx) <= flipDeadzone)
+        {
+            var player = PlayerController.Instance;
+            if (player != null)
+                vx = player.transform.position.x - transform.position.x;
+        }
+
+        if (vx > flipDeadzone)
+            spriteRenderer.flipX = invertFacingFlip;
+        else if (vx < -flipDeadzone)
+            spriteRenderer.flipX = !invertFacingFlip;
     }
 
     public void NotifyAttack()

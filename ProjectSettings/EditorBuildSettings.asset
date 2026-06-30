@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/FlailTest/test.unity
     guid: 147200a0c46ee084289c6ead59a05b55
+  - enabled: 1
+    path: Assets/Scenes/BossCombatTest.unity
+    guid: e2bab7a70750b4348b89d7b85b233b05
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

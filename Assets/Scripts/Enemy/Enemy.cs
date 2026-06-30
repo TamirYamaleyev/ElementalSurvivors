@@ -24,6 +24,8 @@ public class Enemy : MonoBehaviour
     public int PoolTierIndex => poolTierIndex;
     public float BaselineMaxHealth => health.BaselineMaxHealth;
     public float BaselineContactDamage => health.BaselineContactDamage;
+    public float LastDamageReceived => health.LastDamageReceived;
+    public EnemyAI AI => ai;
 
     private void Awake()
     {
@@ -59,7 +61,7 @@ public class Enemy : MonoBehaviour
         ConfigureSystems(statusSystemRef, registryRef);
 
         if (statusSystem != null)
-            status.Initialize(statusSystem, this);
+            status.Initialize(statusSystem, this, statusSystem.ElementalGameplayCatalog);
 
         health.Initialize(this);
         isInitialized = true;
@@ -67,6 +69,8 @@ public class Enemy : MonoBehaviour
 
     public void OnAcquire(SpawnContext ctx)
     {
+        status?.ResetForPool();
+
         transform.SetPositionAndRotation(ctx.Position, Quaternion.identity);
         transform.localScale = defaultLocalScale;
 
@@ -78,7 +82,7 @@ public class Enemy : MonoBehaviour
         health.EnsureInitialized();
         ai.SetGameplayEnabled(true);
 
-        if (!isInitialized)
+        if (!isInitialized && statusSystem != null)
             Initialize(statusSystem, registry);
 
         registry?.Register(this);
@@ -91,13 +95,18 @@ public class Enemy : MonoBehaviour
         UnsubscribeFromDeath();
         registry?.Unregister(this);
 
-        ai.SetGameplayEnabled(false);
-        ai.ResetState();
-        health.ResetState();
-        status?.ClearAllStatuses();
-        GetComponent<ElementalStatusVfxPresenter>()?.ResetForPool();
-        transform.localScale = defaultLocalScale;
+        // Deactivate before restoring HP / AI so late-frame hits cannot re-apply debuffs.
         gameObject.SetActive(false);
+
+        ai.ResetState();
+        ai.SetGameplayEnabled(false);
+        health.ResetState();
+        status?.ResetForPool();
+
+        foreach (var reset in GetComponents<IEnemyPoolReset>())
+            reset.ResetForPool();
+
+        transform.localScale = defaultLocalScale;
     }
 
     public void TakeDamage(float amount)
@@ -128,8 +137,6 @@ public class Enemy : MonoBehaviour
         UnsubscribeFromDeath();
         registry?.Unregister(this);
         health.SpawnDeathLoot();
-
-        status.ClearAllStatuses();
 
         if (poolRelease != null)
             poolRelease(this);

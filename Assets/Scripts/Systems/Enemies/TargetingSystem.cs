@@ -24,7 +24,7 @@ public class TargetingSystem : MonoBehaviour
         {
             Enemy e = registry.ActiveEnemies[i];
 
-            if (e == null)
+            if (!CombatHitUtility.IsEnemyTargetable(e))
                 continue;
 
             Vector3 diff = e.transform.position - pos;
@@ -57,7 +57,7 @@ public class TargetingSystem : MonoBehaviour
 
             foreach (var enemy in registry.ActiveEnemies)
             {
-                if (enemy == null || visited.Contains(enemy))
+                if (!CombatHitUtility.IsEnemyTargetable(enemy) || visited.Contains(enemy))
                     continue;
 
                 Vector2 delta = (Vector2)enemy.transform.position - currentPos;

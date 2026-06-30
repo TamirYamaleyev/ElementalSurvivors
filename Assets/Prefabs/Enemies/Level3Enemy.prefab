@@ -135,7 +135,7 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -226,6 +226,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ElementalStatusVfxPresenter
   optionalAnchor: {fileID: 3728385286340350028}
   vfxLocalOffset: {x: 0, y: 0, z: 0}
+  reactionCatalog: {fileID: 11400000, guid: cafecafe111111111111111111111101, type: 2}
   fireStatusPrefab: {fileID: 5048118146191943710, guid: f0e1d2c3b4a5968778695a4b3c2d1000, type: 3}
   waterStatusPrefab: {fileID: 1296498245142634484, guid: f0e1d2c3b4a5968778695a4b3c2d1001, type: 3}
   windStatusPrefab: {fileID: 9024943813806199681, guid: f0e1d2c3b4a5968778695a4b3c2d1002, type: 3}
