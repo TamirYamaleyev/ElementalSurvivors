@@ -24,6 +24,8 @@ public class Enemy : MonoBehaviour
     public int PoolTierIndex => poolTierIndex;
     public float BaselineMaxHealth => health.BaselineMaxHealth;
     public float BaselineContactDamage => health.BaselineContactDamage;
+    public float LastDamageReceived => health.LastDamageReceived;
+    public EnemyAI AI => ai;
 
     private void Awake()
     {
@@ -59,7 +61,7 @@ public class Enemy : MonoBehaviour
         ConfigureSystems(statusSystemRef, registryRef);
 
         if (statusSystem != null)
-            status.Initialize(statusSystem, this);
+            status.Initialize(statusSystem, this, statusSystem.ElementalGameplayCatalog);
 
         health.Initialize(this);
         isInitialized = true;

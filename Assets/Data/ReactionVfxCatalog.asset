@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: ReactionVfxCatalog
   m_EditorClassIdentifier: Assembly-CSharp::ReactionVfxCatalogSO
   vaporize: {fileID: 4645281112110247057, guid: a1111111111111111111111111111111, type: 3}
-  crystallize: {fileID: 9110202579734990213, guid: a1111111111111111111111111111112, type: 3}
+  crystallize: {fileID: 0}
   scorchingWind: {fileID: 3344771000479699142, guid: a1111111111111111111111111111113, type: 3}
   explosion: {fileID: 371695689958730962, guid: a1111111111111111111111111111114, type: 3}
-  growth: {fileID: 8173152539914920015, guid: a1111111111111111111111111111115, type: 3}
+  growth: {fileID: 0}
   hail: {fileID: 6804005456036460869, guid: a1111111111111111111111111111116, type: 3}
   electrowetting: {fileID: 410001001, guid: a1111111111111111111111111111117, type: 3}
-  dustSandStorm: {fileID: 9041038424775561456, guid: a1111111111111111111111111111118, type: 3}
+  dustSandStorm: {fileID: 0}
   magnetism: {fileID: 6774590696384651514, guid: a1111111111111111111111111111119, type: 3}
-  staticCharge: {fileID: 3339060361198335911, guid: a111111111111111111111111111111a, type: 3}
+  staticCharge: {fileID: 0}

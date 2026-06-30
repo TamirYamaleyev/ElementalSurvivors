@@ -1,17 +1,14 @@
+using TMPro;
 using UnityEngine;
 
 /// <summary>
 /// World-space label for reaction VFX showcase enemies.
-/// Uses built-in TextMesh to avoid TMP font initialization issues in the editor.
 /// </summary>
 public static class ReactionShowcaseLabel
 {
     private const float LabelHeight = 1.15f;
     private const int SortingOrder = 50;
-    private const int FontSize = 32;
-    private const float CharacterSize = 0.08f;
-
-    private static Font cachedFont;
+    private const float FontSize = 3.2f;
 
     public static void Create(Transform anchor, string reactionName, StatusType a, StatusType b)
     {
@@ -32,36 +29,18 @@ public static class ReactionShowcaseLabel
         go.transform.SetParent(anchor, false);
         go.transform.localPosition = new Vector3(0f, LabelHeight, 0f);
 
-        var font = ResolveFont();
-        if (font == null)
-        {
-            Object.Destroy(go);
-            return;
-        }
-
-        var text = go.AddComponent<TextMesh>();
-        text.font = font;
+        var text = go.AddComponent<TextMeshPro>();
         text.text = labelText;
         text.fontSize = FontSize;
-        text.characterSize = CharacterSize;
-        text.anchor = TextAnchor.MiddleCenter;
-        text.alignment = TextAlignment.Center;
+        text.alignment = TextAlignmentOptions.Center;
         text.color = Color.white;
-        text.lineSpacing = 1.1f;
+        text.textWrappingMode = TextWrappingModes.NoWrap;
+        text.rectTransform.sizeDelta = new Vector2(6f, 2f);
+
+        TmpFontUtility.EnsureAssigned(text);
+        go.AddComponent<TmpFontOnEnable>();
 
         ApplySorting(go, anchor);
-    }
-
-    private static Font ResolveFont()
-    {
-        if (cachedFont != null)
-            return cachedFont;
-
-        cachedFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        if (cachedFont == null)
-            cachedFont = Resources.GetBuiltinResource<Font>("Arial.ttf");
-
-        return cachedFont;
     }
 
     private static void ApplySorting(GameObject go, Transform anchor)

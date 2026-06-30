@@ -52,9 +52,7 @@ public class LightSword : MonoBehaviour
 
         hitEnemies.Add(enemy);
 
-        enemy.TakeDamage(damage);
-
-        statusSystem.Apply(enemy, status, statusDuration);
+        CombatHitUtility.ApplyStatusThenDamage(enemy, statusSystem, status, statusDuration, damage);
     }
 
     private void Rotate90(bool isClockwise)

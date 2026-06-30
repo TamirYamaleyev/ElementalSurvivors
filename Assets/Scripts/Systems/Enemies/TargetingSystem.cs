@@ -24,7 +24,7 @@ public class TargetingSystem : MonoBehaviour
         {
             Enemy e = registry.ActiveEnemies[i];
 
-            if (e == null)
+            if (e == null || !e.gameObject.activeInHierarchy)
                 continue;
 
             Vector3 diff = e.transform.position - pos;
@@ -57,8 +57,8 @@ public class TargetingSystem : MonoBehaviour
 
             foreach (var enemy in registry.ActiveEnemies)
             {
-                if (enemy == null || visited.Contains(enemy))
-                    continue;
+            if (enemy == null || visited.Contains(enemy) || !enemy.gameObject.activeInHierarchy)
+                continue;
 
                 Vector2 delta = (Vector2)enemy.transform.position - currentPos;
                 float d = delta.sqrMagnitude;

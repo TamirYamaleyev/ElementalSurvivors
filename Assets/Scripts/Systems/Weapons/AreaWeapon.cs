@@ -49,15 +49,20 @@ public class AreaWeapon : MonoBehaviour
         if (sr != null && visualSprite != null)
             sr.sprite = visualSprite;
 
-        Destroy(gameObject, lifetime);
+        if (TryGetComponent<LightSword>(out var sword))
+            sword.Init(damage, lifetime, status, statusDuration, statusSystem, visualSprite);
+        else
+            Destroy(gameObject, lifetime);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (TryGetComponent<LightSword>(out _))
+            return;
+
         if (!CombatHitUtility.TryResolveEnemy(other, out Enemy enemy))
             return;
 
-        enemy.TakeDamage(damage);
-        statusSystem.Apply(enemy, status, statusDuration);
+        CombatHitUtility.ApplyStatusThenDamage(enemy, statusSystem, status, statusDuration, damage);
     }
 }
