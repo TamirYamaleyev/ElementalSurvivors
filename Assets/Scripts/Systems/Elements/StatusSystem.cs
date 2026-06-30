@@ -45,6 +45,7 @@ public class StatusSystem : MonoBehaviour
             return;
 
         SpawnReactionVfxInstance(enemy, prefab);
+        enemy.StatusController.ClearAllStatuses();
     }
 
     /// <summary>Spawns reaction burst VFX for a pair without changing enemy statuses.</summary>

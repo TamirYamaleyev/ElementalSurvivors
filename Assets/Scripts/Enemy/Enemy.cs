@@ -129,6 +129,8 @@ public class Enemy : MonoBehaviour
         registry?.Unregister(this);
         health.SpawnDeathLoot();
 
+        status.ClearAllStatuses();
+
         if (poolRelease != null)
             poolRelease(this);
         else
