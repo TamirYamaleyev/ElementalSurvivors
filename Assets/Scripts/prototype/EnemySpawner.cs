@@ -13,7 +13,6 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float spawnInterval = 1f;
     [SerializeField] private float spawnRadius = 8f;
     [SerializeField] private float spawnJitter = 0.5f;
-    [SerializeField] private int rangedEveryNormalSpawns = 5;
 
     [Header("Obstacle Clearance")]
     [SerializeField] private float spawnBodyRadius = 0.35f;
@@ -25,7 +24,6 @@ public class EnemySpawner : MonoBehaviour
     private float timer;
     private float elapsedTime;
     private float nextBossAt;
-    private int normalSpawnCounter;
 
     private Transform player;
 
@@ -64,11 +62,7 @@ public class EnemySpawner : MonoBehaviour
 
         if (timer <= 0f)
         {
-            normalSpawnCounter++;
             int tierIndex = RunDifficultyEvaluator.GetPrefabIndex(runProfile, elapsedTime);
-            if (rangedEveryNormalSpawns > 0 && normalSpawnCounter % rangedEveryNormalSpawns == 0)
-                tierIndex = tierSet.RangedTierIndex;
-
             SpawnEnemy(tierIndex, isBoss: false);
             timer = spawnInterval;
         }

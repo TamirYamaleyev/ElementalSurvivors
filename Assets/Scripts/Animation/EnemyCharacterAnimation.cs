@@ -9,13 +9,9 @@ public sealed class EnemyCharacterAnimation : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private float flipDeadzone = 0.02f;
     [SerializeField] private float attackAnimCooldown = 0.45f;
-    [Tooltip("Enable when sprite art faces left by default (e.g. Enemy2_Walk).")]
-    [SerializeField] private bool invertFacingFlip;
 
     float _nextAttackAnimTime;
     bool _deathStarted;
-    Vector2 _lastPosition;
-    bool _hasLastPosition;
 
     void Awake()
     {
@@ -29,47 +25,19 @@ public sealed class EnemyCharacterAnimation : MonoBehaviour
 
     void LateUpdate()
     {
-        if (_deathStarted || animator == null)
+        if (_deathStarted || animator == null || rb == null)
             return;
 
-        var current = (Vector2)transform.position;
-        var speed = 0f;
-        var deltaX = 0f;
-        if (_hasLastPosition && Time.deltaTime > 1e-6f)
-        {
-            var delta = current - _lastPosition;
-            speed = delta.magnitude / Time.deltaTime;
-            deltaX = delta.x / Time.deltaTime;
-        }
-
-        _lastPosition = current;
-        _hasLastPosition = true;
-
-        animator.SetFloat(AnimationParams.Speed, speed);
+        animator.SetFloat(AnimationParams.Speed, rb.linearVelocity.magnitude);
 
         if (spriteRenderer != null)
-            ApplyHorizontalFacing(deltaX);
-    }
-
-    public void ResetMotionSample()
-    {
-        _lastPosition = transform.position;
-        _hasLastPosition = false;
-    }
-
-    private void ApplyHorizontalFacing(float vx)
-    {
-        if (Mathf.Abs(vx) <= flipDeadzone)
         {
-            var player = PlayerController.Instance;
-            if (player != null)
-                vx = player.transform.position.x - transform.position.x;
+            var vx = rb.linearVelocity.x;
+            if (vx > flipDeadzone)
+                spriteRenderer.flipX = false;
+            else if (vx < -flipDeadzone)
+                spriteRenderer.flipX = true;
         }
-
-        if (vx > flipDeadzone)
-            spriteRenderer.flipX = invertFacingFlip;
-        else if (vx < -flipDeadzone)
-            spriteRenderer.flipX = !invertFacingFlip;
     }
 
     public void NotifyAttack()

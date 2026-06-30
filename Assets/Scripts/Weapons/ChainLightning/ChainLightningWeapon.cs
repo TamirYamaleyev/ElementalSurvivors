@@ -30,12 +30,9 @@ public class ChainLightningWeapon : WeaponBehavior
             var visual = Instantiate(visualPrefab);
             visual.Initialize(previousPoint, hitPoint, data.visualSprite, visualLifetime);
 
-            CombatHitUtility.ApplyStatusThenDamage(
-                enemy,
-                ctx.StatusSystem,
-                definition.appliedStatus,
-                data.statusDuration,
-                damage);
+            enemy.TakeDamage(damage);
+
+            ctx.StatusSystem.Apply(enemy, definition.appliedStatus, data.statusDuration);
 
             previousPoint = hitPoint;
         }

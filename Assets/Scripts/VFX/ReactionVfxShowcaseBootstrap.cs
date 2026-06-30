@@ -7,8 +7,6 @@ using UnityEngine;
 /// </summary>
 public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
 {
-    public static Transform VfxContainer { get; private set; }
-
     [SerializeField] private Enemy enemyPrefab = null!;
     [SerializeField] private int columns = 5;
     [SerializeField] private float columnSpacing = 2.2f;
@@ -48,17 +46,6 @@ public sealed class ReactionVfxShowcaseBootstrap : MonoBehaviour
     {
         4f, 2.4f, 0.5f, 0.85f, 2.4f, 2.4f, 0.5f, 2.6f, 1.2f, 1.8f,
     };
-
-    private void Awake()
-    {
-        VfxContainer = transform;
-    }
-
-    private void OnDestroy()
-    {
-        if (VfxContainer == transform)
-            VfxContainer = null;
-    }
 
     private void Start()
     {

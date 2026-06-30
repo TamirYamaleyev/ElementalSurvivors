@@ -82,6 +82,7 @@ public class OrbitingObject : MonoBehaviour
         if (!CombatHitUtility.TryResolveEnemy(other, out Enemy enemy))
             return;
 
-        CombatHitUtility.ApplyStatusThenDamage(enemy, statusSystem, status, statusDuration, damage);
+        enemy.TakeDamage(damage);
+        statusSystem.Apply(enemy, status, statusDuration);
     }
 }
