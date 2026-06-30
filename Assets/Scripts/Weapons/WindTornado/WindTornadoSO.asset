@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c027cf32f7345f2438066bbce20a0373, type: 3}
+  m_Name: WindTornadoSO
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
+  weaponName: Wind Tornado
+  behaviorType: 3
+  appliedStatus: 2
+  projectilePrefab: {fileID: 0}
+  orbitPrefab: {fileID: 0}
+  areaPrefab: {fileID: 0}
+  customWeaponPrefab: {fileID: -2187592129383696490, guid: 05d7af66fc49a2e4eaff18e9d003a987, type: 3}
+  levels:
+  - damage: 5
+    cooldown: 5
+    range: 0
+    width: 1
+    height: 1
+    lifetime: 5
+    speed: 1
+    projectileCount: 1
+    statusDuration: 10
+    visualSprite: {fileID: 0}
+  - damage: 0
+    cooldown: 0
+    range: 0
+    width: 0
+    height: 0
+    lifetime: 0
+    speed: 0
+    projectileCount: 0
+    statusDuration: 0
+    visualSprite: {fileID: 0}
+  - damage: 0
+    cooldown: 0
+    range: 0
+    width: 0
+    height: 0
+    lifetime: 0
+    speed: 0
+    projectileCount: 0
+    statusDuration: 0
+    visualSprite: {fileID: 0}
+  - damage: 0
+    cooldown: 0
+    range: 0
+    width: 0
+    height: 0
+    lifetime: 0
+    speed: 0
+    projectileCount: 0
+    statusDuration: 0
+    visualSprite: {fileID: 0}
+  - damage: 0
+    cooldown: 0
+    range: 0
+    width: 0
+    height: 0
+    lifetime: 0
+    speed: 0
+    projectileCount: 0
+    statusDuration: 0
+    visualSprite: {fileID: 0}
