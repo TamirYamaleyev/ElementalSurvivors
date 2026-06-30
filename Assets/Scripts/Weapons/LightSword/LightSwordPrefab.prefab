@@ -183,7 +183,7 @@ GameObject:
   - component: {fileID: 8162699345641786503}
   - component: {fileID: 1777772827307961276}
   - component: {fileID: 7216124979373775457}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Sheer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
