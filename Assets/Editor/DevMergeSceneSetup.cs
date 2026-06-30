@@ -527,6 +527,12 @@ public static class DevMergeSceneSetup
         if (go.GetComponent<UnityEngine.UI.GraphicRaycaster>() == null)
             go.AddComponent<UnityEngine.UI.GraphicRaycaster>();
 
+        if (canvas.sortingOrder < 100)
+        {
+            canvas.sortingOrder = 100;
+            checklist.Add(DamageNumbersWorldName + " canvas sorting order");
+        }
+
         return rect;
     }
 

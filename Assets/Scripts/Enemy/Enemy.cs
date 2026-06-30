@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private EnemyAI ai;
     [SerializeField] private EnemyStatusController status;
     [SerializeField] private EnemyHealth health;
+    [SerializeField] private EnemyContactDamage contactDamage;
 
     private Vector3 defaultLocalScale;
     private Action<Enemy> poolRelease;
@@ -19,6 +20,7 @@ public class Enemy : MonoBehaviour
 
     private StatusSystem statusSystem;
     private EnemyRegistry registry;
+    private Transform playerTransform;
 
     public EnemyStatusController StatusController => status;
     public int PoolTierIndex => poolTierIndex;
@@ -26,6 +28,7 @@ public class Enemy : MonoBehaviour
     public float BaselineContactDamage => health.BaselineContactDamage;
     public float LastDamageReceived => health.LastDamageReceived;
     public EnemyAI AI => ai;
+    public Transform PlayerTransform => playerTransform;
 
     private void Awake()
     {
@@ -35,6 +38,12 @@ public class Enemy : MonoBehaviour
             health = GetComponent<EnemyHealth>();
         if (status == null)
             status = GetComponent<EnemyStatusController>();
+        if (contactDamage == null)
+            contactDamage = GetComponent<EnemyContactDamage>();
+        if (contactDamage == null)
+            contactDamage = gameObject.AddComponent<EnemyContactDamage>();
+        if (GetComponent<EnemyDamageNumberPresenter>() == null)
+            gameObject.AddComponent<EnemyDamageNumberPresenter>();
 
         defaultLocalScale = transform.localScale;
     }
@@ -64,7 +73,15 @@ public class Enemy : MonoBehaviour
             status.Initialize(statusSystem, this, statusSystem.ElementalGameplayCatalog);
 
         health.Initialize(this);
+        ConfigureEnemyRegistry(registry);
         isInitialized = true;
+    }
+
+    private void ConfigureEnemyRegistry(EnemyRegistry registryRef)
+    {
+        var vfxPresenter = GetComponent<ElementalStatusVfxPresenter>();
+        if (vfxPresenter != null && registryRef != null)
+            vfxPresenter.SetEnemyRegistry(registryRef);
     }
 
     public void OnAcquire(SpawnContext ctx)
@@ -78,8 +95,9 @@ public class Enemy : MonoBehaviour
             transform.localScale = defaultLocalScale * ctx.VisualScaleMultiplier;
 
         health.ApplyScaledStats(ctx.ScaledMaxHealth, ctx.ScaledContactDamage);
+        ConfigurePlayerTarget(PlayerController.Instance);
         ai.EnsureInitialized();
-        health.EnsureInitialized();
+        contactDamage?.EnsureInitialized(playerTransform);
         ai.SetGameplayEnabled(true);
 
         if (!isInitialized && statusSystem != null)
@@ -112,6 +130,29 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(float amount)
     {
         health.TakeDamage(amount);
+    }
+
+    private void ConfigurePlayerTarget(Transform player)
+    {
+        playerTransform = player;
+        ai?.SetPlayerTarget(playerTransform);
+
+        if (contactDamage != null)
+            contactDamage.SetPlayerTarget(playerTransform);
+
+        var rangedAttack = GetComponent<EnemyRangedAttack>();
+        if (rangedAttack != null)
+            rangedAttack.SetPlayerTarget(playerTransform);
+
+        var bossAi = GetComponent<BossAI>();
+        if (bossAi != null)
+            bossAi.SetPlayerTarget(playerTransform);
+
+        var bossAttack = GetComponent<BossAttackController>();
+        if (bossAttack != null)
+            bossAttack.SetPlayerTarget(playerTransform);
+
+        ConfigureEnemyRegistry(registry);
     }
 
     private void SubscribeToDeath()

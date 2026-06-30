@@ -48,6 +48,7 @@ public class DamageNumberView : MonoBehaviour
             StopCoroutine(playRoutine);
 
         gameObject.SetActive(true);
+        ApplyFontAndMaterial();
 
         if (cachedTransform != null)
             cachedTransform.position = worldPosition;
@@ -57,6 +58,7 @@ public class DamageNumberView : MonoBehaviour
             text.text = damage.ToString();
             color.a = 1f;
             text.color = color;
+            text.ForceMeshUpdate(true);
         }
 
         if (canvasGroup != null)

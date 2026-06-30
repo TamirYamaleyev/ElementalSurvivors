@@ -11,6 +11,7 @@ public sealed class BossAI : MonoBehaviour, IEnemyPoolReset
 
     private EnemyAI ai;
     private BossAttackController attack;
+    private Transform playerTarget;
     private float strafeTimer;
     private int strafeSign = 1;
 
@@ -36,6 +37,11 @@ public sealed class BossAI : MonoBehaviour, IEnemyPoolReset
             attack.AttackStarted -= HandleAttackStarted;
             attack.AttackFinished -= HandleAttackFinished;
         }
+    }
+
+    public void SetPlayerTarget(Transform playerTransform)
+    {
+        playerTarget = playerTransform;
     }
 
     public void ResetForPool()
@@ -78,10 +84,11 @@ public sealed class BossAI : MonoBehaviour, IEnemyPoolReset
 
     private void ApplyStrafe()
     {
-        if (PlayerController.Instance == null)
+        var player = playerTarget != null ? playerTarget : PlayerController.Instance;
+        if (player == null)
             return;
 
-        var toPlayer = ((Vector2)PlayerController.Instance.transform.position - (Vector2)transform.position).normalized;
+        var toPlayer = ((Vector2)player.position - (Vector2)transform.position).normalized;
         var tangent = new Vector2(-toPlayer.y, toPlayer.x) * strafeSign;
         ai.SetStrafeDirection(tangent);
     }

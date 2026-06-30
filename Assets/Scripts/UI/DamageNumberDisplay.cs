@@ -13,6 +13,7 @@ public class DamageNumberDisplay : MonoBehaviour
     [SerializeField] private float lifetime = 0.8f;
     [SerializeField] private Vector2 worldOffset = new(0f, 0.5f);
     [SerializeField] private Vector2 randomSpread = new(0.35f, 0.15f);
+    [SerializeField] private int canvasSortingOrder = 100;
 
     private readonly Stack<DamageNumberView> pool = new();
 
@@ -29,7 +30,21 @@ public class DamageNumberDisplay : MonoBehaviour
         if (worldCamera == null)
             worldCamera = Camera.main;
 
+        EnsureContainerDrawOrder();
         Prewarm();
+    }
+
+    private void EnsureContainerDrawOrder()
+    {
+        if (container == null || canvasSortingOrder < 0)
+            return;
+
+        var canvas = container.GetComponent<Canvas>();
+        if (canvas == null)
+            canvas = container.GetComponentInParent<Canvas>();
+
+        if (canvas != null)
+            canvas.sortingOrder = Mathf.Max(canvas.sortingOrder, canvasSortingOrder);
     }
 
     private void OnDestroy()

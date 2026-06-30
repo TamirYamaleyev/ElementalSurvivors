@@ -16,7 +16,8 @@ public class TargetingSystem : MonoBehaviour
             return null;
 
         Enemy best = null;
-        float bestDistSqr = float.MaxValue * maxRange;
+        float maxRangeSqr = maxRange * maxRange;
+        float bestDistSqr = float.MaxValue;
 
         Vector3 pos = position;
 
@@ -30,11 +31,11 @@ public class TargetingSystem : MonoBehaviour
             Vector3 diff = e.transform.position - pos;
             float distSqr = diff.sqrMagnitude;
 
-            if (distSqr <= bestDistSqr)
-            {
-                bestDistSqr = distSqr;
-                best = e;
-            }
+            if (distSqr > maxRangeSqr || distSqr >= bestDistSqr)
+                continue;
+
+            bestDistSqr = distSqr;
+            best = e;
         }
 
         return best;

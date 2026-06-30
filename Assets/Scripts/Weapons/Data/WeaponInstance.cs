@@ -54,6 +54,9 @@ public class WeaponInstance
 
     public bool TryExecute(Enemy target, WeaponSystemContext ctx, WeaponLevelData data)
     {
+        if (!WeaponExecutionStrategies.TryGet(definition.behaviorType, out var strategy))
+            return false;
+
         var stats = ctx.PlayerStats != null ? ctx.PlayerStats.Current : default;
 
         float damage = ctx.PlayerStats != null
@@ -64,97 +67,8 @@ public class WeaponInstance
             ? CombatStatResolver.ScaleProjectileSpeed(data.speed, stats)
             : data.speed;
 
-        Vector2 spawnPos = ctx.PlayerTransformPoint != null
-            ? ctx.PlayerTransformPoint.position
-            : transformFallback(ctx);
+        Vector2 spawnPos = WeaponExecutionUtility.ResolveSpawnFallback(ctx);
 
-        switch (definition.behaviorType)
-        {
-            case WeaponBehaviorType.Projectile:
-            {
-                spawnPos = ctx.ProjectileSpawnPoint.position;
-                Vector2 dir = ResolveDirection(target, spawnPos, ctx);
-
-                ctx.ProjectileSystem.Fire(
-                    definition.projectilePrefab,
-                    spawnPos,
-                    dir,
-                    damage,
-                    speed,
-                    definition.appliedStatus,
-                    data.statusDuration,
-                    ctx.StatusSystem,
-                    data.visualSprite);
-
-                return true;
-            }
-
-            case WeaponBehaviorType.Area:
-            {
-                Vector2 pos = ctx.AreaSpawnPoint != null
-                    ? ctx.AreaSpawnPoint.position
-                    : spawnPos;
-
-                ctx.AreaSystem.Cast(
-                    definition.areaPrefab,
-                    ctx.AreaSpawnPoint,
-                    data.width,
-                    data.height,
-                    damage,
-                    data.lifetime,
-                    definition.appliedStatus,
-                    data.statusDuration,
-                    ctx.StatusSystem,
-                    data.visualSprite);
-
-                return true;
-            }
-
-            case WeaponBehaviorType.Orbit:
-            {
-                ctx.OrbitSystem.Spawn(
-                    definition.orbitPrefab,
-                    ctx.OrbitCenter,
-                    data.projectileCount,
-                    data.range,
-                    speed,
-                    damage,
-                    definition.appliedStatus,
-                    data.statusDuration,
-                    ctx.StatusSystem,
-                    data.visualSprite);
-
-                return true;
-            }
-
-            case WeaponBehaviorType.Custom:
-            {
-                if (definition.customWeaponPrefab == null)
-                    return false;
-
-                return definition.customWeaponPrefab.TryExecute(target, data, ctx, definition);
-            }
-        }
-
-        return false;
-    }
-
-    static Vector2 transformFallback(WeaponSystemContext ctx)
-    {
-        if (ctx.ProjectileSpawnPoint != null)
-            return ctx.ProjectileSpawnPoint.position;
-
-        return Vector2.zero;
-    }
-
-    static Vector2 ResolveDirection(Enemy target, Vector2 origin, WeaponSystemContext ctx)
-    {
-        if (target != null)
-            return ((Vector2)target.transform.position - origin).normalized;
-
-        if (ctx.AimDirection != null)
-            return ctx.AimDirection.LastDirection;
-
-        return Vector2.right;
+        return strategy.Execute(target, ctx, data, definition, damage, speed, spawnPos);
     }
 }

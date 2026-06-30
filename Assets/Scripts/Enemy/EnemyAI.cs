@@ -23,21 +23,15 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private float probeDistance = 1f;
     [SerializeField] private float[] steerAnglesDeg = { 0f, -35f, 35f, -70f, 70f, -110f, 110f };
 
+    private readonly EnemyCrowdControlState crowdControl = new();
+
+    // Legacy DoT path used by Legacy/Weapons/OrbitOrb until legacy weapons are removed.
     private EnemyHealth health;
-    private float slowMultiplier = 0.5f;
-    private float slowTimer;
     private float dotDuration;
     private float dotTickTimer;
     private float dotDamage = 1f;
-    private float dotTickInterval = 0.5f;
-    private float fearTimer;
-    private float stunTimer;
-    private float hailStunImmunityTimer;
-    private Vector2 externalVelocity;
-    private float externalVelocityDecay = 12f;
-    private Vector2 pullTarget;
-    private float pullStrength;
-    private float pullTimer;
+    private readonly float dotTickInterval = 0.5f;
+
     private Transform player;
     private Vector2 direction;
     private bool gameplayEnabled = true;
@@ -64,6 +58,11 @@ public class EnemyAI : MonoBehaviour
             obstacleMask = LayerMask.GetMask("Obstacle");
     }
 
+    public void SetPlayerTarget(Transform playerTransform)
+    {
+        player = playerTransform;
+    }
+
     public void EnsureInitialized()
     {
         if (player == null)
@@ -72,35 +71,21 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
-        if (stunTimer > 0f)
-        {
-            stunTimer -= Time.deltaTime;
-            if (stunTimer <= 0f)
-                gameplayEnabled = true;
-        }
+        var wasStunned = crowdControl.IsStunned;
+        crowdControl.TickStun(Time.deltaTime);
+        if (wasStunned && !crowdControl.IsStunned)
+            gameplayEnabled = true;
 
-        if (pullTimer > 0f)
-            pullTimer -= Time.deltaTime;
-        else
-            pullStrength = 0f;
-
-        if (hailStunImmunityTimer > 0f)
-            hailStunImmunityTimer -= Time.deltaTime;
+        crowdControl.TickPull(Time.deltaTime);
+        crowdControl.TickHailImmunity(Time.deltaTime);
 
         if (dotDuration > 0f)
-            DealDoT();
+            DealLegacyDoT();
     }
 
-    public void ApplyFear(float duration)
-    {
-        fearTimer = duration;
-    }
+    public void ApplyFear(float duration) => crowdControl.ApplyFear(duration);
 
-    public void ApplySlow(float duration, float multiplier)
-    {
-        slowTimer = duration;
-        slowMultiplier = multiplier;
-    }
+    public void ApplySlow(float duration, float multiplier) => crowdControl.ApplySlow(duration, multiplier);
 
     public void ApplyDoT(float duration, float damagePerTick)
     {
@@ -111,47 +96,26 @@ public class EnemyAI : MonoBehaviour
 
     public void ApplyStun(float duration)
     {
-        if (duration <= 0f)
-            return;
-
-        stunTimer = Mathf.Max(stunTimer, duration);
+        crowdControl.ApplyStun(duration);
         gameplayEnabled = false;
 
         if (rb != null)
             rb.linearVelocity = Vector2.zero;
-
-        externalVelocity = Vector2.zero;
     }
 
-    public void ApplyKnockback(Vector2 direction, float impulse)
-    {
-        if (impulse <= 0f || direction.sqrMagnitude < 1e-6f || rb == null)
-            return;
+    public void ApplyKnockback(Vector2 knockbackDirection, float impulse) =>
+        crowdControl.ApplyKnockback(knockbackDirection, impulse);
 
-        pullTimer = 0f;
-        pullStrength = 0f;
-        pullTarget = Vector2.zero;
+    public void ApplyPullToward(Vector2 target, float strength, float duration) =>
+        crowdControl.ApplyPullToward(target, strength, duration);
 
-        externalVelocity = direction.normalized * impulse;
-    }
-
-    public void ApplyPullToward(Vector2 target, float strength, float duration)
-    {
-        if (strength <= 0f || duration <= 0f)
-            return;
-
-        pullTarget = target;
-        pullStrength = strength;
-        pullTimer = Mathf.Max(pullTimer, duration);
-    }
-
-    public bool CanBeStunnedByHail() => hailStunImmunityTimer <= 0f;
+    public bool CanBeStunnedByHail() => crowdControl.CanBeStunnedByHail();
 
     public void SetMovementOverride(bool enabled)
     {
         movementOverrideEnabled = enabled;
 
-        if (!enabled && rb != null && externalVelocity.sqrMagnitude < 1e-6f && pullTimer <= 0f)
+        if (!enabled && rb != null && !crowdControl.HasExternalVelocity && !crowdControl.IsPulled)
             rb.linearVelocity = Vector2.zero;
     }
 
@@ -189,17 +153,9 @@ public class EnemyAI : MonoBehaviour
         return DistanceBand.InRange;
     }
 
-    public void AddHailStunImmunity(float duration)
-    {
-        if (duration <= 0f)
-            return;
+    public void AddHailStunImmunity(float duration) => crowdControl.AddHailStunImmunity(duration);
 
-        hailStunImmunityTimer = Mathf.Min(
-            hailStunImmunityTimer + duration,
-            10f);
-    }
-
-    private void DealDoT()
+    private void DealLegacyDoT()
     {
         dotDuration -= Time.deltaTime;
         dotTickTimer += Time.deltaTime;
@@ -216,23 +172,11 @@ public class EnemyAI : MonoBehaviour
         if (rb == null)
             return;
 
-        if (externalVelocity.sqrMagnitude > 1e-6f)
-        {
-            rb.linearVelocity = externalVelocity;
-            externalVelocity = Vector2.Lerp(
-                externalVelocity,
-                Vector2.zero,
-                externalVelocityDecay * Time.fixedDeltaTime);
+        if (crowdControl.TryApplyExternalVelocity(rb, Time.fixedDeltaTime))
             return;
-        }
 
-        if (pullTimer > 0f && pullStrength > 0f)
-        {
-            var delta = pullTarget - rb.position;
-            if (delta.sqrMagnitude > 1e-6f)
-                rb.linearVelocity = delta.normalized * pullStrength;
+        if (crowdControl.TryApplyPullVelocity(rb))
             return;
-        }
 
         if (!gameplayEnabled)
             return;
@@ -288,12 +232,7 @@ public class EnemyAI : MonoBehaviour
         if (moveDir.sqrMagnitude < 1e-6f || rb == null)
             return;
 
-        var currentSpeed = moveSpeed;
-        if (slowTimer > 0f)
-        {
-            currentSpeed *= slowMultiplier;
-            slowTimer -= Time.fixedDeltaTime;
-        }
+        var currentSpeed = crowdControl.ApplySlowToSpeed(moveSpeed, Time.fixedDeltaTime);
 
         if (Physics2D.OverlapCircle(rb.position, bodyCastRadius, obstacleMask))
             EnemyObstacleSteering.SeparateFromObstacles(rb, bodyCastRadius, obstacleMask);
@@ -315,16 +254,7 @@ public class EnemyAI : MonoBehaviour
             return;
 
         Vector2 baseDir = (player.position - transform.position).normalized;
-
-        if (fearTimer > 0f)
-        {
-            direction = -baseDir;
-            fearTimer -= Time.fixedDeltaTime;
-        }
-        else
-        {
-            direction = baseDir;
-        }
+        direction = crowdControl.ResolveFollowDirection(baseDir, Time.fixedDeltaTime);
     }
 
     private void FollowPlayer()
@@ -339,15 +269,9 @@ public class EnemyAI : MonoBehaviour
 
     public void ResetState()
     {
-        slowTimer = 0f;
-        fearTimer = 0f;
-        stunTimer = 0f;
-        hailStunImmunityTimer = 0f;
+        crowdControl.Reset();
         dotDuration = 0f;
         dotTickTimer = 0f;
-        externalVelocity = Vector2.zero;
-        pullStrength = 0f;
-        pullTimer = 0f;
         gameplayEnabled = true;
         movementOverrideEnabled = true;
         useDistanceMaintenance = false;

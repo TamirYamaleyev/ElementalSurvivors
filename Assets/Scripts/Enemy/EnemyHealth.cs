@@ -8,15 +8,16 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [SerializeField] private float contactDamage = 10f;
 
     private float currentHealth;
-    private PlayerHealth playerRef;
 
     public event Action OnDied;
     public event Action<float, float> OnHealthChanged;
+    public event Action<float, Vector3, Color?> OnDamageTaken;
 
     public float CurrentHealth => currentHealth;
     public float MaxHealth => maxHealth;
     public float BaselineMaxHealth => maxHealth;
     public float BaselineContactDamage => contactDamage;
+    public float ContactDamage => contactDamage;
     public float LastDamageReceived { get; private set; }
 
     public void Initialize(Enemy enemy)
@@ -54,7 +55,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         LastDamageReceived = amount;
         currentHealth -= amount;
 
-        DamageNumberDisplay.Instance?.DisplayDamageNumber(amount, transform.position, damageColor);
+        OnDamageTaken?.Invoke(amount, transform.position, damageColor);
         NotifyHealthChanged();
 
         if (currentHealth <= 0f)
@@ -65,27 +66,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         if (lootProfile != null)
             lootProfile.SpawnLoot(transform.position);
-    }
-
-    public void EnsureInitialized()
-    {
-        if (playerRef != null)
-            return;
-
-        Transform player = PlayerController.Instance;
-        if (player != null)
-            playerRef = player.GetComponent<PlayerHealth>();
-    }
-
-    private void OnTriggerStay2D(Collider2D other)
-    {
-        if (!other.CompareTag("Player"))
-            return;
-
-        GetComponent<EnemyCharacterAnimation>()?.NotifyAttack();
-
-        if (playerRef != null)
-            playerRef.TakeDamage(contactDamage);
     }
 
     public void ResetState()

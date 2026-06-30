@@ -34,7 +34,6 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
     private void Awake()
     {
         owner = GetComponent<Enemy>();
-        enemyRegistry = FindAnyObjectByType<EnemyRegistry>();
         bodySprite = Anchor.GetComponent<SpriteRenderer>();
         if (bodySprite == null)
             bodySprite = Anchor.GetComponentInChildren<SpriteRenderer>(true);
@@ -57,6 +56,12 @@ public class ElementalStatusVfxPresenter : MonoBehaviour, IEnemyStatusVisualSink
         StopAllCoroutines();
         ClearAllInstances();
         lastFlipX = bodySprite != null && bodySprite.flipX;
+    }
+
+    public void SetEnemyRegistry(EnemyRegistry registry)
+    {
+        if (registry != null)
+            enemyRegistry = registry;
     }
 
     public void RefreshStatusVisuals(StatusVfxPlan plan)

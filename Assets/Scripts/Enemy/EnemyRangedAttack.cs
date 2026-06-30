@@ -29,6 +29,7 @@ public sealed class EnemyRangedAttack : MonoBehaviour
     private EnemyAI ai;
     private EnemyCharacterAnimation characterAnimation;
     private SpriteRenderer bodySprite;
+    private Transform playerTarget;
     private Coroutine loop;
     private bool pendingFire;
     private float firePointAbsX;
@@ -41,6 +42,19 @@ public sealed class EnemyRangedAttack : MonoBehaviour
 
         if (firePoint != null)
             firePointAbsX = Mathf.Abs(firePoint.localPosition.x);
+    }
+
+    public void SetPlayerTarget(Transform playerTransform)
+    {
+        playerTarget = playerTransform;
+    }
+
+    private Transform ResolvePlayerTarget()
+    {
+        if (playerTarget != null)
+            return playerTarget;
+
+        return PlayerController.Instance;
     }
 
     private void OnEnable()
@@ -135,16 +149,17 @@ public sealed class EnemyRangedAttack : MonoBehaviour
 
     private bool CanAttack()
     {
-        return ai != null && ai.IsGameplayEnabled && PlayerController.Instance != null;
+        return ai != null && ai.IsGameplayEnabled && ResolvePlayerTarget() != null;
     }
 
     private void FireAtPlayer()
     {
-        if (projectilePrefab == null || PlayerController.Instance == null)
+        var player = ResolvePlayerTarget();
+        if (projectilePrefab == null || player == null)
             return;
 
         var origin = firePoint != null ? (Vector2)firePoint.position : (Vector2)transform.position;
-        var target = (Vector2)PlayerController.Instance.transform.position;
+        var target = (Vector2)player.position;
         var dir = target - origin;
         if (dir.sqrMagnitude < 1e-6f)
             dir = Vector2.right;

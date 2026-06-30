@@ -58,6 +58,7 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset
     private Coroutine loop;
     private bool attacking;
     private EnemyAI ai;
+    private Transform playerTarget;
 
     public bool IsAttacking => attacking;
 
@@ -82,6 +83,11 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset
             StopCoroutine(loop);
         loop = null;
         attacking = false;
+    }
+
+    public void SetPlayerTarget(Transform playerTransform)
+    {
+        playerTarget = playerTransform;
     }
 
     public void ResetForPool()
@@ -155,11 +161,12 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset
 
     private Vector2 ResolveAimDirection()
     {
-        if (PlayerController.Instance == null)
+        var player = playerTarget != null ? playerTarget : PlayerController.Instance;
+        if (player == null)
             return Vector2.down;
 
         var origin = GetFireOrigin();
-        var delta = (Vector2)PlayerController.Instance.transform.position - origin;
+        var delta = (Vector2)player.position - origin;
         return delta.sqrMagnitude > 1e-6f ? delta.normalized : Vector2.down;
     }
 

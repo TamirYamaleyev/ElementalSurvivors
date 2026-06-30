@@ -41,7 +41,13 @@ public sealed class ReactionEffectSystem : MonoBehaviour
         var pair = new StatusPair(a, b);
         var center = sourceEnemy.transform.position + Vector3.up * 0.25f;
         var player = PlayerController.Instance;
-        var registry = enemyRegistry != null ? enemyRegistry : FindAnyObjectByType<EnemyRegistry>();
+        var registry = enemyRegistry;
+
+        if (registry == null)
+        {
+            Debug.LogWarning("ReactionEffectSystem: EnemyRegistry is not configured.");
+            return false;
+        }
 
         var triggerDamage = pendingDamage > 0f
             ? pendingDamage
@@ -63,7 +69,7 @@ public sealed class ReactionEffectSystem : MonoBehaviour
 
         root.transform.position = center;
 
-        var gameplay = AddGameplayComponent(root, pair);
+        var gameplay = ReactionEffectRegistry.CreateGameplayComponent(root, pair);
         if (gameplay == null)
         {
             Destroy(root);
@@ -98,8 +104,8 @@ public sealed class ReactionEffectSystem : MonoBehaviour
             }
         }
 
-        if (!UsesSustainedLifecycle(pair, definition))
-            Destroy(root, GetInstantCleanupDelay(pair));
+        if (!ReactionEffectRegistry.UsesSustainedLifecycle(pair, definition))
+            Destroy(root, ReactionEffectRegistry.GetInstantCleanupDelay(pair));
 
         return true;
     }
@@ -117,38 +123,6 @@ public sealed class ReactionEffectSystem : MonoBehaviour
         return null;
     }
 
-    private static bool UsesSustainedLifecycle(StatusPair pair, ReactionGameplayDefinition definition)
-    {
-        if (definition.mode == ReactionGameplayMode.Sustained)
-            return true;
-
-        return pair == new StatusPair(StatusType.Fire, StatusType.Water)
-            || pair == new StatusPair(StatusType.Water, StatusType.Wind)
-            || pair == new StatusPair(StatusType.Water, StatusType.Earth)
-            || pair == new StatusPair(StatusType.Wind, StatusType.Earth)
-            || pair == new StatusPair(StatusType.Wind, StatusType.Lightning);
-    }
-
-    private static float GetInstantCleanupDelay(StatusPair pair)
-    {
-        if (pair.First == StatusType.Fire && pair.Second == StatusType.Lightning)
-            return 0.9f;
-
-        if (pair.First == StatusType.Fire && pair.Second == StatusType.Wind)
-            return 0.4f;
-
-        if (pair.First == StatusType.Water && pair.Second == StatusType.Lightning)
-            return 0.25f;
-
-        if (pair.First == StatusType.Fire && pair.Second == StatusType.Earth)
-            return 0.35f;
-
-        if (pair.First == StatusType.Earth && pair.Second == StatusType.Lightning)
-            return 1.8f;
-
-        return 0.2f;
-    }
-
     private static void ConfigureSustainedReactionVfx(GameObject vfxRoot, ReactionGameplayDefinition definition)
     {
         if (vfxRoot == null || definition == null)
@@ -164,23 +138,5 @@ public sealed class ReactionEffectSystem : MonoBehaviour
 
         foreach (var overlay in vfxRoot.GetComponentsInChildren<ReactionVaporizeAreaOverlay>(true))
             overlay.Configure(lifetime, definition.radius);
-    }
-
-    private static IReactionGameplayEffect AddGameplayComponent(GameObject root, StatusPair pair)
-    {
-        return (pair.First, pair.Second) switch
-        {
-            (StatusType.Fire, StatusType.Water) => root.AddComponent<ReactionVaporizeZoneEffect>(),
-            (StatusType.Fire, StatusType.Earth) => root.AddComponent<ReactionCrystallizeEffect>(),
-            (StatusType.Fire, StatusType.Wind) => root.AddComponent<ReactionScorchingWindEffect>(),
-            (StatusType.Fire, StatusType.Lightning) => root.AddComponent<ReactionExplosionEffect>(),
-            (StatusType.Water, StatusType.Wind) => root.AddComponent<ReactionHailEffect>(),
-            (StatusType.Water, StatusType.Earth) => root.AddComponent<ReactionGrowthZoneEffect>(),
-            (StatusType.Water, StatusType.Lightning) => root.AddComponent<ReactionElectrowettingEffect>(),
-            (StatusType.Wind, StatusType.Earth) => root.AddComponent<ReactionDustSandStormEffect>(),
-            (StatusType.Wind, StatusType.Lightning) => root.AddComponent<ReactionMagnetismEffect>(),
-            (StatusType.Earth, StatusType.Lightning) => root.AddComponent<ReactionStaticChargeEffect>(),
-            _ => null,
-        };
     }
 }

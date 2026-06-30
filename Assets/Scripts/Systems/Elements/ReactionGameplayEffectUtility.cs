@@ -27,12 +27,7 @@ public static class ReactionGameplayEffectUtility
     }
 
     public static EnemyRegistry ResolveRegistry(EnemyRegistry registry)
-    {
-        if (registry != null)
-            return registry;
-
-        return Object.FindAnyObjectByType<EnemyRegistry>();
-    }
+        => registry;
 
     public static float ResolveDamage(ReactionGameplayDefinition def, float triggerDamage)
     {
@@ -102,7 +97,7 @@ public static class ReactionGameplayEffectUtility
 
             foreach (var enemy in registry.ActiveEnemies)
             {
-                if (enemy == null || visited.Contains(enemy) || !enemy.gameObject.activeInHierarchy)
+                if (!CombatHitUtility.IsEnemyTargetable(enemy) || visited.Contains(enemy))
                     continue;
 
                 var delta = (Vector2)enemy.transform.position - currentPos;
