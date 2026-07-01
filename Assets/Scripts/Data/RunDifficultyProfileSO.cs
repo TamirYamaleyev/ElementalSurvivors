@@ -22,4 +22,6 @@ public class RunDifficultyProfileSO : ScriptableObject
     public float bossSpawnIntervalSeconds = 198f;
     public float bossExtraStatMultiplier = 10f;
     public float bossVisualScale = 1.5f;
+    [Tooltip("Multiplier for regular spawn rate while a boss is alive (0.5 = half intensity).")]
+    public float bossFightSpawnIntensityMultiplier = 0.5f;
 }

@@ -23,3 +23,4 @@ MonoBehaviour:
   bossSpawnIntervalSeconds: 198
   bossExtraStatMultiplier: 10
   bossVisualScale: 1.5
+  bossFightSpawnIntensityMultiplier: 0.5

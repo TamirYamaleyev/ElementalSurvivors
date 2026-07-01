@@ -24,6 +24,7 @@ public class EnemySpawner : MonoBehaviour
     private float timer;
     private float elapsedTime;
     private float nextBossAt;
+    private int activeBossCount;
 
     private Transform player;
 
@@ -54,11 +55,14 @@ public class EnemySpawner : MonoBehaviour
 
         if (RunDifficultyEvaluator.ShouldSpawnBoss(runProfile, elapsedTime, ref nextBossAt))
         {
-            SpawnEnemy(0, isBoss: true);
+            if (activeBossCount == 0)
+                SpawnEnemy(0, isBoss: true);
+
             return;
         }
 
-        timer -= Time.deltaTime;
+        float intensity = GetSpawnIntensity();
+        timer -= Time.deltaTime * intensity;
 
         if (timer <= 0f)
         {
@@ -66,6 +70,15 @@ public class EnemySpawner : MonoBehaviour
             SpawnEnemy(tierIndex, isBoss: false);
             timer = spawnInterval;
         }
+    }
+
+    private float GetSpawnIntensity()
+    {
+        if (activeBossCount <= 0)
+            return 1f;
+
+        float multiplier = runProfile.bossFightSpawnIntensityMultiplier;
+        return multiplier > 0f ? multiplier : 1f;
     }
 
     private void SpawnEnemy(int tierIndex, bool isBoss)
@@ -117,7 +130,30 @@ public class EnemySpawner : MonoBehaviour
         });
 
         if (isBoss)
+        {
             EnemyWorldHealthBar.EnsureAttached(instance);
+            TrackBossSpawned(instance);
+        }
+    }
+
+    private void TrackBossSpawned(Enemy boss)
+    {
+        if (boss == null || boss.PoolTierIndex != EnemyPool.BossPoolTierIndex)
+            return;
+
+        var health = boss.GetComponent<EnemyHealth>();
+        if (health == null)
+            return;
+
+        activeBossCount++;
+
+        void HandleBossDied()
+        {
+            health.OnDied -= HandleBossDied;
+            activeBossCount = Mathf.Max(0, activeBossCount - 1);
+        }
+
+        health.OnDied += HandleBossDied;
     }
 
     private Vector3 FindClearSpawnPosition(Vector3 desired, float checkRadius)

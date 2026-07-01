@@ -5,13 +5,21 @@ using UnityEngine;
 
 public class DamageNumberView : MonoBehaviour
 {
+    private static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
+    private static readonly int OutlineWidthId = Shader.PropertyToID("_OutlineWidth");
+    private static readonly int UnderlayColorId = Shader.PropertyToID("_UnderlayColor");
+    private static readonly int UnderlayDilateId = Shader.PropertyToID("_UnderlayDilate");
+
     [SerializeField] private TMP_Text text;
+    [SerializeField] private TMP_Text outlineText;
     [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private Material outlineMaterial;
+    [SerializeField] private float outlineWidth = 0.5f;
     [SerializeField] private float driftWorldUnits = 0.35f;
 
     private Transform cachedTransform;
     private Coroutine playRoutine;
+    private Material outlineMaterialInstance;
 
     private void Awake()
     {
@@ -23,7 +31,14 @@ public class DamageNumberView : MonoBehaviour
         if (canvasGroup == null)
             canvasGroup = GetComponent<CanvasGroup>();
 
-        ApplyFontAndMaterial();
+        EnsureOutlineLayer();
+        ApplyMaterials();
+    }
+
+    private void OnDestroy()
+    {
+        if (outlineMaterialInstance != null)
+            Destroy(outlineMaterialInstance);
     }
 
     private void OnEnable()
@@ -31,15 +46,73 @@ public class DamageNumberView : MonoBehaviour
         if (text == null)
             text = GetComponent<TMP_Text>();
 
-        ApplyFontAndMaterial();
+        EnsureOutlineLayer();
+        ApplyMaterials();
     }
 
-    private void ApplyFontAndMaterial()
+    private void EnsureOutlineLayer()
     {
-        TmpFontUtility.EnsureAssigned(text, preserveSharedMaterial: outlineMaterial != null);
+        if (outlineText != null || text == null)
+            return;
 
-        if (text != null && outlineMaterial != null)
-            text.fontSharedMaterial = outlineMaterial;
+        var outlineGo = new GameObject("Outline", typeof(RectTransform));
+        var outlineRect = outlineGo.GetComponent<RectTransform>();
+        outlineRect.SetParent(transform, false);
+        outlineRect.anchorMin = new Vector2(0.5f, 0.5f);
+        outlineRect.anchorMax = new Vector2(0.5f, 0.5f);
+        outlineRect.pivot = new Vector2(0.5f, 0.5f);
+        outlineRect.anchoredPosition = Vector2.zero;
+        outlineRect.sizeDelta = text.rectTransform.sizeDelta;
+        outlineRect.localScale = Vector3.one;
+        outlineGo.transform.SetAsFirstSibling();
+
+        outlineText = outlineGo.AddComponent<TextMeshProUGUI>();
+        CopyTextLayout(text, outlineText);
+        outlineText.raycastTarget = false;
+        outlineText.color = Color.black;
+    }
+
+    private static void CopyTextLayout(TMP_Text source, TMP_Text dest)
+    {
+        TmpFontUtility.EnsureAssigned(source, preserveSharedMaterial: true);
+        TmpFontUtility.EnsureAssigned(dest, preserveSharedMaterial: true);
+
+        dest.font = source.font;
+        dest.fontSize = source.fontSize;
+        dest.fontStyle = source.fontStyle;
+        dest.alignment = source.alignment;
+        dest.enableAutoSizing = source.enableAutoSizing;
+        dest.fontSizeMin = source.fontSizeMin;
+        dest.fontSizeMax = source.fontSizeMax;
+        dest.characterSpacing = source.characterSpacing;
+        dest.lineSpacing = source.lineSpacing;
+        dest.margin = source.margin;
+        dest.textWrappingMode = source.textWrappingMode;
+        dest.overflowMode = source.overflowMode;
+    }
+
+    private void ApplyMaterials()
+    {
+        TmpFontUtility.EnsureAssigned(text, preserveSharedMaterial: true);
+
+        if (text != null && text.font != null)
+            text.fontSharedMaterial = text.font.material;
+
+        if (outlineText == null || outlineMaterial == null)
+            return;
+
+        if (outlineMaterialInstance == null)
+            outlineMaterialInstance = new Material(outlineMaterial);
+
+        outlineMaterialInstance.EnableKeyword("OUTLINE_ON");
+        outlineMaterialInstance.EnableKeyword("UNDERLAY_ON");
+        outlineMaterialInstance.SetColor(OutlineColorId, Color.black);
+        outlineMaterialInstance.SetFloat(OutlineWidthId, outlineWidth);
+        outlineMaterialInstance.SetColor(UnderlayColorId, new Color(0f, 0f, 0f, 0.9f));
+        outlineMaterialInstance.SetFloat(UnderlayDilateId, 0.28f);
+
+        outlineText.font = text != null ? text.font : outlineText.font;
+        outlineText.fontSharedMaterial = outlineMaterialInstance;
     }
 
     public void Play(int damage, Color color, Vector3 worldPosition, float lifetime, Action<DamageNumberView> onComplete)
@@ -48,14 +121,24 @@ public class DamageNumberView : MonoBehaviour
             StopCoroutine(playRoutine);
 
         gameObject.SetActive(true);
-        ApplyFontAndMaterial();
+        EnsureOutlineLayer();
+        ApplyMaterials();
 
         if (cachedTransform != null)
             cachedTransform.position = worldPosition;
 
+        var damageText = damage.ToString();
+
+        if (outlineText != null)
+        {
+            outlineText.text = damageText;
+            outlineText.color = Color.black;
+            outlineText.ForceMeshUpdate(true);
+        }
+
         if (text != null)
         {
-            text.text = damage.ToString();
+            text.text = damageText;
             color.a = 1f;
             text.color = color;
             text.ForceMeshUpdate(true);
@@ -71,6 +154,7 @@ public class DamageNumberView : MonoBehaviour
     {
         Vector3 endWorldPosition = startWorldPosition + Vector3.up * driftWorldUnits;
         float elapsed = 0f;
+        var fillColor = text != null ? text.color : Color.white;
 
         while (elapsed < lifetime)
         {
@@ -81,13 +165,18 @@ public class DamageNumberView : MonoBehaviour
             if (cachedTransform != null)
                 cachedTransform.position = Vector3.Lerp(startWorldPosition, endWorldPosition, t);
 
-            if (canvasGroup != null)
-                canvasGroup.alpha = alpha;
-            else if (text != null)
+            if (text != null)
             {
-                Color c = text.color;
+                var c = fillColor;
                 c.a = alpha;
                 text.color = c;
+            }
+
+            if (outlineText != null)
+            {
+                var outlineColor = Color.black;
+                outlineColor.a = alpha;
+                outlineText.color = outlineColor;
             }
 
             yield return null;
