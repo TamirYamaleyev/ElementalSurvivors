@@ -6,7 +6,8 @@ public class LightSword : MonoBehaviour
 {
     [SerializeField] private float rotationDuration = 0.5f;
     [SerializeField] private float rotAngle = 90f;
-    [SerializeField] private SpriteRenderer sr;
+    //[SerializeField] private SpriteRenderer sr;
+    [SerializeField] private Transform visualsRoot;
 
     private float damage;
     private float lifetime;
@@ -17,9 +18,13 @@ public class LightSword : MonoBehaviour
 
     private HashSet<Enemy> hitEnemies = new();
 
-    void Start()
+    private Quaternion baseRotation;
+    private Vector3 baseVisualScale;
+
+    void Awake()
     {
-        Rotate90(true);
+        if (visualsRoot != null)
+            baseVisualScale = visualsRoot.localScale;
     }
 
     public void Init(
@@ -28,7 +33,8 @@ public class LightSword : MonoBehaviour
         StatusType status,
         float statusDuration,
         StatusSystem statusSystem,
-        Sprite visualSprite)
+        Sprite visualSprite,
+        Vector2 slashDirection)
     {
         this.damage = damage;
         this.lifetime = lifetime;
@@ -36,8 +42,23 @@ public class LightSword : MonoBehaviour
         this.statusDuration = statusDuration;
         this.statusSystem = statusSystem;
 
-        if (sr != null && visualSprite != null)
-            sr.sprite = visualSprite;
+        //if (sr != null && visualSprite != null)
+        //    sr.sprite = visualSprite;
+
+        // BASE ROTATION
+        float angle = Mathf.Atan2(slashDirection.y, slashDirection.x) * Mathf.Rad2Deg;
+        baseRotation = Quaternion.Euler(0f, 0f, angle + 90f);
+        transform.rotation = baseRotation;
+
+        // VISUAL FLIP
+        float side = Mathf.Sign(slashDirection.x);
+
+        if (visualsRoot != null)
+            visualsRoot.localRotation = Quaternion.Euler(0f, side < 0 ? 0f : 180f, 0f);
+
+        // SWING
+
+        StartCoroutine(RotateRoutine(-rotAngle * side));
 
         Destroy(gameObject, lifetime);
     }
@@ -55,18 +76,10 @@ public class LightSword : MonoBehaviour
         CombatHitUtility.ApplyStatusThenDamage(enemy, statusSystem, status, statusDuration, damage);
     }
 
-    private void Rotate90(bool isClockwise)
+    private IEnumerator RotateRoutine(float swingAngle)
     {
-        if (isClockwise)
-            StartCoroutine(RotateRoutine(rotAngle));
-        else
-            StartCoroutine(RotateRoutine(-rotAngle));
-    }
-
-    private IEnumerator RotateRoutine(float angle)
-    {
-        Quaternion startRotation = transform.rotation;
-        Quaternion targetRotation = startRotation * Quaternion.Euler(0f, 0f, angle);
+        Quaternion startRotation = baseRotation;
+        Quaternion targetRotation = baseRotation * Quaternion.Euler(0f, 0f, swingAngle);
 
         float elapsed = 0f;
 

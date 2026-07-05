@@ -2,31 +2,27 @@ using UnityEngine;
 
 public class LightSwordBehavior : WeaponBehavior
 {
-    [SerializeField] private Camera mainCam;
-
     [SerializeField] private LightSword swordPrefab;
+    [SerializeField] private float maxSpawnDistance = 5f;
 
     public override bool TryExecute(Enemy target, WeaponLevelData data, WeaponSystemContext ctx, WeaponDefinition definition)
     {
-        Transform player = ctx.PlayerTransformPoint;
-        Vector2 playerPos = player.position;
+        Vector2 playerPos = ctx.PlayerTransformPoint.position;
+        Vector2 mousePos = ctx.AimDirection.MouseWorldPosition;
 
-        Vector2 mousePos = mainCam.ScreenToWorldPoint(ctx.AimDirection.LastDirection);
+        Vector2 delta = mousePos - playerPos;
+        Vector2 dir = delta.sqrMagnitude < 0.0001f ? Vector2.right : delta.normalized;
 
-        Vector2 direction = mousePos - playerPos;
+        Vector2 spawnPos = playerPos + dir * maxSpawnDistance;
 
-        if (direction.sqrMagnitude > data.range * data.range)
-        {
-            direction = direction.normalized * data.range;
-        }
+        Vector2 slashDir = delta.normalized;
 
-        Vector2 spawnpos = playerPos + direction;
+        Debug.DrawLine(playerPos, mousePos, Color.red, 1f);
+        Debug.DrawLine(playerPos, spawnPos, Color.green, 1f);
 
-        var sword = Instantiate(swordPrefab, spawnpos, Quaternion.identity, player);
+        var sword = Instantiate(swordPrefab, spawnPos, Quaternion.identity, ctx.PlayerTransformPoint);
 
         sword.transform.localScale = new Vector3(data.width, data.height, 1f);
-
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
         sword.Init(
             data.damage,
@@ -34,7 +30,8 @@ public class LightSwordBehavior : WeaponBehavior
             definition.appliedStatus,
             data.statusDuration,
             ctx.StatusSystem,
-            data.visualSprite
+            data.visualSprite,
+            slashDir
         );
 
         return true;

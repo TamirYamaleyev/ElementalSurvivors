@@ -36,6 +36,12 @@ public class PlayerController : MonoBehaviour
         PlayerPickupRuntimeSetup.Ensure(transform);
     }
 
+    void Update()
+    {
+        Vector2 mouseScreen = Mouse.current.position.ReadValue();
+        playerAimDirection.SetMousePosition(mouseScreen);
+    }
+
     void FixedUpdate()
     {
         Move();
