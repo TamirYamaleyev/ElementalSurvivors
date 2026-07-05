@@ -30,13 +30,13 @@ public class LevelUpUI : MonoBehaviour
     private void HandleLevelUp(int level)
     {
         RefreshOptionButtons();
-        Time.timeScale = 0f;
+        GamePauseController.RequestPause(GamePauseController.PauseReason.LevelUp);
         levelUpPanel.SetActive(true);
     }
 
     public void ChoiceSelected()
     {
-        Time.timeScale = 1f;
+        GamePauseController.ReleasePause(GamePauseController.PauseReason.LevelUp);
         levelUpPanel.SetActive(false);
     }
 

@@ -18,6 +18,11 @@ public sealed class AudioManager : MonoBehaviour
         }
 
         Instance = this;
+        AudioVolumeSettings.Load();
+        ApplyVolumeSettings(
+            AudioVolumeSettings.MasterVolume,
+            AudioVolumeSettings.MusicVolume,
+            AudioVolumeSettings.SfxVolume);
     }
 
     private void OnDestroy()
@@ -33,6 +38,18 @@ public sealed class AudioManager : MonoBehaviour
         else
             bgmPlayer?.PlayDefault();
     }
+
+    public void ApplyVolumeSettings(float master, float music, float sfx)
+    {
+        sfxPlayer?.SetVolumeMultipliers(master, sfx);
+        bgmPlayer?.SetVolumeMultipliers(master, music);
+    }
+
+    public void SetMasterVolume(float value) => AudioVolumeSettings.SetMasterVolume(value);
+
+    public void SetMusicVolume(float value) => AudioVolumeSettings.SetMusicVolume(value);
+
+    public void SetSfxVolume(float value) => AudioVolumeSettings.SetSfxVolume(value);
 
     public void PlaySfx(AudioClip clip)
     {

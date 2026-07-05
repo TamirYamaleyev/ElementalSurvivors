@@ -4,11 +4,16 @@ using UnityEngine;
 public sealed class BgmPlayer : MonoBehaviour
 {
     [SerializeField] private AudioClip defaultClip;
-    [SerializeField] private float volume = 0.6f;
+    [SerializeField] private float baseVolume = 0.6f;
+
+    private float masterMultiplier = 1f;
+    private float musicMultiplier = 1f;
 
     private AudioSource _source;
 
     public AudioClip CurrentClip => _source != null ? _source.clip : null;
+
+    public float EffectiveVolume => baseVolume * masterMultiplier * musicMultiplier;
 
     private void Awake()
     {
@@ -16,7 +21,14 @@ public sealed class BgmPlayer : MonoBehaviour
         _source.playOnAwake = false;
         _source.loop = true;
         _source.spatialBlend = 0f;
-        _source.volume = volume;
+        RefreshSourceVolume();
+    }
+
+    public void SetVolumeMultipliers(float master, float music)
+    {
+        masterMultiplier = Mathf.Clamp01(master);
+        musicMultiplier = Mathf.Clamp01(music);
+        RefreshSourceVolume();
     }
 
     public void PlayDefault()
@@ -31,7 +43,7 @@ public sealed class BgmPlayer : MonoBehaviour
             return;
 
         _source.clip = clip;
-        _source.volume = volume;
+        RefreshSourceVolume();
         _source.Play();
     }
 
@@ -41,5 +53,11 @@ public sealed class BgmPlayer : MonoBehaviour
             return;
 
         _source.Stop();
+    }
+
+    void RefreshSourceVolume()
+    {
+        if (_source != null)
+            _source.volume = EffectiveVolume;
     }
 }
