@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   expOrbPrefab: {fileID: 8359288981196373192, guid: 237375f8a132ffe4da9816fb912d8237, type: 3}
   healthOrbPrefab: {fileID: 9001001001001001, guid: b143504a5a844d9087043ca4195cedf0, type: 3}
-  healthOrbChance: 0.02
+  healthOrbChance: 0.05
   bonusHealthOrbOffset: 1

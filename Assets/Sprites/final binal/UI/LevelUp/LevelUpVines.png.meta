@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: 05341168bdce3414e9e7e3ff80b2367a
+guid: 1acfedea9637bb649b92b1ab30c32edd
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -889739676950766307
-    second: player2_0
+      213: -8743862124658892590
+    second: LevelUpVines_0
+  - first:
+      213: -7682391290336644749
+    second: LevelUpVines_1
+  - first:
+      213: -6878479090490957805
+    second: LevelUpVines_2
+  - first:
+      213: -1923350779939623603
+    second: LevelUpVines_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,12 +55,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 1200
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -126,23 +135,45 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: player2_0
+      name: LevelUpVines_0
       rect:
         serializedVersion: 2
-        x: 504
-        y: 144
-        width: 1055
-        height: 1621
+        x: 580
+        y: 1349
+        width: 168
+        height: 92
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d1d57c45a7207a3f0800000000000000
-      internalID: -889739676950766307
+      spriteID: 2d0e6be79bf87a680800000000000000
+      internalID: -8743862124658892590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LevelUpVines_2
+      rect:
+        serializedVersion: 2
+        x: 1818
+        y: 711
+        width: 158
+        height: 247
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 310a55006bbba80a0800000000000000
+      internalID: -6878479090490957805
       vertices: []
       indices: 
       edges: []
@@ -151,7 +182,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 46b9ee738fba34b4a9cd9c849de988eb
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +192,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      player2_0: -889739676950766307
+      LevelUpVines_0: -8743862124658892590
+      LevelUpVines_1: -7682391290336644749
+      LevelUpVines_2: -6878479090490957805
+      LevelUpVines_3: -1923350779939623603
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
