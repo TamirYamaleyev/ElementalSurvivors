@@ -45,6 +45,11 @@ public class PlayerEXP : MonoBehaviour
         OnExpChanged?.Invoke(currentExp, expToNextCache);
     }
 
+    public void DevLevelUp()
+    {
+        LevelUp();
+    }
+
     private void LevelUp()
     {
         AudioManager.Instance.PlaySfx(sfx);

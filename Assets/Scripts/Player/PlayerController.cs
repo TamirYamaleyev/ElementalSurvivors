@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(Rigidbody2D))]
@@ -13,6 +14,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private MonoBehaviour statsProviderBehaviour;
     [SerializeField] private SpriteRenderer visual;
+    [SerializeField] private PlayerEXP playerExp;
 
     private Vector2 lastFacingDirection = Vector2.down;
 
@@ -43,6 +45,16 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 mouseScreen = Mouse.current.position.ReadValue();
         playerAimDirection.SetMousePosition(mouseScreen);
+
+        if (Keyboard.current.f12Key.wasPressedThisFrame)
+        {
+            playerExp.DevLevelUp();
+        }
+
+        if (Keyboard.current.f10Key.wasPressedThisFrame)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
     }
 
     void FixedUpdate()
