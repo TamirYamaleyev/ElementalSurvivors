@@ -1,4 +1,3 @@
-using UnityEditor.AnimatedValues;
 using UnityEngine;
 
 public class RopeScript : MonoBehaviour
