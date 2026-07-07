@@ -16,6 +16,9 @@ public class WeaponSystem : MonoBehaviour
     private readonly List<WeaponInstance> runtimeWeapons = new();
     private WeaponSystemContext context;
 
+    public IReadOnlyList<WeaponInstance> Weapons => runtimeWeapons;
+    public IReadOnlyList<WeaponLoadoutEntry> AvailableWeapons => weapons;
+
     public void Initialize(WeaponSystemContext ctx)
     {
         context = ctx;
@@ -34,6 +37,15 @@ public class WeaponSystem : MonoBehaviour
 
             runtimeWeapons.Add(new WeaponInstance(entry.definition, entry.level));
         }
+    }
+
+    public WeaponInstance UnlockWeapon(WeaponDefinition definition)
+    {
+        var weapon = new WeaponInstance(definition, 1);
+
+        runtimeWeapons.Add(weapon);
+
+        return weapon;
     }
 
     private void Update()

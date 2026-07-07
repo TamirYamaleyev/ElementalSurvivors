@@ -635,7 +635,7 @@ MonoBehaviour:
   - definition: {fileID: 11400000, guid: 6c35ab8dc527e474287ea1f5cdd83d98, type: 2}
     level: 1
   - definition: {fileID: 11400000, guid: 6f519e1c2b660154ba9d8e6fa4a4ea1a, type: 2}
-    level: 0
+    level: 1
   - definition: {fileID: 11400000, guid: f24871ee27bd4ec439a7598e3b81029a, type: 2}
     level: 0
   - definition: {fileID: 11400000, guid: 453c2e2d90fab4649b1b068adeef7f99, type: 2}
@@ -689,7 +689,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 181845783}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e5f4279b7cdf46298bdb45d88e2a30b3, type: 3}
   m_Name: 
@@ -1791,7 +1791,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &376262325
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1994,9 +1994,9 @@ RectTransform:
   - {fileID: 1147018169}
   m_Father: {fileID: 133321995}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 800, y: -400}
   m_SizeDelta: {x: 377, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &443549225
@@ -3097,20 +3097,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelUpUI
   levelUpPanel: {fileID: 376262324}
-  expRef: {fileID: 181845791}
-  spearWeapon: {fileID: 0}
-  orbitWeapon: {fileID: 0}
-  boomerangWeapon: {fileID: 0}
-  data:
-  - {fileID: 11400000, guid: 8e2f9969544ec6448840f590e2ebae7b, type: 2}
+  weaponSystem: {fileID: 181845793}
   option1Button: {fileID: 1201057199}
   option1Icon: {fileID: 1617033685}
   option1Name: {fileID: 1140826777}
   option1Level: {fileID: 1726232516}
   option1ElementName: {fileID: 1360378807}
   option1Description: {fileID: 1656239714}
-  option2Button: {fileID: 0}
-  option3Button: {fileID: 0}
+  option2Button: {fileID: 443549225}
+  option2Icon: {fileID: 390502172}
+  option2Name: {fileID: 467170663}
+  option2Level: {fileID: 1399215536}
+  option2ElementName: {fileID: 1420881784}
+  option2Description: {fileID: 309965828}
+  option3Button: {fileID: 1146193149}
+  option3Icon: {fileID: 227241655}
+  option3Name: {fileID: 647512848}
+  option3Level: {fileID: 1583218931}
+  option3ElementName: {fileID: 1488666725}
+  option3Description: {fileID: 872652911}
 --- !u!1 &819761847
 GameObject:
   m_ObjectHideFlags: 0
@@ -4363,9 +4368,9 @@ RectTransform:
   - {fileID: 263294841}
   m_Father: {fileID: 133321995}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 1333.3333, y: -400}
   m_SizeDelta: {x: 377, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1146193149
@@ -4864,9 +4869,9 @@ RectTransform:
   - {fileID: 1539344444}
   m_Father: {fileID: 133321995}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 266.66666, y: -400}
   m_SizeDelta: {x: 377, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1201057199
@@ -7102,6 +7107,7 @@ GameObject:
   - component: {fileID: 1859789187}
   - component: {fileID: 1859789192}
   - component: {fileID: 1859789193}
+  - component: {fileID: 1859789194}
   m_Layer: 0
   m_Name: CombatManager
   m_TagString: Untagged
@@ -7222,6 +7228,21 @@ MonoBehaviour:
   worldOffset: {x: 0, y: 0.5}
   randomSpread: {x: 0.35, y: 0.15}
   canvasSortingOrder: 100
+--- !u!114 &1859789194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1859789186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b42a4de66e794b844839289e0027af80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UpgradeManager
+  weaponSystem: {fileID: 181845793}
+  levelUpUI: {fileID: 793641537}
+  expRef: {fileID: 181845791}
 --- !u!1 &1896691030
 GameObject:
   m_ObjectHideFlags: 0

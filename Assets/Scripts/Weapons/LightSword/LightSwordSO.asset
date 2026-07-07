@@ -13,6 +13,11 @@ MonoBehaviour:
   m_Name: LightSwordSO
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: Light Sword
+  icon: {fileID: 21300000, guid: d86478f137cc89d44970b9c20252f400, type: 3}
+  element:
+    name: 
+    color: {r: 0, g: 0, b: 0, a: 0}
+  description: A Sword made of Light, slashing large groups of enemies at a time
   behaviorType: 3
   appliedStatus: 5
   projectilePrefab: {fileID: 0}

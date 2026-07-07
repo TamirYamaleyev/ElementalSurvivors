@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -5,14 +6,9 @@ using UnityEngine.UI;
 public class LevelUpUI : MonoBehaviour
 {
     [SerializeField] private GameObject levelUpPanel;
-    [SerializeField] private PlayerEXP expRef;
+    [SerializeField] private WeaponSystem weaponSystem;
 
-    [Header("Upgrade Targets")]
-    [SerializeField] private PlayerDefaultWeapon spearWeapon;
-    [SerializeField] private OrbitWeapon orbitWeapon;
-    [SerializeField] private BoomerangController boomerangWeapon;
-
-    [SerializeField] private LevelUpOption[] data;
+    private WeaponUpgradeOption[] currentOptions;
 
     [Header("Option Buttons")]
     [SerializeField] private Button option1Button;
@@ -23,23 +19,37 @@ public class LevelUpUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI option1Description;
 
     [SerializeField] private Button option2Button;
+    [SerializeField] private Image option2Icon;
+    [SerializeField] private TextMeshProUGUI option2Name;
+    [SerializeField] private TextMeshProUGUI option2Level;
+    [SerializeField] private TextMeshProUGUI option2ElementName;
+    [SerializeField] private TextMeshProUGUI option2Description;
+
     [SerializeField] private Button option3Button;
+    [SerializeField] private Image option3Icon;
+    [SerializeField] private TextMeshProUGUI option3Name;
+    [SerializeField] private TextMeshProUGUI option3Level;
+    [SerializeField] private TextMeshProUGUI option3ElementName;
+    [SerializeField] private TextMeshProUGUI option3Description;
 
-    void Start()
+    private void OnEnable()
     {
-        if (expRef != null)
-            Bind();
+        option1Button.onClick.AddListener(() => SelectOption(0));
+        option2Button.onClick.AddListener(() => SelectOption(1));
+        option3Button.onClick.AddListener(() => SelectOption(2));
     }
 
-    private void Bind()
+    private void OnDisable()
     {
-        expRef.OnLevelUp += HandleLevelUp;
+        option1Button.onClick.RemoveAllListeners();
+        option2Button.onClick.RemoveAllListeners();
+        option3Button.onClick.RemoveAllListeners();
     }
-
-    private void HandleLevelUp(int level)
+    public void ShowChoices(List<WeaponUpgradeOption> options)
     {
-        RefreshOptionButtons();
-        Time.timeScale = 0f;
+        currentOptions = options.ToArray();
+
+        UpdateButtons();
         levelUpPanel.SetActive(true);
     }
 
@@ -49,30 +59,66 @@ public class LevelUpUI : MonoBehaviour
         levelUpPanel.SetActive(false);
     }
 
-    private void RefreshOptionButtons()
-    {
-        SetButtonState(option1Button, spearWeapon == null || !spearWeapon.IsMaxed);
-        SetButtonState(option2Button, orbitWeapon == null || !orbitWeapon.IsMaxed);
-        SetButtonState(option3Button, boomerangWeapon == null || !boomerangWeapon.IsMaxed);
-
-        UpdateButtons();
-    }
-
-    private static void SetButtonState(Button button, bool interactable)
-    {
-        if (button == null)
-            return;
-
-        button.interactable = interactable;
-    }
-
     private void UpdateButtons()
     {
-        //option1Button.onClick.AddListener();
-        option1Icon.sprite = data[0].icon;
-        option1Name.text = data[0].displayName;
-        option1ElementName.text = data[0].element.name;
-        option1ElementName.color = data[0].element.color;
-        option1Description.text = data[0].description;
+        SetupButton(0, option1Icon, option1Name, option1Level, option1ElementName, option1Description);
+        SetupButton(1, option2Icon, option2Name, option2Level, option2ElementName, option2Description);
+        SetupButton(2, option3Icon, option3Name, option3Level, option3ElementName, option3Description);
+    }
+
+    private void SetupButton(
+        int index, 
+        Image icon,
+        TMP_Text name,
+        TMP_Text level,
+        TMP_Text element,
+        TMP_Text description)
+    {
+        if (currentOptions == null || index >= currentOptions.Length)
+            return;
+
+        var option = currentOptions[index];
+
+        WeaponDefinition def;
+
+        if (option.IsUnlock)
+        {
+            def = option.unlockDefinition;
+
+            icon.sprite = def.icon;
+            name.text = def.weaponName;
+            level.text = "Unlock";
+        }
+        else
+        {
+            var weapon = option.weapon;
+
+            def = weapon.definition;
+
+            icon.sprite = def.icon;
+            name.text = def.weaponName;
+
+            level.text = $"Level {weapon.level} -> {weapon.level + 1}";
+        }
+
+        element.text = def.element.name;
+        element.color = def.element.color;
+
+        description.text = def.description;
+    }
+
+    private void SelectOption(int index)
+    {
+        if (currentOptions == null || index >= currentOptions.Length)
+            return;
+
+        var option = currentOptions[index];
+
+        if (option.IsUnlock)
+            weaponSystem.UnlockWeapon(option.unlockDefinition);
+        else
+            option.weapon.LevelUp();
+
+        ChoiceSelected();
     }
 }

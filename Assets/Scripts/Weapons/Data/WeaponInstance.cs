@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class WeaponInstance
@@ -21,9 +22,16 @@ public class WeaponInstance
             : Current.cooldown;
     }
 
+    public bool CanLevelUp => level < definition.levels.Length;
+
     public void LevelUp()
     {
+        if (!CanLevelUp)
+            return;
+
         level++;
+
+        OnLevelUp?.Invoke();
     }
 
     public void Tick(float deltaTime, Enemy target, WeaponSystemContext ctx)
