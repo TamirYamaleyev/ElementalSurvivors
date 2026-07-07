@@ -141,3 +141,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e0c0208143c2664f91d0d9d19b4264c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tornado
+  sprites:
+  - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
+  - {fileID: -709555396385255776, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
+  - {fileID: 2816347860137905243, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
+  animationFPS: 48
+  sr: {fileID: 4568377006612030476}

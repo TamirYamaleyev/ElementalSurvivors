@@ -640,7 +640,7 @@ MonoBehaviour:
   - definition: {fileID: 11400000, guid: f24871ee27bd4ec439a7598e3b81029a, type: 2}
     level: 0
   - definition: {fileID: 11400000, guid: 453c2e2d90fab4649b1b068adeef7f99, type: 2}
-    level: 0
+    level: 1
   - definition: {fileID: 11400000, guid: 26a6659b18e150042aa7593df16128de, type: 2}
     level: 0
   maxWeapons: 4

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6310697909115010069}
   - component: {fileID: 2018625383258628505}
   - component: {fileID: 1676254222318013671}
+  - component: {fileID: -4422300052652125565}
   m_Layer: 7
   m_Name: firearro2_0
   m_TagString: Untagged
@@ -157,3 +158,23 @@ MonoBehaviour:
   sr: {fileID: 6310697909115010069}
   artForward: 90
   extraRotationOffset: 0
+--- !u!114 &-4422300052652125565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7997954320183153604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 425700a2bcc367b42a9edd4266c0a601, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimationScr
+  sprites:
+  - {fileID: 32601713878340476, guid: a086621664801af4383c3755e79ddc49, type: 3}
+  - {fileID: -5350353268336977582, guid: a086621664801af4383c3755e79ddc49, type: 3}
+  - {fileID: 7507721775238963328, guid: a086621664801af4383c3755e79ddc49, type: 3}
+  - {fileID: 7217918844734804829, guid: a086621664801af4383c3755e79ddc49, type: 3}
+  - {fileID: -6698028640178880273, guid: a086621664801af4383c3755e79ddc49, type: 3}
+  animationFPS: 128
+  sr: {fileID: 6310697909115010069}
