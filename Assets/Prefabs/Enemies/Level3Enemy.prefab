@@ -156,6 +156,7 @@ MonoBehaviour:
   ai: {fileID: 805279636442495647}
   status: {fileID: 1111111111111111103}
   health: {fileID: 1111111111111111102}
+  contactDamage: {fileID: 0}
 --- !u!114 &805279636442495647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,7 +198,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   lootProfile: {fileID: 11400000, guid: 65f2499499d64ca9ae8c9a5f59a47b6d, type: 2}
-  maxHealth: 20
+  maxHealth: 100
   contactDamage: 10
 --- !u!114 &1111111111111111103
 MonoBehaviour:
@@ -249,6 +250,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 4209381533039774733}
   flipDeadzone: 0.02
   attackAnimCooldown: 0.45
+  invertFacingFlip: 0
 --- !u!1 &6767965038971475350
 GameObject:
   m_ObjectHideFlags: 0

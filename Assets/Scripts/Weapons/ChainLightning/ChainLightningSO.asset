@@ -13,6 +13,12 @@ MonoBehaviour:
   m_Name: ChainLightningSO
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: Chain Lightning
+  icon: {fileID: 3635194895896409061, guid: ec8ececa1a9849c40a8ef5524cf9f6f9, type: 3}
+  element:
+    name: Lightning
+    color: {r: 0, g: 0, b: 0.9433962, a: 0}
+  description: Unleashes a bolt of Lightning that strikes an enemy and arcs between
+    nearby foes.
   behaviorType: 3
   appliedStatus: 4
   projectilePrefab: {fileID: 0}
@@ -50,23 +56,23 @@ MonoBehaviour:
     projectileCount: 5
     statusDuration: 10
     visualSprite: {fileID: -2868435901282387113, guid: 2786c44fdf661f44888869a0e8a4066a, type: 3}
-  - damage: 0
-    cooldown: 0
-    range: 0
-    width: 0
-    height: 0
-    lifetime: 0
+  - damage: 30
+    cooldown: 1
+    range: 10
+    width: 1
+    height: 1
+    lifetime: 0.1
     speed: 0
-    projectileCount: 0
-    statusDuration: 0
+    projectileCount: 5
+    statusDuration: 10
     visualSprite: {fileID: 0}
-  - damage: 0
-    cooldown: 0
-    range: 0
-    width: 0
-    height: 0
-    lifetime: 0
+  - damage: 50
+    cooldown: 0.8
+    range: 15
+    width: 1
+    height: 1
+    lifetime: 0.1
     speed: 0
-    projectileCount: 0
-    statusDuration: 0
+    projectileCount: 8
+    statusDuration: 10
     visualSprite: {fileID: 0}

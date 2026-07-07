@@ -13,6 +13,11 @@ MonoBehaviour:
   m_Name: WaterShurikenSO
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: Water Shuriken
+  icon: {fileID: -357020787402876534, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
+  element:
+    name: Water
+    color: {r: 0, g: 0.94117653, b: 0.9960785, a: 0}
+  description: A Shuriken orbits around you and deals damage to enemies.
   behaviorType: 2
   appliedStatus: 1
   projectilePrefab: {fileID: 0}

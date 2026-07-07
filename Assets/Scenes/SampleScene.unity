@@ -635,7 +635,7 @@ MonoBehaviour:
   - definition: {fileID: 11400000, guid: 6c35ab8dc527e474287ea1f5cdd83d98, type: 2}
     level: 1
   - definition: {fileID: 11400000, guid: 6f519e1c2b660154ba9d8e6fa4a4ea1a, type: 2}
-    level: 1
+    level: 0
   - definition: {fileID: 11400000, guid: f24871ee27bd4ec439a7598e3b81029a, type: 2}
     level: 0
   - definition: {fileID: 11400000, guid: 453c2e2d90fab4649b1b068adeef7f99, type: 2}
@@ -6565,8 +6565,8 @@ MonoBehaviour:
   tierSet: {fileID: 11400000, guid: e1e2e3e4f5a6472890e1e2e3e4f5a606, type: 2}
   statusSystem: {fileID: 1859789187}
   enemyRegistry: {fileID: 1627141333}
-  spawnInterval: 1
-  spawnRadius: 10
+  spawnInterval: 0.75
+  spawnRadius: 15
   spawnJitter: 0.5
   spawnBodyRadius: 0.35
   spawnClearancePadding: 0.08
