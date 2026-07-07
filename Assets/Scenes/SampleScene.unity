@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!82 &9369894 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 6816379363303542099, guid: dffb491cc7798447e9af2f480ed0b39f, type: 3}
+  m_PrefabInstance: {fileID: 743355305}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &13114377
 GameObject:
   m_ObjectHideFlags: 0
@@ -1752,6 +1757,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 286273025}
   m_CullTransparentMesh: 1
+--- !u!82 &287488540 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 5273611723288258134, guid: dffb491cc7798447e9af2f480ed0b39f, type: 3}
+  m_PrefabInstance: {fileID: 743355305}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &309965826
 GameObject:
   m_ObjectHideFlags: 0
@@ -3048,6 +3058,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8285758411429029865, guid: dffb491cc7798447e9af2f480ed0b39f, type: 3}
+      propertyPath: defaultBgm
+      value: 
+      objectReference: {fileID: 8300000, guid: 04d5cd63e6b26754f9f59364bb738cf0, type: 3}
+    - target: {fileID: 8285758411429029865, guid: dffb491cc7798447e9af2f480ed0b39f, type: 3}
+      propertyPath: bgmAudioSrc
+      value: 
+      objectReference: {fileID: 287488540}
+    - target: {fileID: 8285758411429029865, guid: dffb491cc7798447e9af2f480ed0b39f, type: 3}
+      propertyPath: sfxAudioSrc
+      value: 
+      objectReference: {fileID: 9369894}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -56,6 +56,10 @@ public class LevelUpUI : MonoBehaviour
     public void ChoiceSelected()
     {
         Time.timeScale = 1f;
+
+        AudioManager.Instance.UnPauseBGM();
+        AudioManager.Instance.UnPauseSFX();
+
         levelUpPanel.SetActive(false);
     }
 

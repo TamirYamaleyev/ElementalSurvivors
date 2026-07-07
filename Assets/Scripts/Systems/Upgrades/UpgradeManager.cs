@@ -36,6 +36,9 @@ public class UpgradeManager : MonoBehaviour
         levelUpUI.ShowChoices(choices);
 
         Time.timeScale = 0f;
+
+        AudioManager.Instance.PauseBGM();
+        AudioManager.Instance.PauseSFX();
     }
 
     public List<UpgradeOption> GenerateChoices(int count = 3)

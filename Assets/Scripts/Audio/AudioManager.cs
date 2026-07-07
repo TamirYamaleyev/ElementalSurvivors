@@ -6,6 +6,9 @@ public sealed class AudioManager : MonoBehaviour
 
     [SerializeField] private SfxPlayer sfxPlayer;
     [SerializeField] private BgmPlayer bgmPlayer;
+    [SerializeField] private AudioSource sfxAudioSrc;
+    [SerializeField] private AudioSource bgmAudioSrc;
+
     [SerializeField] private AudioClip defaultBgm;
     [SerializeField] private AudioClip[] bgmTracks = System.Array.Empty<AudioClip>();
 
@@ -32,6 +35,26 @@ public sealed class AudioManager : MonoBehaviour
             PlayBgm(defaultBgm);
         else
             bgmPlayer?.PlayDefault();
+    }
+
+    public void PauseSFX()
+    {
+        sfxAudioSrc.Pause();
+    }
+
+    public void UnPauseSFX()
+    {
+        sfxAudioSrc.UnPause();
+    }
+
+    public void PauseBGM()
+    {
+        bgmAudioSrc.Pause();
+    }
+
+    public void UnPauseBGM()
+    {
+        bgmAudioSrc.UnPause();
     }
 
     public void PlaySfx(AudioClip clip)

@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class LightSwordBehavior : WeaponBehavior
 {
+    [SerializeField] AudioClip sfx;
+
     [SerializeField] private LightSword swordPrefab;
     [SerializeField] private float maxSpawnDistance = 5f;
 
@@ -21,6 +23,8 @@ public class LightSwordBehavior : WeaponBehavior
         Debug.DrawLine(playerPos, spawnPos, Color.green, 1f);
 
         var sword = Instantiate(swordPrefab, spawnPos, Quaternion.identity, ctx.PlayerTransformPoint);
+
+        AudioManager.Instance.PlaySfx(sfx);
 
         sword.transform.localScale = new Vector3(data.width, data.height, 1f);
 
