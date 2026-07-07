@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class WeaponInstance
@@ -9,6 +10,8 @@ public class WeaponInstance
 
     public WeaponLevelData Current => definition.levels[level - 1];
 
+    public event Action OnLevelUp;
+
     public WeaponInstance(WeaponDefinition def, int startLevel = 1)
     {
         definition = def;
@@ -16,6 +19,11 @@ public class WeaponInstance
         cooldownTimer = definition.behaviorType == WeaponBehaviorType.Orbit
             ? 0f
             : Current.cooldown;
+    }
+
+    public void LevelUp()
+    {
+        level++;
     }
 
     public void Tick(float deltaTime, Enemy target, WeaponSystemContext ctx)

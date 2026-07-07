@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,8 +12,16 @@ public class LevelUpUI : MonoBehaviour
     [SerializeField] private OrbitWeapon orbitWeapon;
     [SerializeField] private BoomerangController boomerangWeapon;
 
+    [SerializeField] private LevelUpOption[] data;
+
     [Header("Option Buttons")]
     [SerializeField] private Button option1Button;
+    [SerializeField] private Image option1Icon;
+    [SerializeField] private TextMeshProUGUI option1Name;
+    [SerializeField] private TextMeshProUGUI option1Level;
+    [SerializeField] private TextMeshProUGUI option1ElementName;
+    [SerializeField] private TextMeshProUGUI option1Description;
+
     [SerializeField] private Button option2Button;
     [SerializeField] private Button option3Button;
 
@@ -45,6 +54,8 @@ public class LevelUpUI : MonoBehaviour
         SetButtonState(option1Button, spearWeapon == null || !spearWeapon.IsMaxed);
         SetButtonState(option2Button, orbitWeapon == null || !orbitWeapon.IsMaxed);
         SetButtonState(option3Button, boomerangWeapon == null || !boomerangWeapon.IsMaxed);
+
+        UpdateButtons();
     }
 
     private static void SetButtonState(Button button, bool interactable)
@@ -53,5 +64,15 @@ public class LevelUpUI : MonoBehaviour
             return;
 
         button.interactable = interactable;
+    }
+
+    private void UpdateButtons()
+    {
+        //option1Button.onClick.AddListener();
+        option1Icon.sprite = data[0].icon;
+        option1Name.text = data[0].displayName;
+        option1ElementName.text = data[0].element.name;
+        option1ElementName.color = data[0].element.color;
+        option1Description.text = data[0].description;
     }
 }
