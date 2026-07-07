@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c51bf815858613646985252d2d3afed0, type: 3}
-  m_Name: PickupRadiusO
+  m_Name: PickupRadiusSO
   m_EditorClassIdentifier: Assembly-CSharp::PassiveDefinition
   passiveName: Pickup Radius
-  icon: {fileID: 0}
-  description: 
+  icon: {fileID: -4207956046400771090, guid: ed22bb1180c04b8c9f2c4d0e8a3b9c01, type: 3}
+  description: Increases EXP Shard and Berry pickup radius.
   type: 5
   minMultiplier: 1.1
   maxMultiplier: 1.2

@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c51bf815858613646985252d2d3afed0, type: 3}
   m_Name: SpeedSO
   m_EditorClassIdentifier: Assembly-CSharp::PassiveDefinition
-  passiveName: Movemet Speed
-  icon: {fileID: 0}
-  description: 
+  passiveName: Move Speed
+  icon: {fileID: -4207956046400771090, guid: ed22bb1180c04b8c9f2c4d0e8a3b9c01, type: 3}
+  description: Increases movement speed.
   type: 1
   minMultiplier: 1.05
   maxMultiplier: 1.1

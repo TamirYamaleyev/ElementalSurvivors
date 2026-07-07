@@ -13,7 +13,7 @@ public class PassiveUpgradeOption : UpgradeOption
 
     public override Sprite Icon => passive.definition.icon;
 
-    public override string Name => passive.definition.name;
+    public override string Name => passive.definition.passiveName;
 
     public override string Description => passive.definition.description;
 

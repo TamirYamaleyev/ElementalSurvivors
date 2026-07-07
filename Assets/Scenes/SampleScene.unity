@@ -643,6 +643,7 @@ MonoBehaviour:
     level: 0
   - definition: {fileID: 11400000, guid: 26a6659b18e150042aa7593df16128de, type: 2}
     level: 0
+  maxWeapons: 4
 --- !u!114 &181845794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -711,7 +712,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60240b2e14ef75d4ea1c462e7c26b8d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PassiveSystem
-  availablePassives: []
+  availablePassives:
+  - {fileID: 11400000, guid: 03f65337c23db4c468b1c3d3e8817c3b, type: 2}
+  - {fileID: 11400000, guid: a49c2b8c4eb858942afc49cc92cd13ba, type: 2}
+  - {fileID: 11400000, guid: 3b8a54bbdbed318458f36cacf8e60155, type: 2}
+  - {fileID: 11400000, guid: 0ea69a12e01a2c044ad37e1e51de99ba, type: 2}
+  - {fileID: 11400000, guid: da5c7c952596f12428b9e998cc4110cf, type: 2}
 --- !u!1 &191866787
 GameObject:
   m_ObjectHideFlags: 0
@@ -1892,13 +1898,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 390502170}
-  m_LocalRotation: {x: -0.38268343, y: 0.92387956, z: -0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 784817053}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: -45}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 32}
@@ -3111,7 +3117,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelUpUI
   levelUpPanel: {fileID: 376262324}
-  weaponSystem: {fileID: 181845793}
   option1Button: {fileID: 1201057199}
   option1Icon: {fileID: 1617033685}
   option1Name: {fileID: 1140826777}
@@ -7221,6 +7226,7 @@ MonoBehaviour:
   areaSpawnPoint: {fileID: 1591302829}
   playerTransformPoint: {fileID: 181845785}
   weaponSystem: {fileID: 181845793}
+  passiveSystem: {fileID: 181845798}
 --- !u!114 &1859789193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7255,6 +7261,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeManager
   weaponSystem: {fileID: 181845793}
+  passiveSystem: {fileID: 181845798}
   levelUpUI: {fileID: 793641537}
   expRef: {fileID: 181845791}
 --- !u!1 &1896691030

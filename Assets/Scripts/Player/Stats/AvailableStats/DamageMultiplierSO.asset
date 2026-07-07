@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c51bf815858613646985252d2d3afed0, type: 3}
   m_Name: DamageMultiplierSO
   m_EditorClassIdentifier: Assembly-CSharp::PassiveDefinition
-  passiveName: Damage Multiplier
-  icon: {fileID: 0}
-  description: 
+  passiveName: Damage
+  icon: {fileID: -4207956046400771090, guid: ed22bb1180c04b8c9f2c4d0e8a3b9c01, type: 3}
+  description: Multiplies the amount of damage dealt.
   type: 2
   minMultiplier: 1.1
   maxMultiplier: 1.3

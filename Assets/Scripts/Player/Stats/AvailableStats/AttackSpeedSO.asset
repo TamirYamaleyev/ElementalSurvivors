@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: AttackSpeedSO
   m_EditorClassIdentifier: Assembly-CSharp::PassiveDefinition
   passiveName: Attack Speed
-  icon: {fileID: 0}
-  description: 
+  icon: {fileID: -4207956046400771090, guid: ed22bb1180c04b8c9f2c4d0e8a3b9c01, type: 3}
+  description: Decreases the time between weapon attacks.
   type: 3
   minMultiplier: 1.1
   maxMultiplier: 1.15
