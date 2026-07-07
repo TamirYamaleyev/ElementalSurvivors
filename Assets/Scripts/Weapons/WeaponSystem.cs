@@ -19,6 +19,17 @@ public class WeaponSystem : MonoBehaviour
     public IReadOnlyList<WeaponInstance> Weapons => runtimeWeapons;
     public IReadOnlyList<WeaponLoadoutEntry> AvailableWeapons => weapons;
 
+    public bool HasWeapon(WeaponDefinition definition)
+    {
+        foreach (var weapon in runtimeWeapons)
+        {
+            if (weapon.definition == definition) 
+                return true;
+        }
+
+        return false;
+    }
+
     public void Initialize(WeaponSystemContext ctx)
     {
         context = ctx;

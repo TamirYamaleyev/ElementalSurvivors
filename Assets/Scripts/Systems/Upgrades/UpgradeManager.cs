@@ -41,6 +41,18 @@ public class UpgradeManager : MonoBehaviour
     {
         List<WeaponUpgradeOption> candidates = new();
 
+        // Unowned weapons
+        foreach (var entry in weaponSystem.AvailableWeapons)
+        {
+            if (entry.definition == null)
+                continue;
+
+            if (weaponSystem.HasWeapon(entry.definition))
+                continue;
+
+            candidates.Add(new WeaponUpgradeOption(entry.definition));
+        }
+
         // Existing weapons
         foreach (var weapon in weaponSystem.Weapons)
         {
@@ -48,18 +60,6 @@ public class UpgradeManager : MonoBehaviour
                 continue;
 
             candidates.Add(new WeaponUpgradeOption(weapon));
-        }
-
-        // Unowned weapons
-        foreach (var entry in weaponSystem.AvailableWeapons)
-        {
-            if (entry.definition == null)
-                continue;
-
-            if (entry.level != 0)
-                continue;
-
-            candidates.Add(new WeaponUpgradeOption(entry.definition));
         }
 
         Shuffle(candidates);
