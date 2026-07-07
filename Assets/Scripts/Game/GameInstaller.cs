@@ -28,6 +28,7 @@ public class GameInstaller : MonoBehaviour
 
     [Header("Runtime")]
     [SerializeField] private WeaponSystem weaponSystem;
+    [SerializeField] private PassiveSystem passiveSystem;
 
     void Awake()
     {
@@ -49,6 +50,9 @@ public class GameInstaller : MonoBehaviour
         }
 
         weaponSystem.Initialize(BuildWeaponContext());
+
+        if (passiveSystem != null)
+            passiveSystem.Initialize(playerStats);
     }
 
     private void OnDestroy()

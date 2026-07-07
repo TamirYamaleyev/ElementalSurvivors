@@ -15,5 +15,5 @@ public class PlayerBaseStatsSO : ScriptableObject
     public float baseProjectileSpeedMultiplier = 1f;
 
     [Header("Pickup")]
-    public float baseCollectRadius = 0.5f;
+    public float baseCollectRadius = 1.3f;
 }

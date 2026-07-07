@@ -13,11 +13,18 @@ public class WeaponSystem : MonoBehaviour
 {
     [SerializeField] private List<WeaponLoadoutEntry> weapons = new();
 
+    [SerializeField] private int maxWeapons = 4;
+
     private readonly List<WeaponInstance> runtimeWeapons = new();
     private WeaponSystemContext context;
 
     public IReadOnlyList<WeaponInstance> Weapons => runtimeWeapons;
     public IReadOnlyList<WeaponLoadoutEntry> AvailableWeapons => weapons;
+
+    public bool CanAddWeapon()
+    {
+        return runtimeWeapons.Count < maxWeapons;
+    }
 
     public bool HasWeapon(WeaponDefinition definition)
     {
@@ -52,6 +59,12 @@ public class WeaponSystem : MonoBehaviour
 
     public WeaponInstance UnlockWeapon(WeaponDefinition definition)
     {
+        if (!CanAddWeapon())
+            return null;
+
+        if (HasWeapon(definition))
+            return null;
+
         var weapon = new WeaponInstance(definition, 1);
 
         runtimeWeapons.Add(weapon);

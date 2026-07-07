@@ -4,6 +4,7 @@ using UnityEngine;
 public class UpgradeManager : MonoBehaviour
 {
     [SerializeField] private WeaponSystem weaponSystem;
+    [SerializeField] private PassiveSystem passiveSystem;
     [SerializeField] private LevelUpUI levelUpUI;
     [SerializeField] private PlayerEXP expRef;
 
@@ -37,11 +38,13 @@ public class UpgradeManager : MonoBehaviour
         Time.timeScale = 0f;
     }
 
-    public List<WeaponUpgradeOption> GenerateChoices(int count = 3)
+    public List<UpgradeOption> GenerateChoices(int count = 3)
     {
-        List<WeaponUpgradeOption> candidates = new();
+        List<UpgradeOption> candidates = new();
 
         // Unowned weapons
+        if (weaponSystem.CanAddWeapon()) { 
+        }
         foreach (var entry in weaponSystem.AvailableWeapons)
         {
             if (entry.definition == null)
@@ -50,7 +53,7 @@ public class UpgradeManager : MonoBehaviour
             if (weaponSystem.HasWeapon(entry.definition))
                 continue;
 
-            candidates.Add(new WeaponUpgradeOption(entry.definition));
+            candidates.Add(new WeaponUpgradeOption(entry.definition, weaponSystem));
         }
 
         // Existing weapons
@@ -60,6 +63,16 @@ public class UpgradeManager : MonoBehaviour
                 continue;
 
             candidates.Add(new WeaponUpgradeOption(weapon));
+        }
+
+        foreach (var passiveDefinition in passiveSystem.AvailablePassives)
+        {
+            var passive = passiveSystem.GetOrCreatePassive(passiveDefinition);
+
+            if (passive.IsMaxed)
+                continue;
+
+            candidates.Add(new PassiveUpgradeOption(passive, passiveSystem));
         }
 
         Shuffle(candidates);
@@ -79,7 +92,7 @@ public class UpgradeManager : MonoBehaviour
         return candidates;
     }
 
-    private void Shuffle(List<WeaponUpgradeOption> list)
+    private void Shuffle(List<UpgradeOption> list)
     {
         for (int i = list.Count - 1; i > 0; i--)
         {

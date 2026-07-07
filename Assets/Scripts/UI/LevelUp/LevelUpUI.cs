@@ -6,9 +6,8 @@ using UnityEngine.UI;
 public class LevelUpUI : MonoBehaviour
 {
     [SerializeField] private GameObject levelUpPanel;
-    [SerializeField] private WeaponSystem weaponSystem;
 
-    private WeaponUpgradeOption[] currentOptions;
+    private UpgradeOption[] currentOptions;
 
     [Header("Option Buttons")]
     [SerializeField] private Button option1Button;
@@ -45,11 +44,12 @@ public class LevelUpUI : MonoBehaviour
         option2Button.onClick.RemoveAllListeners();
         option3Button.onClick.RemoveAllListeners();
     }
-    public void ShowChoices(List<WeaponUpgradeOption> options)
+    public void ShowChoices(List<UpgradeOption> options)
     {
         currentOptions = options.ToArray();
 
         UpdateButtons();
+
         levelUpPanel.SetActive(true);
     }
 
@@ -79,32 +79,40 @@ public class LevelUpUI : MonoBehaviour
 
         var option = currentOptions[index];
 
-        WeaponDefinition def;
+        icon.sprite = option.Icon;
+        name.text = option.Name;
+        level.text = option.LevelText;
 
-        if (option.IsUnlock)
-        {
-            def = option.unlockDefinition;
+        element.text = option.Element.name;
+        element.color = option.Element.color;
+        description.text = option.Description;
 
-            icon.sprite = def.icon;
-            name.text = def.weaponName;
-            level.text = "Unlock";
-        }
-        else
-        {
-            var weapon = option.weapon;
+        //WeaponDefinition def;
 
-            def = weapon.definition;
+        //if (option.IsUnlock)
+        //{
+        //    def = option.unlockDefinition;
 
-            icon.sprite = def.icon;
-            name.text = def.weaponName;
+        //    icon.sprite = def.icon;
+        //    name.text = def.weaponName;
+        //    level.text = "Unlock";
+        //}
+        //else
+        //{
+        //    var weapon = option.weapon;
 
-            level.text = $"Level {weapon.level} -> {weapon.level + 1}";
-        }
+        //    def = weapon.definition;
 
-        element.text = def.element.name;
-        element.color = def.element.color;
+        //    icon.sprite = def.icon;
+        //    name.text = def.weaponName;
 
-        description.text = def.description;
+        //    level.text = $"Level {weapon.level} -> {weapon.level + 1}";
+        //}
+
+        //element.text = def.element.name;
+        //element.color = def.element.color;
+
+        //description.text = def.description;
     }
 
     private void SelectOption(int index)
@@ -112,12 +120,14 @@ public class LevelUpUI : MonoBehaviour
         if (currentOptions == null || index >= currentOptions.Length)
             return;
 
-        var option = currentOptions[index];
+        currentOptions[index].Apply();
 
-        if (option.IsUnlock)
-            weaponSystem.UnlockWeapon(option.unlockDefinition);
-        else
-            option.weapon.LevelUp();
+        //var option = currentOptions[index];
+
+        //if (option.IsUnlock)
+        //    weaponSystem.UnlockWeapon(option.unlockDefinition);
+        //else
+        //    option.weapon.LevelUp();
 
         ChoiceSelected();
     }
