@@ -17,7 +17,7 @@ MonoBehaviour:
   element:
     name: None
     color: {r: 0, g: 0, b: 0, a: 0}
-  description: A Sword made of Light, slashing large groups of enemies at a time
+  description: A Sword made of Light, slashing large groups of enemies at a time.
   behaviorType: 3
   appliedStatus: 5
   projectilePrefab: {fileID: 0}

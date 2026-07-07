@@ -17,4 +17,4 @@ MonoBehaviour:
   baseDamageMultiplier: 1
   baseAttackSpeed: 1
   baseProjectileSpeedMultiplier: 1
-  baseCollectRadius: 0.5
+  baseCollectRadius: 1.3
