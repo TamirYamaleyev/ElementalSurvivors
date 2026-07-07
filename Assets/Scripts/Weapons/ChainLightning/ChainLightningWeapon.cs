@@ -28,6 +28,7 @@ public class ChainLightningWeapon : WeaponBehavior
             Vector2 hitPoint = enemy.transform.position;
 
             var visual = Instantiate(visualPrefab);
+
             visual.Initialize(previousPoint, hitPoint, data.visualSprite, visualLifetime);
 
             CombatHitUtility.ApplyStatusThenDamage(

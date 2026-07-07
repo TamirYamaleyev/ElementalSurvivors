@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class ChaingLightningVisual : MonoBehaviour
 {
+    [SerializeField] AudioClip sfx;
+
     [SerializeField] private Sprite[] frames;
     [SerializeField] private SpriteRenderer sr;
     [SerializeField] private float offset = 0.4f;
@@ -15,6 +17,8 @@ public class ChaingLightningVisual : MonoBehaviour
     {
         if (sr == null)
             sr = GetComponent<SpriteRenderer>();
+
+        AudioManager.Instance.PlaySfx(sfx);
     }
 
     public void Initialize(Vector2 start, Vector2 end, Sprite sprite, float lifetime, float endpointInset = -1f)

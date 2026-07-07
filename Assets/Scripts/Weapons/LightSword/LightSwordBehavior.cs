@@ -24,7 +24,7 @@ public class LightSwordBehavior : WeaponBehavior
 
         var sword = Instantiate(swordPrefab, spawnPos, Quaternion.identity, ctx.PlayerTransformPoint);
 
-        AudioManager.Instance.PlaySfx(sfx);
+        AudioManager.Instance.PlaySfx(sfx, 0.75f);
 
         sword.transform.localScale = new Vector3(data.width, data.height, 1f);
 

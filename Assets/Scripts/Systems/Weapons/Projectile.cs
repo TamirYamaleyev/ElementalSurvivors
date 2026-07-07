@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
+    [SerializeField] AudioClip sfx;
+
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private SpriteRenderer sr;
     [SerializeField] private DirectionFacing2D.ArtForward artForward = DirectionFacing2D.ArtForward.Right;
@@ -19,6 +21,8 @@ public class Projectile : MonoBehaviour
     {
         if (sr == null)
             sr = GetComponent<SpriteRenderer>();
+
+        AudioManager.Instance.PlaySfx(sfx);
     }
 
     public void Init(Vector2 direction, float damage, float speed, StatusType status, float statusDuration, StatusSystem statusSystem, Sprite visualSprite, float lifetime = 5f)

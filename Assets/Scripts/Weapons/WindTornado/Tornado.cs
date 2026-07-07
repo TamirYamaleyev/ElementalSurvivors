@@ -4,6 +4,8 @@ using UnityEngine.Tilemaps;
 
 public class Tornado : MonoBehaviour
 {
+    [SerializeField] AudioClip sfx;
+
     [Header("Animation")]
     [SerializeField] private Sprite[] sprites;
     [SerializeField] private float animationFPS = 12f;
@@ -23,6 +25,11 @@ public class Tornado : MonoBehaviour
     private Vector2 targetPosition;
 
     private HashSet<Enemy> hitEnemies = new();
+
+    void Awake()
+    {
+        AudioManager.Instance.PlaySfx(sfx, 0.15f);    
+    }
 
     public void Init(
         float damage,

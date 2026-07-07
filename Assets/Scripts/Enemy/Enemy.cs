@@ -6,6 +6,9 @@ using UnityEngine;
 [RequireComponent(typeof(EnemyStatusController))]
 public class Enemy : MonoBehaviour
 {
+    [SerializeField] AudioClip hitSound;
+    [SerializeField] AudioClip deathSound;
+
     [Header("Components")]
     [SerializeField] private EnemyAI ai;
     [SerializeField] private EnemyStatusController status;
@@ -110,6 +113,8 @@ public class Enemy : MonoBehaviour
 
     public void OnReleaseToPool()
     {
+        AudioManager.Instance.PlaySfx(deathSound);
+
         UnsubscribeFromDeath();
         registry?.Unregister(this);
 
@@ -130,6 +135,8 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(float amount)
     {
         health.TakeDamage(amount);
+
+        AudioManager.Instance.PlaySfx(hitSound, 3f);
     }
 
     private void ConfigurePlayerTarget(Transform player)

@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PlayerEXP : MonoBehaviour
 {
+    [SerializeField] AudioClip sfx;
+
     [Header("Progression")]
     [SerializeField] private int level = 1;
     [SerializeField] private float currentExp;
@@ -45,6 +47,8 @@ public class PlayerEXP : MonoBehaviour
 
     private void LevelUp()
     {
+        AudioManager.Instance.PlaySfx(sfx);
+
         level++;
         RecalculateExpThreshold();
 

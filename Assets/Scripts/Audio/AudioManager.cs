@@ -4,6 +4,8 @@ public sealed class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
+    [SerializeField] private AudioClip uiClickSfx;
+
     [SerializeField] private SfxPlayer sfxPlayer;
     [SerializeField] private BgmPlayer bgmPlayer;
     [SerializeField] private AudioSource sfxAudioSrc;
@@ -37,6 +39,11 @@ public sealed class AudioManager : MonoBehaviour
             bgmPlayer?.PlayDefault();
     }
 
+    public void PlayUIClick()
+    {
+        Instance.PlaySfx(uiClickSfx, 1.1f);
+    }
+
     public void PauseSFX()
     {
         sfxAudioSrc.Pause();
@@ -57,12 +64,12 @@ public sealed class AudioManager : MonoBehaviour
         bgmAudioSrc.UnPause();
     }
 
-    public void PlaySfx(AudioClip clip)
+    public void PlaySfx(AudioClip clip, float volume = 1f)
     {
         if (sfxPlayer == null)
             return;
 
-        sfxPlayer.PlayOneShot(clip);
+        sfxPlayer.PlayOneShot(clip, volume);
     }
 
     public void PlayBgm(AudioClip clip)

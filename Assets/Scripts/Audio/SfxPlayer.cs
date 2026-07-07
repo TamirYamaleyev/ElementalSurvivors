@@ -17,8 +17,10 @@ public sealed class SfxPlayer : MonoBehaviour
         _source.spatialBlend = 0f;
     }
 
-    public void PlayOneShot(AudioClip clip)
+    public void PlayOneShot(AudioClip clip, float overrideVolume = 1f)
     {
+        volume = overrideVolume;
+
         if (clip == null || _source == null)
             return;
 
