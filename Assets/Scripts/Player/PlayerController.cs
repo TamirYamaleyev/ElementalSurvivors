@@ -46,12 +46,12 @@ public class PlayerController : MonoBehaviour
         Vector2 mouseScreen = Mouse.current.position.ReadValue();
         playerAimDirection.SetMousePosition(mouseScreen);
 
-        if (Keyboard.current.f12Key.wasPressedThisFrame)
+        if (Keyboard.current.uKey.wasPressedThisFrame)
         {
             playerExp.DevLevelUp();
         }
 
-        if (Keyboard.current.f10Key.wasPressedThisFrame)
+        if (Keyboard.current.rKey.wasPressedThisFrame)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
