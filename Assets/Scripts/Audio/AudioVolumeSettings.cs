@@ -55,7 +55,7 @@ public static class AudioVolumeSettings
         if (manager == null)
             return;
 
-        manager.ApplyVolumeSettings(MasterVolume, MusicVolume, SfxVolume);
+        //manager.ApplyVolumeSettings(MasterVolume, MusicVolume, SfxVolume);
     }
 
     static void ApplyIfAvailable()
