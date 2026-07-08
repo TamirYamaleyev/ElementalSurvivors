@@ -9,6 +9,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     [SerializeField] private MonoBehaviour statsProviderBehaviour;
 
     public event Action<float, float> OnHealthChanged;
+    public event Action OnDied;
 
     private IPlayerStatsProvider _statsProvider;
     private float currentHealth;
@@ -116,6 +117,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private void Die()
     {
         Debug.Log("Player died");
+        OnDied?.Invoke();
         gameObject.SetActive(false);
     }
 }

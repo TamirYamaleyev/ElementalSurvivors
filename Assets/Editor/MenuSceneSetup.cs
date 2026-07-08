@@ -26,6 +26,8 @@ public static class MenuSceneSetup
         CreateOrUpdateMainMenuScene(checklist);
         SetupPauseMenuInScene(SampleScenePath, checklist);
         SetupPauseMenuInScene(BossCombatTestPath, checklist);
+        SetupRunResultMenuInScene(SampleScenePath, includeVictory: true, checklist);
+        SetupRunResultMenuInScene(BossCombatTestPath, includeVictory: false, checklist);
         UpdateBuildSettings();
         AssetDatabase.SaveAssets();
         Debug.Log("[MenuSceneSetup] Completed: " + string.Join(", ", checklist));
@@ -177,6 +179,117 @@ public static class MenuSceneSetup
 
         if (backButton != null)
             WireButton(backButton, settingsMenu, nameof(SettingsMenuUI.Close), checklist, scenePath + ".SettingsBack");
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+    }
+
+    static void SetupRunResultMenuInScene(string scenePath, bool includeVictory, List<string> checklist)
+    {
+        var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+        var hud = FindRootObject(scene, "HUD");
+        if (hud == null)
+        {
+            Debug.LogWarning("[MenuSceneSetup] HUD not found in " + scenePath);
+            return;
+        }
+
+        var runRoot = FindChild(hud.transform, "RunResultMenuRoot");
+        if (runRoot == null)
+        {
+            runRoot = new GameObject("RunResultMenuRoot", typeof(RectTransform));
+            runRoot.transform.SetParent(hud.transform, false);
+            Stretch(runRoot.GetComponent<RectTransform>());
+            checklist.Add(scenePath + ".RunResultMenuRoot");
+        }
+
+        var runUi = runRoot.GetComponent<RunResultMenuUI>();
+        if (runUi == null)
+        {
+            runUi = runRoot.AddComponent<RunResultMenuUI>();
+            checklist.Add(scenePath + ".RunResultMenuUI");
+        }
+
+        var lossPanel = FindChild(hud.transform, "LossPanel");
+        if (lossPanel == null)
+        {
+            lossPanel = CreateOverlayPanel(hud.transform, "LossPanel");
+            checklist.Add(scenePath + ".LossPanel");
+        }
+        lossPanel.SetActive(false);
+
+        GameObject victoryPanel = null;
+        if (includeVictory)
+        {
+            victoryPanel = FindChild(hud.transform, "VictoryPanel");
+            if (victoryPanel == null)
+            {
+                victoryPanel = CreateOverlayPanel(hud.transform, "VictoryPanel");
+                checklist.Add(scenePath + ".VictoryPanel");
+            }
+            victoryPanel.SetActive(false);
+        }
+
+        var titleLoss = EnsureTmpText(lossPanel.transform, "LossTitle", "Defeat", 42, checklist);
+        var titleLossRect = titleLoss.GetComponent<RectTransform>();
+        titleLossRect.anchorMin = new Vector2(0.5f, 0.7f);
+        titleLossRect.anchorMax = new Vector2(0.5f, 0.7f);
+        titleLossRect.sizeDelta = new Vector2(500f, 70f);
+        titleLossRect.anchoredPosition = Vector2.zero;
+
+        var retryButton = EnsureMenuButton(lossPanel.transform, "RetryButton", "Retry", new Vector2(0.5f, 0.48f), checklist);
+        var mainMenuLossButton = EnsureMenuButton(lossPanel.transform, "MainMenuButton", "Main Menu", new Vector2(0.5f, 0.36f), checklist);
+
+        if (includeVictory && victoryPanel != null)
+        {
+            var titleVictory = EnsureTmpText(victoryPanel.transform, "VictoryTitle", "Victory", 42, checklist);
+            var titleVictoryRect = titleVictory.GetComponent<RectTransform>();
+            titleVictoryRect.anchorMin = new Vector2(0.5f, 0.7f);
+            titleVictoryRect.anchorMax = new Vector2(0.5f, 0.7f);
+            titleVictoryRect.sizeDelta = new Vector2(500f, 70f);
+            titleVictoryRect.anchoredPosition = Vector2.zero;
+
+            EnsureMenuButton(victoryPanel.transform, "MainMenuButton", "Main Menu", new Vector2(0.5f, 0.36f), checklist);
+        }
+
+        var playerInput = Object.FindFirstObjectByType<PlayerInput>();
+
+        var so = new SerializedObject(runUi);
+        so.FindProperty("victoryPanel").objectReferenceValue = victoryPanel;
+        so.FindProperty("lossPanel").objectReferenceValue = lossPanel;
+        so.FindProperty("playerInput").objectReferenceValue = playerInput;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        if (retryButton != null)
+            WireButton(retryButton, runUi, nameof(RunResultMenuUI.Retry), checklist, scenePath + ".Retry");
+
+        if (mainMenuLossButton != null)
+            WireButton(mainMenuLossButton, runUi, nameof(RunResultMenuUI.ReturnToMainMenu), checklist, scenePath + ".LossMainMenu");
+
+        if (includeVictory && victoryPanel != null)
+        {
+            var mainMenuVictoryButton = FindChild(victoryPanel.transform, "MainMenuButton")?.GetComponent<Button>();
+            if (mainMenuVictoryButton != null)
+                WireButton(mainMenuVictoryButton, runUi, nameof(RunResultMenuUI.ReturnToMainMenu), checklist, scenePath + ".VictoryMainMenu");
+        }
+
+        var controllerRoot = FindChild(hud.transform, "RunSessionControllerRoot");
+        if (controllerRoot == null)
+        {
+            controllerRoot = new GameObject("RunSessionControllerRoot", typeof(RunSessionController));
+            controllerRoot.transform.SetParent(hud.transform, false);
+            checklist.Add(scenePath + ".RunSessionControllerRoot");
+        }
+
+        var runController = controllerRoot.GetComponent<RunSessionController>();
+        var spawner = Object.FindFirstObjectByType<EnemySpawner>();
+        var player = Object.FindFirstObjectByType<PlayerHealth>();
+
+        var runSo = new SerializedObject(runController);
+        runSo.FindProperty("enemySpawner").objectReferenceValue = spawner;
+        runSo.FindProperty("playerHealth").objectReferenceValue = player;
+        runSo.FindProperty("resultMenuUI").objectReferenceValue = runUi;
+        runSo.ApplyModifiedPropertiesWithoutUndo();
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);

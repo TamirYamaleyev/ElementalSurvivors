@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -25,8 +26,16 @@ public class EnemySpawner : MonoBehaviour
     private float elapsedTime;
     private float nextBossAt;
     private int activeBossCount;
+    private bool sessionComplete;
 
     private Transform player;
+
+    public float ElapsedTime => elapsedTime;
+    public int ActiveBossCount => activeBossCount;
+    public bool IsSessionComplete => sessionComplete;
+
+    public event Action OnSessionComplete;
+    public event Action<int> OnActiveBossCountChanged;
 
     private void Awake()
     {
@@ -48,6 +57,12 @@ public class EnemySpawner : MonoBehaviour
             return;
 
         elapsedTime += Time.deltaTime;
+
+        if (!sessionComplete && elapsedTime >= runProfile.sessionDurationSeconds)
+        {
+            sessionComplete = true;
+            OnSessionComplete?.Invoke();
+        }
 
         if (runProfile.stopSpawningWhenSessionEnds &&
             elapsedTime >= runProfile.sessionDurationSeconds)
@@ -93,8 +108,8 @@ public class EnemySpawner : MonoBehaviour
 
         instance.ConfigureSystems(statusSystem, enemyRegistry);
 
-        Vector2 baseOffset = Random.insideUnitCircle * spawnRadius;
-        Vector2 jitter = Random.insideUnitCircle * spawnJitter;
+        Vector2 baseOffset = UnityEngine.Random.insideUnitCircle * spawnRadius;
+        Vector2 jitter = UnityEngine.Random.insideUnitCircle * spawnJitter;
 
         Vector3 desiredSpawn = player.position + new Vector3(
             baseOffset.x + jitter.x,
@@ -146,11 +161,13 @@ public class EnemySpawner : MonoBehaviour
             return;
 
         activeBossCount++;
+        OnActiveBossCountChanged?.Invoke(activeBossCount);
 
         void HandleBossDied()
         {
             health.OnDied -= HandleBossDied;
             activeBossCount = Mathf.Max(0, activeBossCount - 1);
+            OnActiveBossCountChanged?.Invoke(activeBossCount);
         }
 
         health.OnDied += HandleBossDied;
@@ -163,8 +180,8 @@ public class EnemySpawner : MonoBehaviour
 
         for (int i = 0; i < spawnClearMaxAttempts; i++)
         {
-            Vector2 offset = Random.insideUnitCircle * spawnRadius;
-            Vector2 jitter = Random.insideUnitCircle * spawnJitter;
+            Vector2 offset = UnityEngine.Random.insideUnitCircle * spawnRadius;
+            Vector2 jitter = UnityEngine.Random.insideUnitCircle * spawnJitter;
             Vector3 candidate = player.position + new Vector3(offset.x + jitter.x, offset.y + jitter.y, 0f);
             if (!IsSpawnBlocked(candidate, checkRadius))
                 return candidate;

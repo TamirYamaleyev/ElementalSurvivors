@@ -29,6 +29,10 @@ public class LevelUpUI : MonoBehaviour
 
     private void HandleLevelUp(int level)
     {
+        // Prevent showing LevelUp when the run result is active (Victory/Loss overlay).
+        if (!GamePauseController.CanOpenPauseMenu)
+            return;
+
         RefreshOptionButtons();
         GamePauseController.RequestPause(GamePauseController.PauseReason.LevelUp);
         levelUpPanel.SetActive(true);
@@ -38,6 +42,12 @@ public class LevelUpUI : MonoBehaviour
     {
         GamePauseController.ReleasePause(GamePauseController.PauseReason.LevelUp);
         levelUpPanel.SetActive(false);
+    }
+
+    public void HideLevelUpPanel()
+    {
+        if (levelUpPanel != null)
+            levelUpPanel.SetActive(false);
     }
 
     private void RefreshOptionButtons()

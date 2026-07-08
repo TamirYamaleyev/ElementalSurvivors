@@ -4,7 +4,8 @@ public static class GamePauseController
     {
         None,
         LevelUp,
-        PauseMenu
+        PauseMenu,
+        RunEnd
     }
 
     private static PauseReason activeReason = PauseReason.None;
@@ -16,6 +17,10 @@ public static class GamePauseController
 
     public static void RequestPause(PauseReason reason)
     {
+        // RunEnd has highest priority: once a run ends we freeze the game and ignore other pause requests.
+        if (activeReason == PauseReason.RunEnd && reason != PauseReason.RunEnd)
+            return;
+
         if (reason == PauseReason.PauseMenu && activeReason == PauseReason.LevelUp)
             return;
 
