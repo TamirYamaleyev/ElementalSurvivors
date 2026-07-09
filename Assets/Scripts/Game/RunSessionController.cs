@@ -30,10 +30,9 @@ public sealed class RunSessionController : MonoBehaviour
         if (enemySpawner != null)
         {
             enemySpawner.OnSessionComplete += HandleSessionComplete;
-            enemySpawner.OnActiveBossCountChanged += HandleBossCountChanged;
+            enemySpawner.OnFinalBossDefeated += HandleFinalBossDefeated;
         }
 
-        // Edge case: if session already completed when the controller starts.
         TryShowVictory();
     }
 
@@ -45,7 +44,7 @@ public sealed class RunSessionController : MonoBehaviour
         if (enemySpawner != null)
         {
             enemySpawner.OnSessionComplete -= HandleSessionComplete;
-            enemySpawner.OnActiveBossCountChanged -= HandleBossCountChanged;
+            enemySpawner.OnFinalBossDefeated -= HandleFinalBossDefeated;
         }
     }
 
@@ -65,7 +64,7 @@ public sealed class RunSessionController : MonoBehaviour
         TryShowVictory();
     }
 
-    private void HandleBossCountChanged(int _)
+    private void HandleFinalBossDefeated()
     {
         TryShowVictory();
     }
@@ -78,7 +77,10 @@ public sealed class RunSessionController : MonoBehaviour
         if (enemySpawner == null || !enemySpawner.IsSessionComplete)
             return;
 
-        if (enemySpawner.ActiveBossCount != 0)
+        if (!enemySpawner.FinalBossWasSpawned)
+            return;
+
+        if (enemySpawner.IsFinalBossAlive)
             return;
 
         runFinished = true;
@@ -86,4 +88,3 @@ public sealed class RunSessionController : MonoBehaviour
         resultMenuUI?.ShowVictory();
     }
 }
-

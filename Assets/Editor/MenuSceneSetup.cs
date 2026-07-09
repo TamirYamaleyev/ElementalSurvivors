@@ -28,6 +28,8 @@ public static class MenuSceneSetup
         SetupPauseMenuInScene(BossCombatTestPath, checklist);
         SetupRunResultMenuInScene(SampleScenePath, includeVictory: true, checklist);
         SetupRunResultMenuInScene(BossCombatTestPath, includeVictory: false, checklist);
+        SetupRunTimerInScene(SampleScenePath, checklist);
+        SetupRunTimerInScene(BossCombatTestPath, checklist);
         UpdateBuildSettings();
         AssetDatabase.SaveAssets();
         Debug.Log("[MenuSceneSetup] Completed: " + string.Join(", ", checklist));
@@ -487,6 +489,60 @@ public static class MenuSceneSetup
 
         if (backButton != null && settingsMenu != null)
             WireButton(backButton, settingsMenu, nameof(SettingsMenuUI.Close), checklist, "MainMenu.SettingsBack");
+    }
+
+    static void SetupRunTimerInScene(string scenePath, List<string> checklist)
+    {
+        var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+        var hud = FindRootObject(scene, "HUD");
+        if (hud == null)
+        {
+            Debug.LogWarning("[MenuSceneSetup] HUD not found in " + scenePath);
+            return;
+        }
+
+        var healthbar = FindChild(hud.transform, "Healthbar");
+        float belowHealthY = -95f;
+        if (healthbar != null)
+        {
+            var hbRect = healthbar.GetComponent<RectTransform>();
+            belowHealthY = hbRect.anchoredPosition.y - hbRect.sizeDelta.y - 10f;
+        }
+
+        var timerGo = FindChild(hud.transform, "RunTimerText");
+        if (timerGo == null)
+        {
+            timerGo = new GameObject("RunTimerText", typeof(RectTransform), typeof(TextMeshProUGUI), typeof(TmpFontOnEnable));
+            timerGo.transform.SetParent(hud.transform, false);
+            checklist.Add(scenePath + ".RunTimerText");
+        }
+
+        var rect = timerGo.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0f, 1f);
+        rect.anchorMax = new Vector2(0f, 1f);
+        rect.pivot = new Vector2(0f, 1f);
+        rect.sizeDelta = new Vector2(220f, 40f);
+        rect.anchoredPosition = new Vector2(5f, belowHealthY);
+
+        var tmp = timerGo.GetComponent<TextMeshProUGUI>();
+        tmp.text = "00:00";
+        tmp.fontSize = 28;
+        tmp.alignment = TextAlignmentOptions.MidlineLeft;
+        tmp.color = Color.white;
+
+        var controller = timerGo.GetComponent<RunTimerUIController>();
+        if (controller == null)
+            controller = timerGo.AddComponent<RunTimerUIController>();
+
+        var spawner = Object.FindFirstObjectByType<EnemySpawner>();
+
+        var so = new SerializedObject(controller);
+        so.FindProperty("spawner").objectReferenceValue = spawner;
+        so.FindProperty("timerText").objectReferenceValue = tmp;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
     }
 
     static void WirePauseMenuUi(

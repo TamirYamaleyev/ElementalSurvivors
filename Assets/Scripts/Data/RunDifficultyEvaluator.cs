@@ -32,6 +32,7 @@ public static class RunDifficultyEvaluator
         return 2;
     }
 
+    [System.Obsolete("Boss schedule is milestone-based in EnemySpawner (tier2/tier3/session times).")]
     public static bool ShouldSpawnBoss(RunDifficultyProfileSO profile, float elapsedSeconds, ref float nextBossAt)
     {
         if (profile == null)

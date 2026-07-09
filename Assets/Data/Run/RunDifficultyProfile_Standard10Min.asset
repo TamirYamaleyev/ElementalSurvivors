@@ -21,6 +21,8 @@ MonoBehaviour:
   tier3StartSeconds: 400
   firstBossDelaySeconds: 198
   bossSpawnIntervalSeconds: 198
+  miniBossStatMultiplier: 3
+  miniBossVisualScale: 1.25
   bossExtraStatMultiplier: 10
   bossVisualScale: 1.5
   bossFightSpawnIntensityMultiplier: 0.5

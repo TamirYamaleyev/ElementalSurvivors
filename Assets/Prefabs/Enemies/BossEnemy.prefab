@@ -651,7 +651,7 @@ MonoBehaviour:
     rows: 7
     coneHalfAngle: 35
     rowSpacing: 0.55
-    delayBetweenRows: 0.08
+    delayBetweenRows: 0.2
   singleLine:
     count: 11
     delayBetweenShots: 0.05

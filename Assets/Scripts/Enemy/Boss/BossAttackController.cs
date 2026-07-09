@@ -28,7 +28,7 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset
         rows = 7,
         coneHalfAngle = 35f,
         rowSpacing = 0.55f,
-        delayBetweenRows = 0.08f
+        delayBetweenRows = 0.2f
     };
 
     [SerializeField] private BossSingleLineConfig singleLine = new()
