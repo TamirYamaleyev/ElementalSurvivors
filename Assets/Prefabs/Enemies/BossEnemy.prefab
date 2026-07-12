@@ -638,32 +638,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26d53d3cb77ee40d7aa6066615587668, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossAttackController
-  windUpDuration: 1
-  delayBetweenVolleys: 2
-  initialDelay: 1.5
+  attackProfile: {fileID: 11400000, guid: 0d70bae2ad18b4573bb7c783887bf05f, type: 2}
   projectilePrefab: {fileID: 1270097732734394434, guid: efc41bcefb29940088568cbee18ce853, type: 3}
-  projectileSpeed: 5
-  projectileDamage: 12
-  projectileLifetime: 5
   firePoint: {fileID: 576947643538986003}
-  patternCycle: 000000000100000002000000
-  triangleCone:
-    rows: 7
-    coneHalfAngle: 35
-    rowSpacing: 0.55
-    delayBetweenRows: 0.2
-  singleLine:
-    count: 11
-    delayBetweenShots: 0.05
-  rotatingArc:
-    segmentCount: 5
-    segmentArcDegrees: 72
-    projectilesPerRow: 9
-    radialRows: 6
-    rowSpacing: 0.5
-    delayBetweenSegments: 0.5
-    rotationStepDegrees: 45
-    startFromAim: 1
   telegraphVfx: {fileID: 6116855580254196680}
   characterAnimation: {fileID: 0}
 --- !u!114 &4587097918954661063

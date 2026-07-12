@@ -3,53 +3,12 @@ using UnityEngine;
 
 public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset
 {
-    [Header("Timing")]
-    [SerializeField] private float windUpDuration = 1f;
-    [SerializeField] private float delayBetweenVolleys = 2f;
-    [SerializeField] private float initialDelay = 1.5f;
-
-    [Header("Projectile")]
-    [SerializeField] private EnemyProjectile projectilePrefab;
-    [SerializeField] private float projectileSpeed = 7f;
-    [SerializeField] private float projectileDamage = 12f;
-    [SerializeField] private float projectileLifetime = 5f;
-    [SerializeField] private Transform firePoint;
-
-    [Header("Patterns")]
-    [SerializeField] private BossAttackPatternKind[] patternCycle =
-    {
-        BossAttackPatternKind.TriangleCone,
-        BossAttackPatternKind.SingleLine,
-        BossAttackPatternKind.RotatingArc
-    };
-
-    [SerializeField] private BossTriangleConeConfig triangleCone = new()
-    {
-        rows = 7,
-        coneHalfAngle = 35f,
-        rowSpacing = 0.55f,
-        delayBetweenRows = 0.2f
-    };
-
-    [SerializeField] private BossSingleLineConfig singleLine = new()
-    {
-        count = 11,
-        delayBetweenShots = 0.05f
-    };
-
-    [SerializeField] private BossRotatingArcConfig rotatingArc = new()
-    {
-        segmentCount = 5,
-        segmentArcDegrees = 72f,
-        projectilesPerRow = 9,
-        radialRows = 6,
-        rowSpacing = 0.5f,
-        delayBetweenSegments = 0.5f,
-        rotationStepDegrees = 45f,
-        startFromAim = true
-    };
+    [Header("Balance")]
+    [SerializeField] private BossAttackProfileSO attackProfile;
 
     [Header("References")]
+    [SerializeField] private EnemyProjectile projectilePrefab;
+    [SerializeField] private Transform firePoint;
     [SerializeField] private BossAttackTelegraphVfx telegraphVfx;
     [SerializeField] private EnemyCharacterAnimation characterAnimation;
 
@@ -103,8 +62,14 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset
 
     private IEnumerator VolleyLoop()
     {
-        if (initialDelay > 0f)
-            yield return new WaitForSeconds(initialDelay);
+        if (attackProfile == null)
+        {
+            Debug.LogWarning("[BossAttackController] Missing BossAttackProfileSO.", this);
+            yield break;
+        }
+
+        if (attackProfile.initialDelay > 0f)
+            yield return new WaitForSeconds(attackProfile.initialDelay);
 
         while (enabled && gameObject.activeInHierarchy)
         {
@@ -112,14 +77,18 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset
                 yield return null;
 
             yield return RunVolley();
-            if (delayBetweenVolleys > 0f)
-                yield return new WaitForSeconds(delayBetweenVolleys);
+            if (attackProfile.delayBetweenVolleys > 0f)
+                yield return new WaitForSeconds(attackProfile.delayBetweenVolleys);
         }
     }
 
     private IEnumerator RunVolley()
     {
-        if (projectilePrefab == null || patternCycle == null || patternCycle.Length == 0)
+        if (attackProfile == null || projectilePrefab == null)
+            yield break;
+
+        var patternCycle = attackProfile.patternCycle;
+        if (patternCycle == null || patternCycle.Length == 0)
             yield break;
 
         var kind = patternCycle[patternIndex % patternCycle.Length];
@@ -136,8 +105,8 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset
             : aim;
         telegraphVfx?.Play(telegraphDir);
 
-        if (windUpDuration > 0f)
-            yield return new WaitForSeconds(windUpDuration);
+        if (attackProfile.windUpDuration > 0f)
+            yield return new WaitForSeconds(attackProfile.windUpDuration);
 
         telegraphVfx?.Stop();
 
@@ -151,7 +120,9 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset
                 break;
             case BossAttackPatternKind.RotatingArc:
                 yield return FireRotatingArc(aim);
-                arcRotation = Mathf.Repeat(arcRotation + rotatingArc.rotationStepDegrees, 360f);
+                arcRotation = Mathf.Repeat(
+                    arcRotation + attackProfile.rotatingArc.rotationStepDegrees,
+                    360f);
                 break;
         }
 
@@ -172,6 +143,7 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset
 
     private float ResolveFirstSegmentCenterAngle(Vector2 aim)
     {
+        var rotatingArc = attackProfile.rotatingArc;
         var aimAngle = Mathf.Atan2(aim.y, aim.x) * Mathf.Rad2Deg;
         var baseAngle = rotatingArc.startFromAim ? aimAngle : 0f;
         return baseAngle + arcRotation;
@@ -191,13 +163,14 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset
             projectilePrefab,
             origin,
             direction,
-            projectileDamage,
-            projectileSpeed,
-            projectileLifetime);
+            attackProfile.projectileDamage,
+            attackProfile.projectileSpeed,
+            attackProfile.projectileLifetime);
     }
 
     private IEnumerator FireTriangleCone(Vector2 aim)
     {
+        var triangleCone = attackProfile.triangleCone;
         var rows = Mathf.Max(1, triangleCone.rows);
         var baseAngle = Mathf.Atan2(aim.y, aim.x) * Mathf.Rad2Deg;
 
@@ -223,6 +196,7 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset
 
     private IEnumerator FireSingleLine(Vector2 aim)
     {
+        var singleLine = attackProfile.singleLine;
         var count = Mathf.Max(1, singleLine.count);
         var origin = GetFireOrigin();
         var direction = aim.sqrMagnitude > 1e-6f ? aim.normalized : Vector2.down;
@@ -238,6 +212,7 @@ public sealed class BossAttackController : MonoBehaviour, IEnemyPoolReset
 
     private IEnumerator FireRotatingArc(Vector2 aim)
     {
+        var rotatingArc = attackProfile.rotatingArc;
         var segments = Mathf.Max(1, rotatingArc.segmentCount);
         var segmentArc = rotatingArc.segmentArcDegrees > 0f
             ? rotatingArc.segmentArcDegrees
