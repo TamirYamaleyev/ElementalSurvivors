@@ -21,4 +21,6 @@ public class WeaponDefinition : ScriptableObject
     public WeaponBehavior customWeaponPrefab;
 
     public WeaponLevelData[] levels = new WeaponLevelData[5];
+
+    public int MaxLevel => levels != null ? levels.Length : 0;
 }

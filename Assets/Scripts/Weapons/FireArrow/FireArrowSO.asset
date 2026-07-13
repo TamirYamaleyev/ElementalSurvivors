@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c027cf32f7345f2438066bbce20a0373, type: 3}
   m_Name: FireArrowSO
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
-  weaponName: Fire Arrow Volley
+  weaponName: Fire Arrow
   behaviorType: 0
   appliedStatus: 0
   projectilePrefab: {fileID: 1676254222318013671, guid: dfc62e36d537a7e4b94c76fdd717fec5, type: 3}
@@ -30,43 +30,43 @@ MonoBehaviour:
     projectileCount: 1
     statusDuration: 10
     visualSprite: {fileID: 2173011316737109762, guid: fdce42d036c958547ac93a7f5bbc385b, type: 3}
-  - damage: 0
-    cooldown: 0
-    range: 0
-    width: 0
-    height: 0
-    lifetime: 0
-    speed: 0
-    projectileCount: 0
-    statusDuration: 0
-    visualSprite: {fileID: 0}
-  - damage: 0
-    cooldown: 0
-    range: 0
-    width: 0
-    height: 0
-    lifetime: 0
-    speed: 0
-    projectileCount: 0
-    statusDuration: 0
-    visualSprite: {fileID: 0}
-  - damage: 0
-    cooldown: 0
-    range: 0
-    width: 0
-    height: 0
-    lifetime: 0
-    speed: 0
-    projectileCount: 0
-    statusDuration: 0
-    visualSprite: {fileID: 0}
-  - damage: 0
-    cooldown: 0
-    range: 0
-    width: 0
-    height: 0
-    lifetime: 0
-    speed: 0
-    projectileCount: 0
-    statusDuration: 0
-    visualSprite: {fileID: 0}
+  - damage: 15
+    cooldown: 1
+    range: 100
+    width: 1
+    height: 1
+    lifetime: 5
+    speed: 11
+    projectileCount: 2
+    statusDuration: 10
+    visualSprite: {fileID: 2173011316737109762, guid: fdce42d036c958547ac93a7f5bbc385b, type: 3}
+  - damage: 20
+    cooldown: 0.9
+    range: 100
+    width: 1
+    height: 1
+    lifetime: 5
+    speed: 12
+    projectileCount: 3
+    statusDuration: 10
+    visualSprite: {fileID: 2173011316737109762, guid: fdce42d036c958547ac93a7f5bbc385b, type: 3}
+  - damage: 28
+    cooldown: 0.85
+    range: 100
+    width: 1
+    height: 1
+    lifetime: 5
+    speed: 13
+    projectileCount: 4
+    statusDuration: 10
+    visualSprite: {fileID: 2173011316737109762, guid: fdce42d036c958547ac93a7f5bbc385b, type: 3}
+  - damage: 40
+    cooldown: 0.75
+    range: 100
+    width: 1
+    height: 1
+    lifetime: 5
+    speed: 14
+    projectileCount: 5
+    statusDuration: 10
+    visualSprite: {fileID: 2173011316737109762, guid: fdce42d036c958547ac93a7f5bbc385b, type: 3}

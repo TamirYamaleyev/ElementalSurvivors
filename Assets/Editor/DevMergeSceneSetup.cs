@@ -121,6 +121,10 @@ public static class DevMergeSceneSetup
         Debug.Log("[DevMergeSceneSetup] Level-up UI wired: " + string.Join(", ", checklist));
     }
 
+    const string WaterShurikenSoPath = "Assets/Scripts/Weapons/WaterShuriken/WaterShurikenSO.asset";
+    const string FireArrowSoPath = "Assets/Scripts/Weapons/FireArrow/FireArrowSO.asset";
+    const string ChainLightningSoPath = "Assets/Scripts/Weapons/ChainLightning/ChainLightningSO.asset";
+
     static void FixLevelUpUi(Scene scene, List<string> checklist)
     {
         var levelUpUi = Object.FindFirstObjectByType<LevelUpUI>();
@@ -134,98 +138,58 @@ public static class DevMergeSceneSetup
         if (player == null)
             throw new System.InvalidOperationException("Player not found in SampleScene.");
 
-        var spearWeapon = EnsurePlayerDefaultWeapon(player, checklist);
-        var orbitWeapon = player.GetComponentInChildren<OrbitWeapon>(true);
-        var boomerangWeapon = player.GetComponentInChildren<BoomerangController>(true);
+        var weaponSystem = player.GetComponent<WeaponSystem>();
+        if (weaponSystem == null)
+            throw new System.InvalidOperationException("Player is missing WeaponSystem.");
 
-        var uiSo = new SerializedObject(levelUpUi);
-        if (spearWeapon != null && uiSo.FindProperty("spearWeapon").objectReferenceValue == null)
-        {
-            uiSo.FindProperty("spearWeapon").objectReferenceValue = spearWeapon;
-            checklist.Add("LevelUpUI.spearWeapon");
-        }
-
-        if (orbitWeapon != null && uiSo.FindProperty("orbitWeapon").objectReferenceValue == null)
-        {
-            uiSo.FindProperty("orbitWeapon").objectReferenceValue = orbitWeapon;
-            checklist.Add("LevelUpUI.orbitWeapon");
-        }
-
-        if (boomerangWeapon != null && uiSo.FindProperty("boomerangWeapon").objectReferenceValue == null)
-        {
-            uiSo.FindProperty("boomerangWeapon").objectReferenceValue = boomerangWeapon;
-            checklist.Add("LevelUpUI.boomerangWeapon");
-        }
+        var water = AssetDatabase.LoadAssetAtPath<WeaponDefinition>(WaterShurikenSoPath);
+        var fire = AssetDatabase.LoadAssetAtPath<WeaponDefinition>(FireArrowSoPath);
+        var lightning = AssetDatabase.LoadAssetAtPath<WeaponDefinition>(ChainLightningSoPath);
+        if (water == null || fire == null || lightning == null)
+            throw new System.InvalidOperationException("Missing Water/Fire/Lightning WeaponDefinition assets.");
 
         var option1 = FindSceneButton(scene, "Option1");
         var option2 = FindSceneButton(scene, "Option2");
         var option3 = FindSceneButton(scene, "Option3");
+        if (option1 == null || option2 == null || option3 == null)
+            throw new System.InvalidOperationException("Level-up Option1/2/3 buttons not found.");
 
-        if (option1 != null && uiSo.FindProperty("option1Button").objectReferenceValue == null)
-        {
-            uiSo.FindProperty("option1Button").objectReferenceValue = option1;
-            checklist.Add("LevelUpUI.option1Button");
-        }
+        var uiSo = new SerializedObject(levelUpUi);
+        uiSo.FindProperty("weaponSystem").objectReferenceValue = weaponSystem;
 
-        if (option2 != null && uiSo.FindProperty("option2Button").objectReferenceValue == null)
-        {
-            uiSo.FindProperty("option2Button").objectReferenceValue = option2;
-            checklist.Add("LevelUpUI.option2Button");
-        }
+        var optionsProp = uiSo.FindProperty("levelUpOptions");
+        optionsProp.arraySize = 3;
+        optionsProp.GetArrayElementAtIndex(0).objectReferenceValue = water;
+        optionsProp.GetArrayElementAtIndex(1).objectReferenceValue = fire;
+        optionsProp.GetArrayElementAtIndex(2).objectReferenceValue = lightning;
 
-        if (option3 != null && uiSo.FindProperty("option3Button").objectReferenceValue == null)
-        {
-            uiSo.FindProperty("option3Button").objectReferenceValue = option3;
-            checklist.Add("LevelUpUI.option3Button");
-        }
+        var buttonsProp = uiSo.FindProperty("optionButtons");
+        buttonsProp.arraySize = 3;
+        buttonsProp.GetArrayElementAtIndex(0).objectReferenceValue = option1;
+        buttonsProp.GetArrayElementAtIndex(1).objectReferenceValue = option2;
+        buttonsProp.GetArrayElementAtIndex(2).objectReferenceValue = option3;
 
         uiSo.ApplyModifiedPropertiesWithoutUndo();
+        checklist.Add("LevelUpUI.weaponSystem+options+buttons");
 
-        if (spearWeapon != null && option1 != null)
-            WireButtonLevelUpTarget(option1, spearWeapon, levelUpUi, checklist, "Option1→PlayerDefaultWeapon");
-        if (orbitWeapon != null && option2 != null)
-            WireButtonLevelUpTarget(option2, orbitWeapon, levelUpUi, checklist, "Option2→OrbitWeapon");
-        if (boomerangWeapon != null && option3 != null)
-            WireButtonLevelUpTarget(option3, boomerangWeapon, levelUpUi, checklist, "Option3→BoomerangController");
+        ClearButtonPersistentCalls(option1, checklist);
+        ClearButtonPersistentCalls(option2, checklist);
+        ClearButtonPersistentCalls(option3, checklist);
     }
 
-    static PlayerDefaultWeapon EnsurePlayerDefaultWeapon(GameObject player, List<string> checklist)
+    static void ClearButtonPersistentCalls(Button button, List<string> checklist)
     {
-        var spearWeapon = player.GetComponent<PlayerDefaultWeapon>();
-        if (spearWeapon == null)
-        {
-            spearWeapon = player.AddComponent<PlayerDefaultWeapon>();
-            checklist.Add("PlayerDefaultWeapon component");
-        }
+        if (button == null)
+            return;
 
-        var spearTransform = player.transform.Find("SpearHitbox");
-        if (spearTransform == null)
-        {
-            var spearGo = new GameObject("SpearHitbox");
-            spearGo.transform.SetParent(player.transform, false);
-            spearGo.SetActive(false);
-            spearTransform = spearGo.transform;
-            checklist.Add("Player/SpearHitbox child");
-        }
+        var buttonSo = new SerializedObject(button);
+        var calls = buttonSo.FindProperty("m_OnClick.m_PersistentCalls.m_Calls");
+        if (calls.arraySize == 0)
+            return;
 
-        var cam = Camera.main ?? Object.FindFirstObjectByType<Camera>();
-        var weaponSo = new SerializedObject(spearWeapon);
-        if (weaponSo.FindProperty("spear").objectReferenceValue == null)
-            weaponSo.FindProperty("spear").objectReferenceValue = spearTransform;
-        if (cam != null && weaponSo.FindProperty("cam").objectReferenceValue == null)
-            weaponSo.FindProperty("cam").objectReferenceValue = cam;
-
-        var characterAnimation = player.GetComponent<PlayerCharacterAnimation>();
-        if (characterAnimation != null &&
-            weaponSo.FindProperty("characterAnimation").objectReferenceValue == null)
-            weaponSo.FindProperty("characterAnimation").objectReferenceValue = characterAnimation;
-
-        var stats = player.GetComponent<PlayerStats>();
-        if (stats != null && weaponSo.FindProperty("statsProviderBehaviour").objectReferenceValue == null)
-            weaponSo.FindProperty("statsProviderBehaviour").objectReferenceValue = stats;
-
-        weaponSo.ApplyModifiedPropertiesWithoutUndo();
-        return spearWeapon;
+        calls.ClearArray();
+        buttonSo.ApplyModifiedPropertiesWithoutUndo();
+        checklist.Add(button.name + ".OnClick cleared");
     }
 
     static Button FindSceneButton(Scene scene, string objectName)
@@ -240,68 +204,6 @@ public static class DevMergeSceneSetup
         }
 
         return null;
-    }
-
-    static void WireButtonLevelUpTarget(
-        Button button,
-        MonoBehaviour weaponTarget,
-        LevelUpUI levelUpUi,
-        List<string> checklist,
-        string label)
-    {
-        var buttonSo = new SerializedObject(button);
-        var calls = buttonSo.FindProperty("m_OnClick.m_PersistentCalls.m_Calls");
-        var changed = false;
-
-        for (var i = 0; i < calls.arraySize; i++)
-        {
-            var call = calls.GetArrayElementAtIndex(i);
-            var methodName = call.FindPropertyRelative("m_MethodName").stringValue;
-            if (methodName != "LevelUp")
-                continue;
-
-            var targetProp = call.FindPropertyRelative("m_Target");
-            if (targetProp.objectReferenceValue == weaponTarget)
-                continue;
-
-            targetProp.objectReferenceValue = weaponTarget;
-            changed = true;
-        }
-
-        if (changed)
-        {
-            buttonSo.ApplyModifiedPropertiesWithoutUndo();
-            checklist.Add(label);
-        }
-
-        WireChoiceSelectedTarget(button, levelUpUi, checklist);
-    }
-
-    static void WireChoiceSelectedTarget(Button button, LevelUpUI levelUpUi, List<string> checklist)
-    {
-        var buttonSo = new SerializedObject(button);
-        var calls = buttonSo.FindProperty("m_OnClick.m_PersistentCalls.m_Calls");
-        var changed = false;
-
-        for (var i = 0; i < calls.arraySize; i++)
-        {
-            var call = calls.GetArrayElementAtIndex(i);
-            if (call.FindPropertyRelative("m_MethodName").stringValue != "ChoiceSelected")
-                continue;
-
-            var targetProp = call.FindPropertyRelative("m_Target");
-            if (targetProp.objectReferenceValue == levelUpUi)
-                continue;
-
-            targetProp.objectReferenceValue = levelUpUi;
-            changed = true;
-        }
-
-        if (changed)
-        {
-            buttonSo.ApplyModifiedPropertiesWithoutUndo();
-            checklist.Add(button.name + "→LevelUpUI.ChoiceSelected");
-        }
     }
 
     [MenuItem("Tools/Dev Merge/Add Player Animator Visual")]

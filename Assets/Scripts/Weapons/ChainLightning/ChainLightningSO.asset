@@ -22,7 +22,7 @@ MonoBehaviour:
   levels:
   - damage: 10
     cooldown: 3
-    range: 5
+    range: 18
     width: 1
     height: 1
     lifetime: 0.1
@@ -32,7 +32,7 @@ MonoBehaviour:
     visualSprite: {fileID: -2868435901282387113, guid: 2786c44fdf661f44888869a0e8a4066a, type: 3}
   - damage: 20
     cooldown: 3
-    range: 5
+    range: 18
     width: 1
     height: 1
     lifetime: 0.1
@@ -42,7 +42,7 @@ MonoBehaviour:
     visualSprite: {fileID: -2868435901282387113, guid: 2786c44fdf661f44888869a0e8a4066a, type: 3}
   - damage: 30
     cooldown: 2
-    range: 5
+    range: 18
     width: 1
     height: 1
     lifetime: 0.1
@@ -50,23 +50,23 @@ MonoBehaviour:
     projectileCount: 5
     statusDuration: 10
     visualSprite: {fileID: -2868435901282387113, guid: 2786c44fdf661f44888869a0e8a4066a, type: 3}
-  - damage: 0
-    cooldown: 0
-    range: 0
-    width: 0
-    height: 0
-    lifetime: 0
+  - damage: 40
+    cooldown: 1.75
+    range: 18
+    width: 1
+    height: 1
+    lifetime: 0.1
     speed: 0
-    projectileCount: 0
-    statusDuration: 0
-    visualSprite: {fileID: 0}
-  - damage: 0
-    cooldown: 0
-    range: 0
-    width: 0
-    height: 0
-    lifetime: 0
+    projectileCount: 6
+    statusDuration: 10
+    visualSprite: {fileID: -2868435901282387113, guid: 2786c44fdf661f44888869a0e8a4066a, type: 3}
+  - damage: 55
+    cooldown: 1.5
+    range: 18
+    width: 1
+    height: 1
+    lifetime: 0.1
     speed: 0
-    projectileCount: 0
-    statusDuration: 0
-    visualSprite: {fileID: 0}
+    projectileCount: 7
+    statusDuration: 10
+    visualSprite: {fileID: -2868435901282387113, guid: 2786c44fdf661f44888869a0e8a4066a, type: 3}
