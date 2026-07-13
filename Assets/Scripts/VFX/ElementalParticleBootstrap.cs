@@ -9,13 +9,13 @@ public class ElementalParticleBootstrap : MonoBehaviour
     private static readonly Color ElementColorFirePrimary = ElementStatusPalette.FirePrimary;
     private static readonly Color ElementColorFireSecondary = new(1f, 0.4f, 0.12f);
     private static readonly Color ElementColorWaterPrimary = ElementStatusPalette.WaterPrimary;
-    private static readonly Color ElementColorWaterSecondary = new(0.8f, 0.95f, 1f);
+    private static readonly Color ElementColorWaterSecondary = ElementStatusPalette.WaterSecondary;
     private static readonly Color ElementColorWindPrimary = ElementStatusPalette.WindPrimary;
     private static readonly Color ElementColorWindSecondary = new(0.75f, 1f, 0.7f);
     private static readonly Color ElementColorEarthPrimary = ElementStatusPalette.EarthPrimary;
     private static readonly Color ElementColorEarthSecondary = new(0.95f, 0.78f, 0.4f);
     private static readonly Color ElementColorLightningPrimary = ElementStatusPalette.LightningPrimary;
-    private static readonly Color ElementColorLightningSecondary = new(0.45f, 0.65f, 1f);
+    private static readonly Color ElementColorLightningSecondary = ElementStatusPalette.LightningSecondary;
     private static readonly Color BossBlackParticle = new(0.02f, 0.02f, 0.025f);
 
     private const float VisualAreaScale = 2f;
