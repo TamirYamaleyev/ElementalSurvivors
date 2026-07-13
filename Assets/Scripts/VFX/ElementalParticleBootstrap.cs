@@ -6,16 +6,16 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class ElementalParticleBootstrap : MonoBehaviour
 {
-    private static readonly Color ElementColorFirePrimary = new(1f, 0.15f, 0.08f);
-    private static readonly Color ElementColorFireSecondary = new(1f, 0.45f, 0.15f);
-    private static readonly Color ElementColorWaterPrimary = new(0.2f, 0.45f, 1f);
-    private static readonly Color ElementColorWaterSecondary = new(0.72f, 0.9f, 1f);
-    private static readonly Color ElementColorWindPrimary = new(0.92f, 0.95f, 1f);
-    private static readonly Color ElementColorWindSecondary = Color.white;
-    private static readonly Color ElementColorEarthPrimary = new(0.35f, 0.28f, 0.2f);
+    private static readonly Color ElementColorFirePrimary = ElementStatusPalette.FirePrimary;
+    private static readonly Color ElementColorFireSecondary = new(1f, 0.35f, 0.12f);
+    private static readonly Color ElementColorWaterPrimary = ElementStatusPalette.WaterPrimary;
+    private static readonly Color ElementColorWaterSecondary = new(0.78f, 0.92f, 1f);
+    private static readonly Color ElementColorWindPrimary = ElementStatusPalette.WindPrimary;
+    private static readonly Color ElementColorWindSecondary = new(0.78f, 1f, 0.72f);
+    private static readonly Color ElementColorEarthPrimary = ElementStatusPalette.EarthPrimary;
     private static readonly Color ElementColorEarthSecondary = new(0.55f, 0.45f, 0.32f);
-    private static readonly Color ElementColorLightningPrimary = new(1f, 0.92f, 0.15f);
-    private static readonly Color ElementColorLightningSecondary = new(1f, 0.78f, 0.05f);
+    private static readonly Color ElementColorLightningPrimary = ElementStatusPalette.LightningPrimary;
+    private static readonly Color ElementColorLightningSecondary = new(0.28f, 0.42f, 0.95f);
     private static readonly Color BossBlackParticle = new(0.02f, 0.02f, 0.025f);
 
     private const float VisualAreaScale = 2f;
