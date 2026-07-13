@@ -12,6 +12,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private PlayerAimDirection playerAimDirection;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private MonoBehaviour statsProviderBehaviour;
+    [SerializeField] private SpriteRenderer visual;
+
+    private Vector2 lastFacingDirection = Vector2.down;
 
     private IPlayerStatsProvider _statsProvider;
     private Vector2 moveInput;
@@ -52,6 +55,11 @@ public class PlayerController : MonoBehaviour
         moveInput = value.Get<Vector2>();
         if (playerAimDirection != null)
             playerAimDirection.SetDirection(moveInput);
+
+        if (moveInput.x > 0)
+            visual.flipX = true;
+        else if (moveInput.x < 0)
+            visual.flipX = false;
     }
 
     private void Move()
