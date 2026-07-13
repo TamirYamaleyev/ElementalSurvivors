@@ -67,6 +67,9 @@ public class ElementalVfxShowcaseBootstrap : MonoBehaviour
 
             yield return null;
             RefreshStatusParticles(enemy);
+            // Second tick: bootstrap Awake + material are fully applied.
+            yield return null;
+            RefreshStatusParticles(enemy);
         }
 
         if (bossVfxPrefab == null)
@@ -134,6 +137,10 @@ public class ElementalVfxShowcaseBootstrap : MonoBehaviour
         var ai = enemy.GetComponent<EnemyAI>();
         if (ai != null)
             ai.SetGameplayEnabled(false);
+
+        // Keep enemies alive for VFX review (DoT would kill Level1 in ~5s).
+        var health = enemy.GetComponent<EnemyHealth>();
+        health?.ApplySpawnScaling(99999f);
 
         if (registry != null)
             registry.Register(enemy);

@@ -17,6 +17,6 @@ MonoBehaviour:
     tickInterval: 0.5
     fireDamageColor: {r: 1, g: 0.12, b: 0.08, a: 1}
     waterDamageColor: {r: 0.55, g: 0.82, b: 1, a: 1}
-    windDamageColor: {r: 0.55, g: 0.95, b: 0.55, a: 1}
-    earthDamageColor: {r: 0.75, g: 0.62, b: 0.45, a: 1}
-    lightningDamageColor: {r: 0.12, g: 0.22, b: 0.72, a: 1}
+    windDamageColor: {r: 0.45, g: 1, b: 0.5, a: 1}
+    earthDamageColor: {r: 0.85, g: 0.68, b: 0.35, a: 1}
+    lightningDamageColor: {r: 0.2, g: 0.35, b: 0.95, a: 1}
