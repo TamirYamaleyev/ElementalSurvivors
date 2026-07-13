@@ -8,6 +8,7 @@ public sealed class MainMenuUI : MonoBehaviour
     [SerializeField] private GameObject mainPanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private Button playButton;
+    [SerializeField] private Button endlessButton;
     [SerializeField] private Button settingsButton;
     [SerializeField] private Button quitButton;
     [SerializeField] private SettingsMenuUI settingsMenu;
@@ -16,6 +17,7 @@ public sealed class MainMenuUI : MonoBehaviour
     private void Awake()
     {
         GamePauseController.ForceResume();
+        RunLaunchContext.PendingMode = RunMode.Standard;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
 
@@ -38,6 +40,15 @@ public sealed class MainMenuUI : MonoBehaviour
     {
         PlayClick();
         GamePauseController.ForceResume();
+        RunLaunchContext.PendingMode = RunMode.Standard;
+        SceneManager.LoadScene(gameplaySceneName);
+    }
+
+    public void StartEndlessGame()
+    {
+        PlayClick();
+        GamePauseController.ForceResume();
+        RunLaunchContext.PendingMode = RunMode.Endless;
         SceneManager.LoadScene(gameplaySceneName);
     }
 

@@ -26,3 +26,5 @@ MonoBehaviour:
   bossExtraStatMultiplier: 10
   bossVisualScale: 1.5
   bossFightSpawnIntensityMultiplier: 0.5
+  endlessFinalBossIntervalSeconds: 300
+  endlessExtraMultiplierPerMinute: 0.15
