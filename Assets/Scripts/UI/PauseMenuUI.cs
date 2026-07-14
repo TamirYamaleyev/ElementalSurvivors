@@ -65,6 +65,8 @@ public sealed class PauseMenuUI : MonoBehaviour
         if (!GamePauseController.CanOpenPauseMenu)
             return;
 
+        Debug.Log("togglep");
+
         if (isOpen)
             Resume();
         else
