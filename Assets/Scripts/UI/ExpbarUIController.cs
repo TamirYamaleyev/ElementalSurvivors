@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,12 +14,36 @@ public class ExpbarUIController : MonoBehaviour
 
     [SerializeField] private string levelPrefix = "LV: ";
 
+    [SerializeField] private float lerpSpeed = 5f;
+
+    private float targetFillAmount;
+    private float currentFillAmount;
+
+    private Vector2 targetMaskAnchor;
+
     void Start()
     {
         UpdateExp(0f, 100f);
 
         if (expRef != null)
             Bind();
+    }
+
+    private void Update()
+    {
+        currentFillAmount = Mathf.Lerp(
+            currentFillAmount,
+            targetFillAmount,
+            Time.deltaTime * lerpSpeed
+        );
+
+        fillImage.fillAmount = currentFillAmount;
+
+        textMask.anchorMax = Vector2.Lerp(
+            textMask.anchorMax,
+            targetMaskAnchor,
+            Time.deltaTime * lerpSpeed
+        );
     }
 
     private void Bind()
@@ -31,11 +54,8 @@ public class ExpbarUIController : MonoBehaviour
 
     private void UpdateExp(float current, float max)
     {
-        float fillAmount = current / max;
-
-        fillImage.fillAmount = fillAmount;
-
-        textMask.anchorMax = new Vector2(fillAmount, 1f);
+        targetFillAmount = current / max;
+        targetMaskAnchor = new Vector2(targetFillAmount, 1f);
     }
 
     private void UpdateLevel(int level)

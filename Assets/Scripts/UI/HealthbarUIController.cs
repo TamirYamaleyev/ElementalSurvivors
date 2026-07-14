@@ -5,6 +5,12 @@ public class HealthbarUIController : MonoBehaviour
 {
     [SerializeField] private PlayerHealth healthRef;
     [SerializeField] private Image fillImage;
+    [SerializeField] private Image fillRoses;
+
+    [SerializeField] private float lerpSpeed = 5f;
+
+    private float targetFillAmount;
+    private float currentFillAmount;
 
     void Start()
     {
@@ -14,6 +20,18 @@ public class HealthbarUIController : MonoBehaviour
             Bind(healthRef);
     }
 
+    private void Update()
+    {
+        currentFillAmount = Mathf.Lerp(
+            currentFillAmount,
+            targetFillAmount,
+            Time.deltaTime * lerpSpeed
+        );
+
+        fillImage.fillAmount = currentFillAmount;
+        fillRoses.fillAmount = currentFillAmount;
+    }
+
     public void Bind(PlayerHealth health)
     {
         health.OnHealthChanged += UpdateHealth;
@@ -21,6 +39,6 @@ public class HealthbarUIController : MonoBehaviour
 
     public void UpdateHealth(float current, float max)
     {
-        fillImage.fillAmount = current / max;
+        targetFillAmount = current / max;
     }
 }
