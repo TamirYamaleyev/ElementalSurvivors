@@ -12,14 +12,9 @@ public class LevelUpUI : MonoBehaviour
     [SerializeField] private WeaponDefinition[] levelUpOptions;
     [SerializeField] private Button[] optionButtons;
 
-    private bool buttonsBound;
-
     void Start()
     {
-        if (weaponSystem == null)
-            weaponSystem = FindFirstObjectByType<WeaponSystem>();
-
-        BindOptionButtons();
+        RefreshOptionLabels();
 
         if (expRef != null)
             expRef.OnLevelUp += HandleLevelUp;
@@ -31,32 +26,11 @@ public class LevelUpUI : MonoBehaviour
             expRef.OnLevelUp -= HandleLevelUp;
     }
 
-    private void BindOptionButtons()
-    {
-        if (buttonsBound || optionButtons == null)
-            return;
-
-        for (int i = 0; i < optionButtons.Length; i++)
-        {
-            var button = optionButtons[i];
-            if (button == null)
-                continue;
-
-            int index = i;
-            button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => Choose(index));
-        }
-
-        buttonsBound = true;
-        RefreshOptionLabels();
-    }
-
     private void HandleLevelUp(int level)
     {
         if (!GamePauseController.CanOpenPauseMenu)
             return;
 
-        BindOptionButtons();
         RefreshOptionButtons();
         GamePauseController.RequestPause(GamePauseController.PauseReason.LevelUp);
         if (levelUpPanel != null)
