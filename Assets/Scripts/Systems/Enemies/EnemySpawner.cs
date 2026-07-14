@@ -35,8 +35,6 @@ public class EnemySpawner : MonoBehaviour
     private bool miniBoss1Spawned;
     private bool miniBoss2Spawned;
     private bool finalBossSpawned;
-    private bool isEndless;
-    private float nextFinalBossAt;
     private Enemy activeFinalBoss;
     private Camera spawnCamera;
 
@@ -47,7 +45,6 @@ public class EnemySpawner : MonoBehaviour
     public bool IsSessionComplete => sessionComplete;
     public bool IsFinalBossAlive => activeFinalBoss != null;
     public bool FinalBossWasSpawned => finalBossSpawned;
-    public bool IsEndless => isEndless;
 
     public event Action OnSessionComplete;
     public event Action<int> OnActiveBossCountChanged;
@@ -65,25 +62,6 @@ public class EnemySpawner : MonoBehaviour
         timer = spawnInterval;
     }
 
-    /// <summary>Start the run already in Endless (Main Menu entry).</summary>
-    public void BeginEndlessFromLaunch()
-    {
-        isEndless = true;
-        sessionComplete = false;
-        float sessionEnd = runProfile != null ? runProfile.sessionDurationSeconds : 600f;
-        nextFinalBossAt = sessionEnd;
-    }
-
-    /// <summary>Continue the same run after Victory into Endless.</summary>
-    public void EnterEndlessMode()
-    {
-        isEndless = true;
-        sessionComplete = true;
-        float interval = ResolveEndlessFinalBossInterval();
-        nextFinalBossAt = elapsedTime + interval;
-        enabled = true;
-    }
-
     private void Update()
     {
         if (runProfile == null || enemyPool == null || tierSet == null || player == null)
@@ -96,14 +74,13 @@ public class EnemySpawner : MonoBehaviour
 
         TrySpawnBossMilestones();
 
-        if (!isEndless && !sessionComplete && elapsedTime >= runProfile.sessionDurationSeconds)
+        if (!sessionComplete && elapsedTime >= runProfile.sessionDurationSeconds)
         {
             sessionComplete = true;
             OnSessionComplete?.Invoke();
         }
 
-        if (!isEndless &&
-            runProfile.stopSpawningWhenSessionEnds &&
+        if (runProfile.stopSpawningWhenSessionEnds &&
             elapsedTime >= runProfile.sessionDurationSeconds)
             return;
 
@@ -126,41 +103,8 @@ public class EnemySpawner : MonoBehaviour
         if (!miniBoss2Spawned && elapsedTime >= runProfile.tier3StartSeconds)
             miniBoss2Spawned = SpawnMiniBoss(2);
 
-        if (isEndless)
-        {
-            TrySpawnEndlessFinalBosses();
-            return;
-        }
-
         if (!finalBossSpawned && elapsedTime >= runProfile.sessionDurationSeconds)
             finalBossSpawned = SpawnFinalBoss();
-    }
-
-    private void TrySpawnEndlessFinalBosses()
-    {
-        if (nextFinalBossAt <= 0f)
-            nextFinalBossAt = runProfile.sessionDurationSeconds;
-
-        float interval = ResolveEndlessFinalBossInterval();
-        while (elapsedTime >= nextFinalBossAt)
-        {
-            if (SpawnFinalBoss())
-            {
-                finalBossSpawned = true;
-                nextFinalBossAt += interval;
-            }
-            else
-            {
-                // Retry next frame if placement/pool failed.
-                break;
-            }
-        }
-    }
-
-    private float ResolveEndlessFinalBossInterval()
-    {
-        float interval = runProfile != null ? runProfile.endlessFinalBossIntervalSeconds : 300f;
-        return interval > 0f ? interval : 300f;
     }
 
     private float GetSpawnIntensity()
@@ -170,11 +114,6 @@ public class EnemySpawner : MonoBehaviour
 
         float multiplier = runProfile.bossFightSpawnIntensityMultiplier;
         return multiplier > 0f ? multiplier : 1f;
-    }
-
-    private float ResolveDifficultyMultiplier()
-    {
-        return RunDifficultyEvaluator.GetDifficultyMultiplier(runProfile, elapsedTime, isEndless);
     }
 
     private void SpawnRegularEnemy(int tierIndex)
@@ -188,7 +127,7 @@ public class EnemySpawner : MonoBehaviour
             return;
 
         float visualScale = 1f;
-        float multiplier = ResolveDifficultyMultiplier();
+        float multiplier = RunDifficultyEvaluator.GetDifficultyMultiplier(runProfile, elapsedTime);
         TryPlaceAndActivate(instance, prefabRef, visualScale, multiplier, trackBossEncounter: false, isFinalBoss: false);
     }
 
@@ -203,7 +142,7 @@ public class EnemySpawner : MonoBehaviour
             return false;
 
         float visualScale = runProfile.miniBossVisualScale > 0f ? runProfile.miniBossVisualScale : 1.25f;
-        float multiplier = ResolveDifficultyMultiplier();
+        float multiplier = RunDifficultyEvaluator.GetDifficultyMultiplier(runProfile, elapsedTime);
         multiplier *= runProfile.miniBossStatMultiplier > 0f ? runProfile.miniBossStatMultiplier : 3f;
         return TryPlaceAndActivate(instance, prefabRef, visualScale, multiplier, trackBossEncounter: true, isFinalBoss: false);
     }
@@ -219,7 +158,7 @@ public class EnemySpawner : MonoBehaviour
             return false;
 
         float visualScale = runProfile.bossVisualScale > 0f ? runProfile.bossVisualScale : 1.5f;
-        float multiplier = ResolveDifficultyMultiplier();
+        float multiplier = RunDifficultyEvaluator.GetDifficultyMultiplier(runProfile, elapsedTime);
         multiplier *= runProfile.bossExtraStatMultiplier;
         return TryPlaceAndActivate(instance, prefabRef, visualScale, multiplier, trackBossEncounter: true, isFinalBoss: true);
     }
