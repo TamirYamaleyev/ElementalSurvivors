@@ -127,7 +127,7 @@ public static class DevMergeSceneSetup
 
     static void FixLevelUpUi(Scene scene, List<string> checklist)
     {
-        var levelUpUi = Object.FindFirstObjectByType<LevelUpUI>();
+        var levelUpUi = Object.FindFirstObjectByType<tLevelUpUI>();
         if (levelUpUi == null)
         {
             Debug.LogWarning("[DevMergeSceneSetup] LevelUpUI not found.");

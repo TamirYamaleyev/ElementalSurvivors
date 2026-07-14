@@ -5,7 +5,7 @@ public class UpgradeManager : MonoBehaviour
 {
     [SerializeField] private WeaponSystem weaponSystem;
     [SerializeField] private PassiveSystem passiveSystem;
-    [SerializeField] private LevelUpUI levelUpUI;
+    [SerializeField] private tLevelUpUI levelUpUI;
     [SerializeField] private PlayerEXP expRef;
 
     private void OnEnable()

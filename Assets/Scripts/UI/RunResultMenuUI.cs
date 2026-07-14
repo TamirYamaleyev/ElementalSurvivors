@@ -11,7 +11,7 @@ public sealed class RunResultMenuUI : MonoBehaviour
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private AudioClip buttonClickClip;
 
-    private LevelUpUI levelUpUI;
+    private tLevelUpUI levelUpUI;
 
     private void Awake()
     {
@@ -21,7 +21,7 @@ public sealed class RunResultMenuUI : MonoBehaviour
         if (lossPanel != null)
             lossPanel.SetActive(false);
 
-        levelUpUI = FindFirstObjectByType<LevelUpUI>();
+        levelUpUI = FindFirstObjectByType<tLevelUpUI>();
     }
 
     private void Start()
@@ -32,7 +32,7 @@ public sealed class RunResultMenuUI : MonoBehaviour
 
     public void ShowVictory()
     {
-        levelUpUI?.HideLevelUpPanel();
+        //levelUpUI?.HideLevelUpPanel();
 
         if (victoryPanel != null)
             victoryPanel.SetActive(true);
@@ -46,7 +46,7 @@ public sealed class RunResultMenuUI : MonoBehaviour
 
     public void ShowLoss()
     {
-        levelUpUI?.HideLevelUpPanel();
+        //levelUpUI?.HideLevelUpPanel();
 
         if (victoryPanel != null)
             victoryPanel.SetActive(false);

@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LevelUpUI : MonoBehaviour
+public class tLevelUpUI : MonoBehaviour
 {
     [SerializeField] private GameObject levelUpPanel;
 
