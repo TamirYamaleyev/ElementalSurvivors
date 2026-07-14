@@ -1,144 +1,118 @@
-//using TMPro;
-//using UnityEngine;
-//using UnityEngine.UI;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
-//public class LevelUpUI : MonoBehaviour
-//{
-//    [SerializeField] private GameObject levelUpPanel;
-//    [SerializeField] private PlayerEXP expRef;
-//    [SerializeField] private WeaponSystem weaponSystem;
+public class LevelUpUI : MonoBehaviour
+{
+    [SerializeField] private GameObject levelUpPanel;
+    [SerializeField] private PlayerEXP expRef;
+    [SerializeField] private WeaponSystem weaponSystem;
 
-//    [Header("Level-Up Options")]
-//    [SerializeField] private WeaponDefinition[] levelUpOptions;
-//    [SerializeField] private Button[] optionButtons;
+    [Header("Level-Up Options")]
+    [SerializeField] private WeaponDefinition[] levelUpOptions;
+    [SerializeField] private Button[] optionButtons;
 
-//    private bool buttonsBound;
+    void Start()
+    {
+        RefreshOptionLabels();
 
-//    void Start()
-//    {
-//        if (weaponSystem == null)
-//            weaponSystem = FindFirstObjectByType<WeaponSystem>();
+        if (expRef != null)
+            expRef.OnLevelUp += HandleLevelUp;
+    }
 
-//        BindOptionButtons();
+    void OnDestroy()
+    {
+        if (expRef != null)
+            expRef.OnLevelUp -= HandleLevelUp;
+    }
 
-//        if (expRef != null)
-//            expRef.OnLevelUp += HandleLevelUp;
-//    }
+    private void HandleLevelUp(int level)
+    {
+        if (!GamePauseController.CanOpenPauseMenu)
+            return;
 
-//    void OnDestroy()
-//    {
-//        if (expRef != null)
-//            expRef.OnLevelUp -= HandleLevelUp;
-//    }
+        RefreshOptionButtons();
+        GamePauseController.RequestPause(GamePauseController.PauseReason.LevelUp);
+        if (levelUpPanel != null)
+            levelUpPanel.SetActive(true);
+    }
 
-//    private void BindOptionButtons()
-//    {
-//        if (buttonsBound || optionButtons == null)
-//            return;
+    public void Choose(int index)
+    {
+        if (weaponSystem == null || levelUpOptions == null)
+        {
+            ChoiceSelected();
+            return;
+        }
 
-//        for (int i = 0; i < optionButtons.Length; i++)
-//        {
-//            var button = optionButtons[i];
-//            if (button == null)
-//                continue;
+        if (index < 0 || index >= levelUpOptions.Length)
+        {
+            ChoiceSelected();
+            return;
+        }
 
-//            int index = i;
-//            button.onClick.RemoveAllListeners();
-//            button.onClick.AddListener(() => Choose(index));
-//        }
+        var def = levelUpOptions[index];
+        if (def != null)
+            weaponSystem.TryLevelUp(def);
 
-//        buttonsBound = true;
-//        RefreshOptionLabels();
-//    }
+        ChoiceSelected();
+    }
 
-//    private void HandleLevelUp(int level)
-//    {
-//        if (!GamePauseController.CanOpenPauseMenu)
-//            return;
+    public void ChoiceSelected()
+    {
+        GamePauseController.ReleasePause(GamePauseController.PauseReason.LevelUp);
+        if (levelUpPanel != null)
+            levelUpPanel.SetActive(false);
+    }
 
-//        BindOptionButtons();
-//        RefreshOptionButtons();
-//        GamePauseController.RequestPause(GamePauseController.PauseReason.LevelUp);
-//        if (levelUpPanel != null)
-//            levelUpPanel.SetActive(true);
-//    }
+    public void HideLevelUpPanel()
+    {
+        if (levelUpPanel != null)
+            levelUpPanel.SetActive(false);
+    }
 
-//    public void Choose(int index)
-//    {
-//        if (weaponSystem == null || levelUpOptions == null)
-//        {
-//            ChoiceSelected();
-//            return;
-//        }
+    private void RefreshOptionButtons()
+    {
+        if (optionButtons == null)
+            return;
 
-//        if (index < 0 || index >= levelUpOptions.Length)
-//        {
-//            ChoiceSelected();
-//            return;
-//        }
+        for (int i = 0; i < optionButtons.Length; i++)
+        {
+            var button = optionButtons[i];
+            if (button == null)
+                continue;
 
-//        var def = levelUpOptions[index];
-//        if (def != null)
-//            weaponSystem.TryLevelUp(def);
+            WeaponDefinition def = null;
+            if (levelUpOptions != null && i < levelUpOptions.Length)
+                def = levelUpOptions[i];
 
-//        ChoiceSelected();
-//    }
+            bool canPick = def != null && weaponSystem != null && !weaponSystem.IsMaxed(def);
+            button.interactable = canPick;
+        }
 
-//    public void ChoiceSelected()
-//    {
-//        GamePauseController.ReleasePause(GamePauseController.PauseReason.LevelUp);
-//        if (levelUpPanel != null)
-//            levelUpPanel.SetActive(false);
-//    }
+        RefreshOptionLabels();
+    }
 
-//    public void HideLevelUpPanel()
-//    {
-//        if (levelUpPanel != null)
-//            levelUpPanel.SetActive(false);
-//    }
+    private void RefreshOptionLabels()
+    {
+        if (optionButtons == null || levelUpOptions == null)
+            return;
 
-//    private void RefreshOptionButtons()
-//    {
-//        if (optionButtons == null)
-//            return;
+        for (int i = 0; i < optionButtons.Length && i < levelUpOptions.Length; i++)
+        {
+            var button = optionButtons[i];
+            var def = levelUpOptions[i];
+            if (button == null || def == null)
+                continue;
 
-//        for (int i = 0; i < optionButtons.Length; i++)
-//        {
-//            var button = optionButtons[i];
-//            if (button == null)
-//                continue;
+            var label = button.GetComponentInChildren<TMP_Text>(true);
+            if (label == null)
+                continue;
 
-//            WeaponDefinition def = null;
-//            if (levelUpOptions != null && i < levelUpOptions.Length)
-//                def = levelUpOptions[i];
-
-//            bool canPick = def != null && weaponSystem != null && !weaponSystem.IsMaxed(def);
-//            button.interactable = canPick;
-//        }
-
-//        RefreshOptionLabels();
-//    }
-
-//    private void RefreshOptionLabels()
-//    {
-//        if (optionButtons == null || levelUpOptions == null)
-//            return;
-
-//        for (int i = 0; i < optionButtons.Length && i < levelUpOptions.Length; i++)
-//        {
-//            var button = optionButtons[i];
-//            var def = levelUpOptions[i];
-//            if (button == null || def == null)
-//                continue;
-
-//            var label = button.GetComponentInChildren<TMP_Text>(true);
-//            if (label == null)
-//                continue;
-
-//            string status = def.appliedStatus == StatusType.None
-//                ? "No Status"
-//                : $"{def.appliedStatus} Status";
-//            label.text = $"{def.weaponName}\n{status}\nMax {def.MaxLevel} Levels";
-//        }
-//    }
-//}
+            string status = def.appliedStatus == StatusType.None
+                ? "No Status"
+                : $"{def.appliedStatus} Status";
+            label.text = $"{def.weaponName}\n{status}\nMax {def.MaxLevel} Levels";
+        }
+    }
+}

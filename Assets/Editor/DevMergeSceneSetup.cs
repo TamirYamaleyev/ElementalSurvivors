@@ -74,7 +74,7 @@ public static class DevMergeSceneSetup
             AddPlayerAnimatorVisual(logToConsole: false);
             CharacterAnimationPipeline.BindDevTierEnemySprites();
             WireReleaseSystems(logToConsole: false);
-            FixLevelUpUi(FindScene(), new List<string>());
+            ValidateLevelUpUi(FindScene(), new List<string>());
             EditorSceneManager.SaveScene(FindScene());
             VerifySampleScene();
             Debug.Log("[DevMergeSceneSetup] Full pipeline completed.");
@@ -98,10 +98,8 @@ public static class DevMergeSceneSetup
         {
             var scene = EditorSceneManager.OpenScene(SampleScenePath, OpenSceneMode.Single);
             var checklist = new List<string>();
-            FixLevelUpUi(scene, checklist);
-            EditorSceneManager.MarkSceneDirty(scene);
-            EditorSceneManager.SaveScene(scene);
-            Debug.Log("[DevMergeSceneSetup] Level-up UI wired: " + string.Join(", ", checklist));
+            ValidateLevelUpUi(scene, checklist);
+            Debug.Log("[DevMergeSceneSetup] Level-up UI validation: " + string.Join(", ", checklist));
         }
         catch (System.Exception ex)
         {
@@ -110,22 +108,16 @@ public static class DevMergeSceneSetup
         }
     }
 
-    [MenuItem("Tools/Dev Merge/Fix Level-Up UI Wiring")]
+    [MenuItem("Tools/Dev Merge/Validate Level-Up UI")]
     public static void FixLevelUpUiMenu()
     {
         var scene = EditorSceneManager.OpenScene(SampleScenePath, OpenSceneMode.Single);
         var checklist = new List<string>();
-        FixLevelUpUi(scene, checklist);
-        EditorSceneManager.MarkSceneDirty(scene);
-        EditorSceneManager.SaveScene(scene);
-        Debug.Log("[DevMergeSceneSetup] Level-up UI wired: " + string.Join(", ", checklist));
+        ValidateLevelUpUi(scene, checklist);
+        Debug.Log("[DevMergeSceneSetup] Level-up UI validation: " + string.Join(", ", checklist));
     }
 
-    const string WaterShurikenSoPath = "Assets/Scripts/Weapons/WaterShuriken/WaterShurikenSO.asset";
-    const string FireArrowSoPath = "Assets/Scripts/Weapons/FireArrow/FireArrowSO.asset";
-    const string ChainLightningSoPath = "Assets/Scripts/Weapons/ChainLightning/ChainLightningSO.asset";
-
-    static void FixLevelUpUi(Scene scene, List<string> checklist)
+    static void ValidateLevelUpUi(Scene scene, List<string> checklist)
     {
         var levelUpUi = Object.FindFirstObjectByType<tLevelUpUI>();
         if (levelUpUi == null)
@@ -134,76 +126,46 @@ public static class DevMergeSceneSetup
             return;
         }
 
-        var player = FindRootObject(scene, "Player");
-        if (player == null)
-            throw new System.InvalidOperationException("Player not found in SampleScene.");
-
-        var weaponSystem = player.GetComponent<WeaponSystem>();
-        if (weaponSystem == null)
-            throw new System.InvalidOperationException("Player is missing WeaponSystem.");
-
-        var water = AssetDatabase.LoadAssetAtPath<WeaponDefinition>(WaterShurikenSoPath);
-        var fire = AssetDatabase.LoadAssetAtPath<WeaponDefinition>(FireArrowSoPath);
-        var lightning = AssetDatabase.LoadAssetAtPath<WeaponDefinition>(ChainLightningSoPath);
-        if (water == null || fire == null || lightning == null)
-            throw new System.InvalidOperationException("Missing Water/Fire/Lightning WeaponDefinition assets.");
-
-        var option1 = FindSceneButton(scene, "Option1");
-        var option2 = FindSceneButton(scene, "Option2");
-        var option3 = FindSceneButton(scene, "Option3");
-        if (option1 == null || option2 == null || option3 == null)
-            throw new System.InvalidOperationException("Level-up Option1/2/3 buttons not found.");
-
         var uiSo = new SerializedObject(levelUpUi);
-        uiSo.FindProperty("weaponSystem").objectReferenceValue = weaponSystem;
+        var weaponSystem = uiSo.FindProperty("weaponSystem").objectReferenceValue;
+        var options = uiSo.FindProperty("levelUpOptions");
+        var buttons = uiSo.FindProperty("optionButtons");
 
-        var optionsProp = uiSo.FindProperty("levelUpOptions");
-        optionsProp.arraySize = 3;
-        optionsProp.GetArrayElementAtIndex(0).objectReferenceValue = water;
-        optionsProp.GetArrayElementAtIndex(1).objectReferenceValue = fire;
-        optionsProp.GetArrayElementAtIndex(2).objectReferenceValue = lightning;
+        if (weaponSystem == null)
+            Debug.LogWarning("[DevMergeSceneSetup] LevelUpUI.weaponSystem is not assigned.");
+        else
+            checklist.Add("weaponSystem ok");
 
-        var buttonsProp = uiSo.FindProperty("optionButtons");
-        buttonsProp.arraySize = 3;
-        buttonsProp.GetArrayElementAtIndex(0).objectReferenceValue = option1;
-        buttonsProp.GetArrayElementAtIndex(1).objectReferenceValue = option2;
-        buttonsProp.GetArrayElementAtIndex(2).objectReferenceValue = option3;
-
-        uiSo.ApplyModifiedPropertiesWithoutUndo();
-        checklist.Add("LevelUpUI.weaponSystem+options+buttons");
-
-        ClearButtonPersistentCalls(option1, checklist);
-        ClearButtonPersistentCalls(option2, checklist);
-        ClearButtonPersistentCalls(option3, checklist);
-    }
-
-    static void ClearButtonPersistentCalls(Button button, List<string> checklist)
-    {
-        if (button == null)
-            return;
-
-        var buttonSo = new SerializedObject(button);
-        var calls = buttonSo.FindProperty("m_OnClick.m_PersistentCalls.m_Calls");
-        if (calls.arraySize == 0)
-            return;
-
-        calls.ClearArray();
-        buttonSo.ApplyModifiedPropertiesWithoutUndo();
-        checklist.Add(button.name + ".OnClick cleared");
-    }
-
-    static Button FindSceneButton(Scene scene, string objectName)
-    {
-        foreach (var root in scene.GetRootGameObjects())
+        if (options == null || options.arraySize < 3)
+            Debug.LogWarning("[DevMergeSceneSetup] LevelUpUI.levelUpOptions needs 3 WeaponDefinitions.");
+        else
         {
-            foreach (var button in root.GetComponentsInChildren<Button>(true))
+            for (int i = 0; i < options.arraySize; i++)
             {
-                if (button.name == objectName)
-                    return button;
+                if (options.GetArrayElementAtIndex(i).objectReferenceValue == null)
+                    Debug.LogWarning($"[DevMergeSceneSetup] LevelUpUI.levelUpOptions[{i}] is null.");
             }
+            checklist.Add($"levelUpOptions[{options.arraySize}]");
         }
 
-        return null;
+        if (buttons == null || buttons.arraySize < 3)
+            Debug.LogWarning("[DevMergeSceneSetup] LevelUpUI.optionButtons needs 3 Buttons.");
+        else
+        {
+            for (int i = 0; i < buttons.arraySize; i++)
+            {
+                var button = buttons.GetArrayElementAtIndex(i).objectReferenceValue as Button;
+                if (button == null)
+                {
+                    Debug.LogWarning($"[DevMergeSceneSetup] LevelUpUI.optionButtons[{i}] is null.");
+                    continue;
+                }
+
+                if (button.onClick.GetPersistentEventCount() == 0)
+                    Debug.LogWarning($"[DevMergeSceneSetup] {button.name} has no persistent OnClick (expected Choose).");
+            }
+            checklist.Add($"optionButtons[{buttons.arraySize}]");
+        }
     }
 
     [MenuItem("Tools/Dev Merge/Add Player Animator Visual")]
@@ -312,7 +274,7 @@ public static class DevMergeSceneSetup
         WireGameInstaller(scene, checklist);
         WireEnvironmentObstacleGenerator(scene, checklist);
         WirePlayerPickup(scene, checklist);
-        FixLevelUpUi(scene, checklist);
+        ValidateLevelUpUi(scene, checklist);
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);

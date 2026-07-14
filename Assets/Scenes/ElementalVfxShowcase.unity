@@ -1077,26 +1077,14 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1766721900}
-        m_TargetAssemblyTypeName: OrbitWeapon, Assembly-CSharp
-        m_MethodName: LevelUp
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 793641537}
         m_TargetAssemblyTypeName: LevelUpUI, Assembly-CSharp
-        m_MethodName: ChoiceSelected
-        m_Mode: 1
+        m_MethodName: Choose
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -1623,6 +1611,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelUpUI
   levelUpPanel: {fileID: 376262324}
   expRef: {fileID: 181845791}
+  weaponSystem: {fileID: 181845793}
+  levelUpOptions:
+  - {fileID: 11400000, guid: 6f519e1c2b660154ba9d8e6fa4a4ea1a, type: 2}
+  - {fileID: 11400000, guid: 453c2e2d90fab4649b1b068adeef7f99, type: 2}
+  - {fileID: 11400000, guid: f24871ee27bd4ec439a7598e3b81029a, type: 2}
+  optionButtons:
+  - {fileID: 1201057199}
+  - {fileID: 274742743}
+  - {fileID: 1599797109}
 --- !u!1 &819761847
 GameObject:
   m_ObjectHideFlags: 0
@@ -1923,22 +1920,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 181845792}
-        m_TargetAssemblyTypeName: PlayerDefaultWeapon, Assembly-CSharp
-        m_MethodName: LevelUp
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 793641537}
         m_TargetAssemblyTypeName: LevelUpUI, Assembly-CSharp
-        m_MethodName: ChoiceSelected
-        m_Mode: 1
+        m_MethodName: Choose
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2429,26 +2414,14 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 657638102}
-        m_TargetAssemblyTypeName: BoomerangController, Assembly-CSharp
-        m_MethodName: LevelUp
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 793641537}
         m_TargetAssemblyTypeName: LevelUpUI, Assembly-CSharp
-        m_MethodName: ChoiceSelected
-        m_Mode: 1
+        m_MethodName: Choose
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0

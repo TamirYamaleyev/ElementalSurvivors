@@ -24,6 +24,7 @@ public static class MenuSceneSetup
     const string MainMenuPrefabPath = MenuPrefabsFolder + "/PF_MainMenu.prefab";
     const string PauseMenuPrefabPath = MenuPrefabsFolder + "/PF_PauseMenu.prefab";
     const string RunResultPrefabPath = MenuPrefabsFolder + "/PF_RunResultMenu.prefab";
+    const string RunTimerPrefabPath = MenuPrefabsFolder + "/PF_RunTimer.prefab";
 
     [MenuItem("Tools/Menu/Build Menu Prefabs From Layout")]
     public static void BuildMenuPrefabsMenu()
@@ -85,13 +86,19 @@ public static class MenuSceneSetup
 
     static void EnsureMenuPrefabsExist(List<string> checklist)
     {
+        EnsureFolder(MenuPrefabsFolder);
+
         if (AssetDatabase.LoadAssetAtPath<GameObject>(SettingsPrefabPath) == null
             || AssetDatabase.LoadAssetAtPath<GameObject>(MainMenuPrefabPath) == null
-            || AssetDatabase.LoadAssetAtPath<GameObject>(PauseMenuPrefabPath) == null
-            || AssetDatabase.LoadAssetAtPath<GameObject>(RunResultPrefabPath) == null)
+            || AssetDatabase.LoadAssetAtPath<GameObject>(PauseMenuPrefabPath) == null)
         {
             BuildAllMenuPrefabs(checklist);
+            return;
         }
+
+        // Always refresh run-result / run-timer layout (HUD widgets evolve independently).
+        BuildRunResultPrefab(checklist);
+        BuildRunTimerPrefab(checklist);
     }
 
     static void BuildAllMenuPrefabs(List<string> checklist)
@@ -102,6 +109,7 @@ public static class MenuSceneSetup
         BuildMainMenuPrefab(settingsPrefab, checklist);
         BuildPauseMenuPrefab(settingsPrefab, checklist);
         BuildRunResultPrefab(checklist);
+        BuildRunTimerPrefab(checklist);
     }
 
     static GameObject BuildSettingsPrefab(List<string> checklist)
@@ -151,9 +159,10 @@ public static class MenuSceneSetup
         titleRect.sizeDelta = new Vector2(700f, 90f);
         titleRect.anchoredPosition = Vector2.zero;
 
-        var playButton = EnsureMenuButton(mainPanel.transform, "StartGameButton", "Start Game", new Vector2(0.5f, 0.48f), scratch);
-        var settingsButton = EnsureMenuButton(mainPanel.transform, "SettingsButton", "Settings", new Vector2(0.5f, 0.36f), scratch);
-        var quitButton = EnsureMenuButton(mainPanel.transform, "QuitButton", "Quit", new Vector2(0.5f, 0.24f), scratch);
+        var playButton = EnsureMenuButton(mainPanel.transform, "StartGameButton", "Start Game", new Vector2(0.5f, 0.54f), scratch);
+        var endlessButton = EnsureMenuButton(mainPanel.transform, "EndlessButton", "Endless", new Vector2(0.5f, 0.42f), scratch);
+        var settingsButton = EnsureMenuButton(mainPanel.transform, "SettingsButton", "Settings", new Vector2(0.5f, 0.30f), scratch);
+        var quitButton = EnsureMenuButton(mainPanel.transform, "QuitButton", "Quit", new Vector2(0.5f, 0.18f), scratch);
 
         var settingsInstance = (GameObject)PrefabUtility.InstantiatePrefab(settingsPrefab);
         settingsInstance.name = "SettingsPanel";
@@ -162,7 +171,7 @@ public static class MenuSceneSetup
         settingsInstance.SetActive(false);
 
         var settingsMenu = settingsInstance.GetComponent<SettingsMenuUI>();
-        WireMainMenuUi(mainMenuUi, mainPanel, settingsInstance, settingsMenu, playButton, settingsButton, quitButton, scratch);
+        WireMainMenuUi(mainMenuUi, mainPanel, settingsInstance, settingsMenu, playButton, endlessButton, settingsButton, quitButton, scratch);
 
         PrefabUtility.SaveAsPrefabAsset(canvas, MainMenuPrefabPath);
         Object.DestroyImmediate(canvas);
@@ -216,37 +225,152 @@ public static class MenuSceneSetup
         var victoryPanel = CreateOverlayPanel(root.transform, "VictoryPanel");
         victoryPanel.SetActive(false);
 
-        var titleLoss = EnsureTmpText(lossPanel.transform, "LossTitle", "Defeat", 42, scratch);
-        var titleLossRect = titleLoss.GetComponent<RectTransform>();
-        titleLossRect.anchorMin = new Vector2(0.5f, 0.7f);
-        titleLossRect.anchorMax = new Vector2(0.5f, 0.7f);
-        titleLossRect.sizeDelta = new Vector2(500f, 70f);
-        titleLossRect.anchoredPosition = Vector2.zero;
+        BuildResultPanelContent(
+            lossPanel.transform,
+            titleName: "LossTitle",
+            titleText: "Defeat",
+            messageText: "Better luck next time!",
+            scratch,
+            out var lossTitle,
+            out var lossTime,
+            out var lossMessage,
+            out var lossEndless,
+            out var lossRestart,
+            out var lossExit);
 
-        var retryButton = EnsureMenuButton(lossPanel.transform, "RetryButton", "Retry", new Vector2(0.5f, 0.48f), scratch);
-        var mainMenuLossButton = EnsureMenuButton(lossPanel.transform, "MainMenuButton", "Main Menu", new Vector2(0.5f, 0.36f), scratch);
-
-        var titleVictory = EnsureTmpText(victoryPanel.transform, "VictoryTitle", "Victory", 42, scratch);
-        var titleVictoryRect = titleVictory.GetComponent<RectTransform>();
-        titleVictoryRect.anchorMin = new Vector2(0.5f, 0.7f);
-        titleVictoryRect.anchorMax = new Vector2(0.5f, 0.7f);
-        titleVictoryRect.sizeDelta = new Vector2(500f, 70f);
-        titleVictoryRect.anchoredPosition = Vector2.zero;
-
-        var mainMenuVictoryButton = EnsureMenuButton(victoryPanel.transform, "MainMenuButton", "Main Menu", new Vector2(0.5f, 0.36f), scratch);
+        BuildResultPanelContent(
+            victoryPanel.transform,
+            titleName: "VictoryTitle",
+            titleText: "Victory",
+            messageText: "Thanks for playing!",
+            scratch,
+            out var victoryTitle,
+            out var victoryTime,
+            out var victoryMessage,
+            out var victoryEndless,
+            out var victoryRestart,
+            out var victoryExit);
 
         var so = new SerializedObject(runUi);
         so.FindProperty("victoryPanel").objectReferenceValue = victoryPanel;
         so.FindProperty("lossPanel").objectReferenceValue = lossPanel;
+        so.FindProperty("victoryTitleText").objectReferenceValue = victoryTitle.GetComponent<TextMeshProUGUI>();
+        so.FindProperty("victorySurviveTimeText").objectReferenceValue = victoryTime.GetComponent<TextMeshProUGUI>();
+        so.FindProperty("victoryMessageText").objectReferenceValue = victoryMessage.GetComponent<TextMeshProUGUI>();
+        so.FindProperty("victoryEndlessButton").objectReferenceValue = victoryEndless;
+        so.FindProperty("victoryRestartButton").objectReferenceValue = victoryRestart;
+        so.FindProperty("victoryExitButton").objectReferenceValue = victoryExit;
+        so.FindProperty("lossTitleText").objectReferenceValue = lossTitle.GetComponent<TextMeshProUGUI>();
+        so.FindProperty("lossSurviveTimeText").objectReferenceValue = lossTime.GetComponent<TextMeshProUGUI>();
+        so.FindProperty("lossMessageText").objectReferenceValue = lossMessage.GetComponent<TextMeshProUGUI>();
+        so.FindProperty("lossEndlessButton").objectReferenceValue = lossEndless;
+        so.FindProperty("lossRestartButton").objectReferenceValue = lossRestart;
+        so.FindProperty("lossExitButton").objectReferenceValue = lossExit;
         so.ApplyModifiedPropertiesWithoutUndo();
 
-        WireButton(retryButton, runUi, nameof(RunResultMenuUI.Retry), scratch, "Result.Retry");
-        WireButton(mainMenuLossButton, runUi, nameof(RunResultMenuUI.ReturnToMainMenu), scratch, "Result.LossMainMenu");
-        WireButton(mainMenuVictoryButton, runUi, nameof(RunResultMenuUI.ReturnToMainMenu), scratch, "Result.VictoryMainMenu");
+        WireButton(victoryEndless, runUi, nameof(RunResultMenuUI.OnEndlessClicked), scratch, "Result.VictoryEndless");
+        WireButton(victoryRestart, runUi, nameof(RunResultMenuUI.Restart), scratch, "Result.VictoryRestart");
+        WireButton(victoryExit, runUi, nameof(RunResultMenuUI.ExitToMainMenu), scratch, "Result.VictoryExit");
+        WireButton(lossEndless, runUi, nameof(RunResultMenuUI.OnEndlessClicked), scratch, "Result.LossEndless");
+        WireButton(lossRestart, runUi, nameof(RunResultMenuUI.Restart), scratch, "Result.LossRestart");
+        WireButton(lossExit, runUi, nameof(RunResultMenuUI.ExitToMainMenu), scratch, "Result.LossExit");
+
+        victoryEndless.interactable = false;
+        lossEndless.interactable = false;
 
         PrefabUtility.SaveAsPrefabAsset(root, RunResultPrefabPath);
         Object.DestroyImmediate(root);
         checklist.Add("PF_RunResultMenu");
+    }
+
+    static void BuildRunTimerPrefab(List<string> checklist)
+    {
+        var scratch = new List<string>();
+        var root = new GameObject("RunTimerRoot", typeof(RectTransform));
+        var rootRect = root.GetComponent<RectTransform>();
+        rootRect.anchorMin = new Vector2(0f, 1f);
+        rootRect.anchorMax = new Vector2(0f, 1f);
+        rootRect.pivot = new Vector2(0f, 1f);
+        rootRect.sizeDelta = new Vector2(220f, 68f);
+        rootRect.anchoredPosition = new Vector2(5f, -95f);
+
+        var controller = root.AddComponent<RunTimerUIController>();
+
+        var timerText = EnsureTmpText(root.transform, "RunTimerText", "00:00", 28, scratch);
+        var timerRect = timerText.GetComponent<RectTransform>();
+        timerRect.anchorMin = new Vector2(0f, 1f);
+        timerRect.anchorMax = new Vector2(0f, 1f);
+        timerRect.pivot = new Vector2(0f, 1f);
+        timerRect.sizeDelta = new Vector2(220f, 40f);
+        timerRect.anchoredPosition = Vector2.zero;
+
+        var timerTmp = timerText.GetComponent<TextMeshProUGUI>();
+        timerTmp.alignment = TextAlignmentOptions.MidlineLeft;
+        timerTmp.color = Color.white;
+        timerTmp.raycastTarget = false;
+
+        var endlessLabel = EnsureTmpText(root.transform, "EndlessModeLabel", "Endless", 20, scratch);
+        var endlessRect = endlessLabel.GetComponent<RectTransform>();
+        endlessRect.anchorMin = new Vector2(0f, 1f);
+        endlessRect.anchorMax = new Vector2(0f, 1f);
+        endlessRect.pivot = new Vector2(0f, 1f);
+        endlessRect.sizeDelta = new Vector2(220f, 28f);
+        endlessRect.anchoredPosition = new Vector2(0f, -36f);
+
+        var endlessTmp = endlessLabel.GetComponent<TextMeshProUGUI>();
+        endlessTmp.alignment = TextAlignmentOptions.MidlineLeft;
+        endlessTmp.color = new Color(0.55f, 1f, 0.7f, 1f);
+        endlessTmp.raycastTarget = false;
+        endlessLabel.SetActive(false);
+
+        var so = new SerializedObject(controller);
+        so.FindProperty("timerText").objectReferenceValue = timerTmp;
+        so.FindProperty("endlessLabel").objectReferenceValue = endlessTmp;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        PrefabUtility.SaveAsPrefabAsset(root, RunTimerPrefabPath);
+        Object.DestroyImmediate(root);
+        checklist.Add("PF_RunTimer");
+    }
+
+    static void BuildResultPanelContent(
+        Transform panel,
+        string titleName,
+        string titleText,
+        string messageText,
+        List<string> scratch,
+        out GameObject title,
+        out GameObject surviveTime,
+        out GameObject message,
+        out Button endlessButton,
+        out Button restartButton,
+        out Button exitButton)
+    {
+        title = EnsureTmpText(panel, titleName, titleText, 42, scratch);
+        PlaceCentered(title.GetComponent<RectTransform>(), new Vector2(0.5f, 0.78f), new Vector2(520f, 70f));
+
+        surviveTime = EnsureTmpText(panel, "SurviveTimeText", "00:00", 36, scratch);
+        PlaceCentered(surviveTime.GetComponent<RectTransform>(), new Vector2(0.5f, 0.66f), new Vector2(220f, 56f));
+
+        message = EnsureTmpText(panel, "MessageText", messageText, 26, scratch);
+        PlaceCentered(message.GetComponent<RectTransform>(), new Vector2(0.68f, 0.42f), new Vector2(320f, 120f));
+        var messageTmp = message.GetComponent<TextMeshProUGUI>();
+        messageTmp.alignment = TextAlignmentOptions.Left;
+        messageTmp.textWrappingMode = TextWrappingModes.Normal;
+
+        // Vertical button stack (left-center), matching mockup order: Endless / Restart / Exit.
+        endlessButton = EnsureMenuButton(panel, "EndlessButton", "Endless", new Vector2(0.32f, 0.48f), scratch);
+        restartButton = EnsureMenuButton(panel, "RestartButton", "Restart", new Vector2(0.32f, 0.36f), scratch);
+        exitButton = EnsureMenuButton(panel, "ExitButton", "Exit", new Vector2(0.32f, 0.24f), scratch);
+    }
+
+    static void PlaceCentered(RectTransform rect, Vector2 anchor, Vector2 size)
+    {
+        rect.anchorMin = anchor;
+        rect.anchorMax = anchor;
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.sizeDelta = size;
+        rect.anchoredPosition = Vector2.zero;
     }
 
     static void CreateOrUpdateMainMenuScene(List<string> checklist)
@@ -359,14 +483,14 @@ public static class MenuSceneSetup
         DestroyLegacyResultObjects(hud.transform);
 
         var resultInstance = FindChild(hud.transform, "RunResultMenuRoot");
-        if (resultInstance == null)
-        {
-            resultInstance = (GameObject)PrefabUtility.InstantiatePrefab(resultPrefab);
-            resultInstance.name = "RunResultMenuRoot";
-            resultInstance.transform.SetParent(hud.transform, false);
-            Stretch(resultInstance.GetComponent<RectTransform>());
-            checklist.Add(scenePath + ".PF_RunResultMenu");
-        }
+        if (resultInstance != null)
+            Object.DestroyImmediate(resultInstance);
+
+        resultInstance = (GameObject)PrefabUtility.InstantiatePrefab(resultPrefab);
+        resultInstance.name = "RunResultMenuRoot";
+        resultInstance.transform.SetParent(hud.transform, false);
+        Stretch(resultInstance.GetComponent<RectTransform>());
+        checklist.Add(scenePath + ".PF_RunResultMenu");
 
         var runUi = resultInstance.GetComponent<RunResultMenuUI>();
         var playerInput = Object.FindFirstObjectByType<PlayerInput>();
@@ -388,6 +512,7 @@ public static class MenuSceneSetup
         runSo.FindProperty("enemySpawner").objectReferenceValue = spawner;
         runSo.FindProperty("playerHealth").objectReferenceValue = player;
         runSo.FindProperty("resultMenuUI").objectReferenceValue = runUi;
+        runSo.FindProperty("playerInput").objectReferenceValue = playerInput;
         runSo.ApplyModifiedPropertiesWithoutUndo();
 
         EditorSceneManager.MarkSceneDirty(scene);
@@ -404,6 +529,18 @@ public static class MenuSceneSetup
             return;
         }
 
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(RunTimerPrefabPath) == null)
+            BuildRunTimerPrefab(checklist);
+
+        var timerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(RunTimerPrefabPath);
+        if (timerPrefab == null)
+        {
+            Debug.LogError("[MenuSceneSetup] Missing " + RunTimerPrefabPath);
+            return;
+        }
+
+        DestroyLegacyRunTimerObjects(hud.transform);
+
         var healthbar = FindChild(hud.transform, "Healthbar");
         float belowHealthY = -95f;
         if (healthbar != null)
@@ -412,40 +549,53 @@ public static class MenuSceneSetup
             belowHealthY = hbRect.anchoredPosition.y - hbRect.sizeDelta.y - 10f;
         }
 
-        var timerGo = FindChild(hud.transform, "RunTimerText");
-        if (timerGo == null)
-        {
-            timerGo = new GameObject("RunTimerText", typeof(RectTransform), typeof(TextMeshProUGUI), typeof(TmpFontOnEnable));
-            timerGo.transform.SetParent(hud.transform, false);
-            checklist.Add(scenePath + ".RunTimerText");
-        }
+        var timerInstance = (GameObject)PrefabUtility.InstantiatePrefab(timerPrefab);
+        timerInstance.name = "RunTimerRoot";
+        timerInstance.transform.SetParent(hud.transform, false);
 
-        var rect = timerGo.GetComponent<RectTransform>();
-        rect.anchorMin = new Vector2(0f, 1f);
-        rect.anchorMax = new Vector2(0f, 1f);
-        rect.pivot = new Vector2(0f, 1f);
-        rect.sizeDelta = new Vector2(220f, 40f);
-        rect.anchoredPosition = new Vector2(5f, belowHealthY);
+        var rootRect = timerInstance.GetComponent<RectTransform>();
+        rootRect.anchorMin = new Vector2(0f, 1f);
+        rootRect.anchorMax = new Vector2(0f, 1f);
+        rootRect.pivot = new Vector2(0f, 1f);
+        rootRect.sizeDelta = new Vector2(220f, 68f);
+        rootRect.anchoredPosition = new Vector2(5f, belowHealthY);
 
-        var tmp = timerGo.GetComponent<TextMeshProUGUI>();
-        tmp.text = "00:00";
-        tmp.fontSize = 28;
-        tmp.alignment = TextAlignmentOptions.MidlineLeft;
-        tmp.color = Color.white;
-
-        var controller = timerGo.GetComponent<RunTimerUIController>();
-        if (controller == null)
-            controller = timerGo.AddComponent<RunTimerUIController>();
-
-        var spawner = Object.FindFirstObjectByType<EnemySpawner>();
-
-        var so = new SerializedObject(controller);
-        so.FindProperty("spawner").objectReferenceValue = spawner;
-        so.FindProperty("timerText").objectReferenceValue = tmp;
-        so.ApplyModifiedPropertiesWithoutUndo();
+        var controller = timerInstance.GetComponent<RunTimerUIController>();
+        WireRunTimerSceneRefs(controller);
+        checklist.Add(scenePath + ".PF_RunTimer");
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
+    }
+
+    static void DestroyLegacyRunTimerObjects(Transform hud)
+    {
+        DestroyChildIfPresent(hud, "RunTimerText");
+        DestroyChildIfPresent(hud, "EndlessModeLabel");
+
+        var timerRoot = FindChild(hud, "RunTimerRoot");
+        if (timerRoot == null)
+            return;
+
+        var timerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(RunTimerPrefabPath);
+        if (timerPrefab != null && PrefabUtility.GetCorrespondingObjectFromSource(timerRoot) == timerPrefab)
+        {
+            Object.DestroyImmediate(timerRoot);
+            return;
+        }
+
+        Object.DestroyImmediate(timerRoot);
+    }
+
+    static void WireRunTimerSceneRefs(RunTimerUIController controller)
+    {
+        if (controller == null)
+            return;
+
+        var so = new SerializedObject(controller);
+        so.FindProperty("spawner").objectReferenceValue = Object.FindFirstObjectByType<EnemySpawner>();
+        so.FindProperty("runSession").objectReferenceValue = Object.FindFirstObjectByType<RunSessionController>();
+        so.ApplyModifiedPropertiesWithoutUndo();
     }
 
     static void DestroyLegacyMainMenuObjects(Scene scene)
@@ -532,6 +682,7 @@ public static class MenuSceneSetup
         GameObject settingsPanel,
         SettingsMenuUI settingsMenu,
         Button playButton,
+        Button endlessButton,
         Button settingsButton,
         Button quitButton,
         List<string> checklist)
@@ -541,12 +692,14 @@ public static class MenuSceneSetup
         so.FindProperty("mainPanel").objectReferenceValue = mainPanel;
         so.FindProperty("settingsPanel").objectReferenceValue = settingsPanel;
         so.FindProperty("playButton").objectReferenceValue = playButton;
+        so.FindProperty("endlessButton").objectReferenceValue = endlessButton;
         so.FindProperty("settingsButton").objectReferenceValue = settingsButton;
         so.FindProperty("quitButton").objectReferenceValue = quitButton;
         so.FindProperty("settingsMenu").objectReferenceValue = settingsMenu;
         so.ApplyModifiedPropertiesWithoutUndo();
 
         WireButton(playButton, ui, nameof(MainMenuUI.StartGame), checklist, "MainMenu.Start");
+        WireButton(endlessButton, ui, nameof(MainMenuUI.StartEndlessGame), checklist, "MainMenu.Endless");
         WireButton(settingsButton, ui, nameof(MainMenuUI.OpenSettings), checklist, "MainMenu.Settings");
         WireButton(quitButton, ui, nameof(MainMenuUI.QuitGame), checklist, "MainMenu.Quit");
     }
@@ -594,6 +747,8 @@ public static class MenuSceneSetup
 
         var so = new SerializedObject(ui);
         so.FindProperty("playerInput").objectReferenceValue = playerInput;
+        so.FindProperty("enemySpawner").objectReferenceValue = Object.FindFirstObjectByType<EnemySpawner>();
+        so.FindProperty("runSessionController").objectReferenceValue = Object.FindFirstObjectByType<RunSessionController>();
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 
