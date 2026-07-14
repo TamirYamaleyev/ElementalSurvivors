@@ -87,4 +87,16 @@ public class WeaponInstance
 
         return strategy.Execute(target, ctx, data, definition, damage, speed, spawnPos);
     }
+
+    public bool TryLevelUp(int maxLevel)
+    {
+        if (maxLevel <= 0 || level >= maxLevel)
+            return false;
+
+        level++;
+        cooldownTimer = definition.behaviorType == WeaponBehaviorType.Orbit
+            ? 0f
+            : Mathf.Min(cooldownTimer, Current.cooldown);
+        return true;
+    }
 }

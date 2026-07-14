@@ -168,17 +168,11 @@ public static class EnemyCombatPrefabBuilder
         if (firePoint != null)
             attackSo.FindProperty("firePoint").objectReferenceValue = firePoint;
 
-        var singleLine = attackSo.FindProperty("singleLine");
-        singleLine.FindPropertyRelative("count").intValue = 11;
-        singleLine.FindPropertyRelative("delayBetweenShots").floatValue = 0.05f;
+        var profile = AssetDatabase.LoadAssetAtPath<BossAttackProfileSO>(
+            "Assets/Data/Boss/BossAttackProfile_Default.asset");
+        if (profile != null)
+            attackSo.FindProperty("attackProfile").objectReferenceValue = profile;
 
-        var rotatingArc = attackSo.FindProperty("rotatingArc");
-        rotatingArc.FindPropertyRelative("segmentCount").intValue = 5;
-        rotatingArc.FindPropertyRelative("segmentArcDegrees").floatValue = 72f;
-        rotatingArc.FindPropertyRelative("projectilesPerRow").intValue = 9;
-        rotatingArc.FindPropertyRelative("radialRows").intValue = 6;
-        rotatingArc.FindPropertyRelative("delayBetweenSegments").floatValue = 0.5f;
-        rotatingArc.FindPropertyRelative("startFromAim").boolValue = true;
         attackSo.ApplyModifiedPropertiesWithoutUndo();
 
         EnsureBossHealthBar(instance, health);

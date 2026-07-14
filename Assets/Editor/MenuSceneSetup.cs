@@ -19,13 +19,33 @@ public static class MenuSceneSetup
     const string InputActionsPath = "Assets/InputSystem_Actions.inputactions";
     const string AudioManagerPrefabPath = "Assets/Prefabs/Audio/PF_AudioManager.prefab";
 
+    const string MenuPrefabsFolder = "Assets/Prefabs/UI/Menus";
+    const string SettingsPrefabPath = MenuPrefabsFolder + "/PF_SettingsPanel.prefab";
+    const string MainMenuPrefabPath = MenuPrefabsFolder + "/PF_MainMenu.prefab";
+    const string PauseMenuPrefabPath = MenuPrefabsFolder + "/PF_PauseMenu.prefab";
+    const string RunResultPrefabPath = MenuPrefabsFolder + "/PF_RunResultMenu.prefab";
+
+    [MenuItem("Tools/Menu/Build Menu Prefabs From Layout")]
+    public static void BuildMenuPrefabsMenu()
+    {
+        var checklist = new List<string>();
+        BuildAllMenuPrefabs(checklist);
+        AssetDatabase.SaveAssets();
+        Debug.Log("[MenuSceneSetup] Prefabs built: " + string.Join(", ", checklist));
+    }
+
     [MenuItem("Tools/Menu/Setup Main Menu And Pause Menu")]
     public static void SetupAllMenusMenu()
     {
         var checklist = new List<string>();
+        EnsureMenuPrefabsExist(checklist);
         CreateOrUpdateMainMenuScene(checklist);
         SetupPauseMenuInScene(SampleScenePath, checklist);
         SetupPauseMenuInScene(BossCombatTestPath, checklist);
+        SetupRunResultMenuInScene(SampleScenePath, checklist);
+        SetupRunResultMenuInScene(BossCombatTestPath, checklist);
+        SetupRunTimerInScene(SampleScenePath, checklist);
+        SetupRunTimerInScene(BossCombatTestPath, checklist);
         UpdateBuildSettings();
         AssetDatabase.SaveAssets();
         Debug.Log("[MenuSceneSetup] Completed: " + string.Join(", ", checklist));
@@ -46,6 +66,189 @@ public static class MenuSceneSetup
         }
     }
 
+    public static void BuildMenuPrefabsFromCli()
+    {
+        try
+        {
+            var checklist = new List<string>();
+            BuildAllMenuPrefabs(checklist);
+            AssetDatabase.SaveAssets();
+            Debug.Log("[MenuSceneSetup] Prefabs CLI build completed: " + string.Join(", ", checklist));
+            EditorApplication.Exit(0);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("[MenuSceneSetup] Prefabs CLI build failed: " + ex);
+            EditorApplication.Exit(1);
+        }
+    }
+
+    static void EnsureMenuPrefabsExist(List<string> checklist)
+    {
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(SettingsPrefabPath) == null
+            || AssetDatabase.LoadAssetAtPath<GameObject>(MainMenuPrefabPath) == null
+            || AssetDatabase.LoadAssetAtPath<GameObject>(PauseMenuPrefabPath) == null
+            || AssetDatabase.LoadAssetAtPath<GameObject>(RunResultPrefabPath) == null)
+        {
+            BuildAllMenuPrefabs(checklist);
+        }
+    }
+
+    static void BuildAllMenuPrefabs(List<string> checklist)
+    {
+        EnsureFolder(MenuPrefabsFolder);
+
+        var settingsPrefab = BuildSettingsPrefab(checklist);
+        BuildMainMenuPrefab(settingsPrefab, checklist);
+        BuildPauseMenuPrefab(settingsPrefab, checklist);
+        BuildRunResultPrefab(checklist);
+    }
+
+    static GameObject BuildSettingsPrefab(List<string> checklist)
+    {
+        var root = CreateOverlayPanel(null, "PF_SettingsPanel");
+        root.SetActive(false);
+
+        var settingsMenu = root.AddComponent<SettingsMenuUI>();
+        var scratch = new List<string>();
+
+        var title = EnsureTmpText(root.transform, "SettingsTitle", "Settings", 42, scratch);
+        var titleRect = title.GetComponent<RectTransform>();
+        titleRect.anchorMin = new Vector2(0.5f, 0.82f);
+        titleRect.anchorMax = new Vector2(0.5f, 0.82f);
+        titleRect.sizeDelta = new Vector2(500f, 70f);
+        titleRect.anchoredPosition = Vector2.zero;
+
+        var masterSlider = EnsureVolumeSlider(root.transform, "MasterVolumeSlider", "Master Volume", 0.62f, scratch);
+        var musicSlider = EnsureVolumeSlider(root.transform, "MusicVolumeSlider", "Music Volume", 0.5f, scratch);
+        var sfxSlider = EnsureVolumeSlider(root.transform, "SfxVolumeSlider", "SFX Volume", 0.38f, scratch);
+        var backButton = EnsureMenuButton(root.transform, "BackButton", "Back", new Vector2(0.5f, 0.18f), scratch);
+
+        WireSettingsMenu(settingsMenu, masterSlider, musicSlider, sfxSlider, backButton);
+        WireButton(backButton, settingsMenu, nameof(SettingsMenuUI.Close), scratch, "Settings.Back");
+
+        var prefab = PrefabUtility.SaveAsPrefabAsset(root, SettingsPrefabPath);
+        Object.DestroyImmediate(root);
+        checklist.Add("PF_SettingsPanel");
+        return prefab;
+    }
+
+    static void BuildMainMenuPrefab(GameObject settingsPrefab, List<string> checklist)
+    {
+        var scratch = new List<string>();
+        var canvas = CreateScreenCanvas("MainMenuCanvas");
+        var menuRoot = new GameObject("MenuRoot", typeof(RectTransform));
+        menuRoot.transform.SetParent(canvas.transform, false);
+        Stretch(menuRoot.GetComponent<RectTransform>());
+
+        var mainMenuUi = menuRoot.AddComponent<MainMenuUI>();
+        var mainPanel = EnsureChildPanel(menuRoot.transform, "MainPanel", scratch);
+
+        var title = EnsureTmpText(mainPanel.transform, "TitleText", "Elemental Survivors", 56, scratch);
+        var titleRect = title.GetComponent<RectTransform>();
+        titleRect.anchorMin = new Vector2(0.5f, 0.75f);
+        titleRect.anchorMax = new Vector2(0.5f, 0.75f);
+        titleRect.sizeDelta = new Vector2(700f, 90f);
+        titleRect.anchoredPosition = Vector2.zero;
+
+        var playButton = EnsureMenuButton(mainPanel.transform, "StartGameButton", "Start Game", new Vector2(0.5f, 0.48f), scratch);
+        var settingsButton = EnsureMenuButton(mainPanel.transform, "SettingsButton", "Settings", new Vector2(0.5f, 0.36f), scratch);
+        var quitButton = EnsureMenuButton(mainPanel.transform, "QuitButton", "Quit", new Vector2(0.5f, 0.24f), scratch);
+
+        var settingsInstance = (GameObject)PrefabUtility.InstantiatePrefab(settingsPrefab);
+        settingsInstance.name = "SettingsPanel";
+        settingsInstance.transform.SetParent(menuRoot.transform, false);
+        Stretch(settingsInstance.GetComponent<RectTransform>());
+        settingsInstance.SetActive(false);
+
+        var settingsMenu = settingsInstance.GetComponent<SettingsMenuUI>();
+        WireMainMenuUi(mainMenuUi, mainPanel, settingsInstance, settingsMenu, playButton, settingsButton, quitButton, scratch);
+
+        PrefabUtility.SaveAsPrefabAsset(canvas, MainMenuPrefabPath);
+        Object.DestroyImmediate(canvas);
+        checklist.Add("PF_MainMenu");
+    }
+
+    static void BuildPauseMenuPrefab(GameObject settingsPrefab, List<string> checklist)
+    {
+        var scratch = new List<string>();
+        var root = new GameObject("PauseMenuRoot", typeof(RectTransform));
+        Stretch(root.GetComponent<RectTransform>());
+
+        var pauseUi = root.AddComponent<PauseMenuUI>();
+        var pausePanel = CreateOverlayPanel(root.transform, "PauseMenuPanel");
+        pausePanel.SetActive(false);
+
+        var title = EnsureTmpText(pausePanel.transform, "PauseTitle", "Paused", 42, scratch);
+        var titleRect = title.GetComponent<RectTransform>();
+        titleRect.anchorMin = new Vector2(0.5f, 0.7f);
+        titleRect.anchorMax = new Vector2(0.5f, 0.7f);
+        titleRect.sizeDelta = new Vector2(500f, 70f);
+        titleRect.anchoredPosition = Vector2.zero;
+
+        var resumeButton = EnsureMenuButton(pausePanel.transform, "ResumeButton", "Resume", new Vector2(0.5f, 0.48f), scratch);
+        var settingsButton = EnsureMenuButton(pausePanel.transform, "SettingsButton", "Settings", new Vector2(0.5f, 0.36f), scratch);
+        var mainMenuButton = EnsureMenuButton(pausePanel.transform, "MainMenuButton", "Main Menu", new Vector2(0.5f, 0.24f), scratch);
+
+        var settingsInstance = (GameObject)PrefabUtility.InstantiatePrefab(settingsPrefab);
+        settingsInstance.name = "PauseSettingsPanel";
+        settingsInstance.transform.SetParent(root.transform, false);
+        Stretch(settingsInstance.GetComponent<RectTransform>());
+        settingsInstance.SetActive(false);
+
+        var settingsMenu = settingsInstance.GetComponent<SettingsMenuUI>();
+        WirePauseMenuInternal(pauseUi, pausePanel, settingsInstance, settingsMenu, resumeButton, settingsButton, mainMenuButton, scratch);
+
+        PrefabUtility.SaveAsPrefabAsset(root, PauseMenuPrefabPath);
+        Object.DestroyImmediate(root);
+        checklist.Add("PF_PauseMenu");
+    }
+
+    static void BuildRunResultPrefab(List<string> checklist)
+    {
+        var scratch = new List<string>();
+        var root = new GameObject("RunResultMenuRoot", typeof(RectTransform));
+        Stretch(root.GetComponent<RectTransform>());
+
+        var runUi = root.AddComponent<RunResultMenuUI>();
+        var lossPanel = CreateOverlayPanel(root.transform, "LossPanel");
+        lossPanel.SetActive(false);
+        var victoryPanel = CreateOverlayPanel(root.transform, "VictoryPanel");
+        victoryPanel.SetActive(false);
+
+        var titleLoss = EnsureTmpText(lossPanel.transform, "LossTitle", "Defeat", 42, scratch);
+        var titleLossRect = titleLoss.GetComponent<RectTransform>();
+        titleLossRect.anchorMin = new Vector2(0.5f, 0.7f);
+        titleLossRect.anchorMax = new Vector2(0.5f, 0.7f);
+        titleLossRect.sizeDelta = new Vector2(500f, 70f);
+        titleLossRect.anchoredPosition = Vector2.zero;
+
+        var retryButton = EnsureMenuButton(lossPanel.transform, "RetryButton", "Retry", new Vector2(0.5f, 0.48f), scratch);
+        var mainMenuLossButton = EnsureMenuButton(lossPanel.transform, "MainMenuButton", "Main Menu", new Vector2(0.5f, 0.36f), scratch);
+
+        var titleVictory = EnsureTmpText(victoryPanel.transform, "VictoryTitle", "Victory", 42, scratch);
+        var titleVictoryRect = titleVictory.GetComponent<RectTransform>();
+        titleVictoryRect.anchorMin = new Vector2(0.5f, 0.7f);
+        titleVictoryRect.anchorMax = new Vector2(0.5f, 0.7f);
+        titleVictoryRect.sizeDelta = new Vector2(500f, 70f);
+        titleVictoryRect.anchoredPosition = Vector2.zero;
+
+        var mainMenuVictoryButton = EnsureMenuButton(victoryPanel.transform, "MainMenuButton", "Main Menu", new Vector2(0.5f, 0.36f), scratch);
+
+        var so = new SerializedObject(runUi);
+        so.FindProperty("victoryPanel").objectReferenceValue = victoryPanel;
+        so.FindProperty("lossPanel").objectReferenceValue = lossPanel;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        WireButton(retryButton, runUi, nameof(RunResultMenuUI.Retry), scratch, "Result.Retry");
+        WireButton(mainMenuLossButton, runUi, nameof(RunResultMenuUI.ReturnToMainMenu), scratch, "Result.LossMainMenu");
+        WireButton(mainMenuVictoryButton, runUi, nameof(RunResultMenuUI.ReturnToMainMenu), scratch, "Result.VictoryMainMenu");
+
+        PrefabUtility.SaveAsPrefabAsset(root, RunResultPrefabPath);
+        Object.DestroyImmediate(root);
+        checklist.Add("PF_RunResultMenu");
+    }
+
     static void CreateOrUpdateMainMenuScene(List<string> checklist)
     {
         Scene scene;
@@ -56,42 +259,29 @@ public static class MenuSceneSetup
 
         EnsureEventSystem(checklist);
         EnsureAudioManager(scene, checklist);
-        var canvas = EnsureScreenCanvas("MainMenuCanvas", checklist);
 
-        var menuRoot = FindChild(canvas.transform, "MenuRoot");
-        if (menuRoot == null)
+        var mainMenuPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(MainMenuPrefabPath);
+        if (mainMenuPrefab == null)
         {
-            menuRoot = new GameObject("MenuRoot", typeof(RectTransform));
-            menuRoot.transform.SetParent(canvas.transform, false);
-            Stretch(menuRoot.GetComponent<RectTransform>());
-            checklist.Add("MainMenu.MenuRoot");
+            Debug.LogError("[MenuSceneSetup] Missing " + MainMenuPrefabPath);
+            return;
         }
 
-        var mainMenuUi = menuRoot.GetComponent<MainMenuUI>();
-        if (mainMenuUi == null)
+        DestroyLegacyMainMenuObjects(scene);
+
+        var canvasInstance = FindRootObject(scene, "MainMenuCanvas");
+        var isPrefabInstance = canvasInstance != null
+            && PrefabUtility.GetCorrespondingObjectFromSource(canvasInstance) == mainMenuPrefab;
+
+        if (!isPrefabInstance)
         {
-            mainMenuUi = menuRoot.AddComponent<MainMenuUI>();
-            checklist.Add("MainMenuUI");
+            if (canvasInstance != null)
+                Object.DestroyImmediate(canvasInstance);
+
+            canvasInstance = (GameObject)PrefabUtility.InstantiatePrefab(mainMenuPrefab, scene);
+            canvasInstance.name = "MainMenuCanvas";
+            checklist.Add("MainMenu.PF_MainMenu");
         }
-
-        var mainPanel = EnsureChildPanel(menuRoot.transform, "MainPanel", checklist);
-        var settingsPanel = EnsureSettingsPanel(menuRoot.transform, "SettingsPanel", checklist);
-        settingsPanel.SetActive(false);
-
-        var title = EnsureTmpText(mainPanel.transform, "TitleText", "Elemental Survivors", 56, checklist);
-        var titleRect = title.GetComponent<RectTransform>();
-        titleRect.anchorMin = new Vector2(0.5f, 0.75f);
-        titleRect.anchorMax = new Vector2(0.5f, 0.75f);
-        titleRect.sizeDelta = new Vector2(700f, 90f);
-        titleRect.anchoredPosition = Vector2.zero;
-
-        var playButton = EnsureMenuButton(mainPanel.transform, "StartGameButton", "Start Game", new Vector2(0.5f, 0.48f), checklist);
-        var settingsButton = EnsureMenuButton(mainPanel.transform, "SettingsButton", "Settings", new Vector2(0.5f, 0.36f), checklist);
-        var quitButton = EnsureMenuButton(mainPanel.transform, "QuitButton", "Quit", new Vector2(0.5f, 0.24f), checklist);
-
-        var settingsMenu = settingsPanel.GetComponent<SettingsMenuUI>();
-        var backButton = settingsPanel.transform.Find("BackButton")?.GetComponent<Button>();
-        WireMainMenuUi(mainMenuUi, mainPanel, settingsPanel, settingsMenu, playButton, settingsButton, quitButton, backButton, checklist);
 
         if (!scene.IsValid() || string.IsNullOrEmpty(scene.path))
             EditorSceneManager.SaveScene(scene, MainMenuScenePath);
@@ -112,45 +302,26 @@ public static class MenuSceneSetup
             return;
         }
 
-        var pauseRoot = FindChild(hud.transform, "PauseMenuRoot");
-        if (pauseRoot == null)
+        var pausePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PauseMenuPrefabPath);
+        if (pausePrefab == null)
         {
-            pauseRoot = new GameObject("PauseMenuRoot", typeof(RectTransform));
-            pauseRoot.transform.SetParent(hud.transform, false);
-            Stretch(pauseRoot.GetComponent<RectTransform>());
-            checklist.Add(scenePath + ".PauseMenuRoot");
+            Debug.LogError("[MenuSceneSetup] Missing " + PauseMenuPrefabPath);
+            return;
         }
 
-        var pauseUi = pauseRoot.GetComponent<PauseMenuUI>();
-        if (pauseUi == null)
+        DestroyLegacyPauseObjects(hud.transform);
+
+        var pauseInstance = FindChild(hud.transform, "PauseMenuRoot");
+        if (pauseInstance == null)
         {
-            pauseUi = pauseRoot.AddComponent<PauseMenuUI>();
-            checklist.Add(scenePath + ".PauseMenuUI");
+            pauseInstance = (GameObject)PrefabUtility.InstantiatePrefab(pausePrefab);
+            pauseInstance.name = "PauseMenuRoot";
+            pauseInstance.transform.SetParent(hud.transform, false);
+            Stretch(pauseInstance.GetComponent<RectTransform>());
+            checklist.Add(scenePath + ".PF_PauseMenu");
         }
 
-        var pausePanel = FindChild(hud.transform, "PauseMenuPanel");
-        if (pausePanel == null)
-        {
-            pausePanel = CreateOverlayPanel(hud.transform, "PauseMenuPanel");
-            checklist.Add(scenePath + ".PauseMenuPanel");
-        }
-
-        pausePanel.SetActive(false);
-
-        var settingsPanel = EnsureSettingsPanel(hud.transform, "PauseSettingsPanel", checklist);
-        settingsPanel.SetActive(false);
-
-        var title = EnsureTmpText(pausePanel.transform, "PauseTitle", "Paused", 42, checklist);
-        var titleRect = title.GetComponent<RectTransform>();
-        titleRect.anchorMin = new Vector2(0.5f, 0.7f);
-        titleRect.anchorMax = new Vector2(0.5f, 0.7f);
-        titleRect.sizeDelta = new Vector2(500f, 70f);
-        titleRect.anchoredPosition = Vector2.zero;
-
-        var resumeButton = EnsureMenuButton(pausePanel.transform, "ResumeButton", "Resume", new Vector2(0.5f, 0.48f), checklist);
-        var settingsButton = EnsureMenuButton(pausePanel.transform, "SettingsButton", "Settings", new Vector2(0.5f, 0.36f), checklist);
-        var mainMenuButton = EnsureMenuButton(pausePanel.transform, "MainMenuButton", "Main Menu", new Vector2(0.5f, 0.24f), checklist);
-
+        var pauseUi = pauseInstance.GetComponent<PauseMenuUI>();
         var pauseToggle = FindChild(hud.transform, "PauseButton");
         if (pauseToggle != null && pauseToggle.GetComponent<Button>() == null)
         {
@@ -158,171 +329,272 @@ public static class MenuSceneSetup
             checklist.Add(scenePath + ".PauseButton.Button");
         }
 
-        var settingsMenu = settingsPanel.GetComponent<SettingsMenuUI>();
         var playerInput = Object.FindFirstObjectByType<PlayerInput>();
-        var backButton = settingsPanel.transform.Find("BackButton")?.GetComponent<Button>();
-        WirePauseMenuUi(pauseUi, pausePanel, settingsPanel, settingsMenu, pauseToggle, resumeButton, settingsButton, mainMenuButton, playerInput, checklist);
+        WirePauseMenuSceneRefs(pauseUi, pauseToggle, playerInput);
 
         if (pauseToggle != null)
-            WirePauseToggle(pauseToggle.GetComponent<Button>(), pauseUi, checklist, scenePath);
-
-        if (resumeButton != null)
-            WireButton(resumeButton, pauseUi, nameof(PauseMenuUI.Resume), checklist, scenePath + ".Resume");
-
-        if (settingsButton != null)
-            WireButton(settingsButton, pauseUi, nameof(PauseMenuUI.OpenSettings), checklist, scenePath + ".Settings");
-
-        if (mainMenuButton != null)
-            WireButton(mainMenuButton, pauseUi, nameof(PauseMenuUI.ReturnToMainMenu), checklist, scenePath + ".MainMenu");
-
-        if (backButton != null)
-            WireButton(backButton, settingsMenu, nameof(SettingsMenuUI.Close), checklist, scenePath + ".SettingsBack");
+            WireButton(pauseToggle.GetComponent<Button>(), pauseUi, nameof(PauseMenuUI.TogglePause), checklist, scenePath + ".PauseToggle");
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
     }
 
-    static GameObject EnsureSettingsPanel(Transform parent, string name, List<string> checklist)
+    static void SetupRunResultMenuInScene(string scenePath, List<string> checklist)
     {
-        var panel = FindChild(parent, name);
-        if (panel == null)
+        var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+        var hud = FindRootObject(scene, "HUD");
+        if (hud == null)
         {
-            panel = CreateOverlayPanel(parent, name);
-            checklist.Add(name);
+            Debug.LogWarning("[MenuSceneSetup] HUD not found in " + scenePath);
+            return;
         }
 
-        var settingsMenu = panel.GetComponent<SettingsMenuUI>();
-        if (settingsMenu == null)
-            settingsMenu = panel.AddComponent<SettingsMenuUI>();
+        var resultPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(RunResultPrefabPath);
+        if (resultPrefab == null)
+        {
+            Debug.LogError("[MenuSceneSetup] Missing " + RunResultPrefabPath);
+            return;
+        }
 
-        var title = EnsureTmpText(panel.transform, "SettingsTitle", "Settings", 42, checklist);
-        var titleRect = title.GetComponent<RectTransform>();
-        titleRect.anchorMin = new Vector2(0.5f, 0.82f);
-        titleRect.anchorMax = new Vector2(0.5f, 0.82f);
-        titleRect.sizeDelta = new Vector2(500f, 70f);
-        titleRect.anchoredPosition = Vector2.zero;
+        DestroyLegacyResultObjects(hud.transform);
 
-        var masterSlider = EnsureVolumeSlider(panel.transform, "MasterVolumeSlider", "Master Volume", 0.62f, checklist);
-        var musicSlider = EnsureVolumeSlider(panel.transform, "MusicVolumeSlider", "Music Volume", 0.5f, checklist);
-        var sfxSlider = EnsureVolumeSlider(panel.transform, "SfxVolumeSlider", "SFX Volume", 0.38f, checklist);
-        var backButton = EnsureMenuButton(panel.transform, "BackButton", "Back", new Vector2(0.5f, 0.18f), checklist);
+        var resultInstance = FindChild(hud.transform, "RunResultMenuRoot");
+        if (resultInstance == null)
+        {
+            resultInstance = (GameObject)PrefabUtility.InstantiatePrefab(resultPrefab);
+            resultInstance.name = "RunResultMenuRoot";
+            resultInstance.transform.SetParent(hud.transform, false);
+            Stretch(resultInstance.GetComponent<RectTransform>());
+            checklist.Add(scenePath + ".PF_RunResultMenu");
+        }
 
+        var runUi = resultInstance.GetComponent<RunResultMenuUI>();
+        var playerInput = Object.FindFirstObjectByType<PlayerInput>();
+        WireRunResultSceneRefs(runUi, playerInput);
+
+        var controllerRoot = FindChild(hud.transform, "RunSessionControllerRoot");
+        if (controllerRoot == null)
+        {
+            controllerRoot = new GameObject("RunSessionControllerRoot", typeof(RunSessionController));
+            controllerRoot.transform.SetParent(hud.transform, false);
+            checklist.Add(scenePath + ".RunSessionControllerRoot");
+        }
+
+        var runController = controllerRoot.GetComponent<RunSessionController>();
+        var spawner = Object.FindFirstObjectByType<EnemySpawner>();
+        var player = Object.FindFirstObjectByType<PlayerHealth>();
+
+        var runSo = new SerializedObject(runController);
+        runSo.FindProperty("enemySpawner").objectReferenceValue = spawner;
+        runSo.FindProperty("playerHealth").objectReferenceValue = player;
+        runSo.FindProperty("resultMenuUI").objectReferenceValue = runUi;
+        runSo.ApplyModifiedPropertiesWithoutUndo();
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+    }
+
+    static void SetupRunTimerInScene(string scenePath, List<string> checklist)
+    {
+        var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+        var hud = FindRootObject(scene, "HUD");
+        if (hud == null)
+        {
+            Debug.LogWarning("[MenuSceneSetup] HUD not found in " + scenePath);
+            return;
+        }
+
+        var healthbar = FindChild(hud.transform, "Healthbar");
+        float belowHealthY = -95f;
+        if (healthbar != null)
+        {
+            var hbRect = healthbar.GetComponent<RectTransform>();
+            belowHealthY = hbRect.anchoredPosition.y - hbRect.sizeDelta.y - 10f;
+        }
+
+        var timerGo = FindChild(hud.transform, "RunTimerText");
+        if (timerGo == null)
+        {
+            timerGo = new GameObject("RunTimerText", typeof(RectTransform), typeof(TextMeshProUGUI), typeof(TmpFontOnEnable));
+            timerGo.transform.SetParent(hud.transform, false);
+            checklist.Add(scenePath + ".RunTimerText");
+        }
+
+        var rect = timerGo.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0f, 1f);
+        rect.anchorMax = new Vector2(0f, 1f);
+        rect.pivot = new Vector2(0f, 1f);
+        rect.sizeDelta = new Vector2(220f, 40f);
+        rect.anchoredPosition = new Vector2(5f, belowHealthY);
+
+        var tmp = timerGo.GetComponent<TextMeshProUGUI>();
+        tmp.text = "00:00";
+        tmp.fontSize = 28;
+        tmp.alignment = TextAlignmentOptions.MidlineLeft;
+        tmp.color = Color.white;
+
+        var controller = timerGo.GetComponent<RunTimerUIController>();
+        if (controller == null)
+            controller = timerGo.AddComponent<RunTimerUIController>();
+
+        var spawner = Object.FindFirstObjectByType<EnemySpawner>();
+
+        var so = new SerializedObject(controller);
+        so.FindProperty("spawner").objectReferenceValue = spawner;
+        so.FindProperty("timerText").objectReferenceValue = tmp;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+    }
+
+    static void DestroyLegacyMainMenuObjects(Scene scene)
+    {
+        // Prefab instance replaces any previously baked MainMenuCanvas tree.
+    }
+
+    static void DestroyLegacyPauseObjects(Transform hud)
+    {
+        // Old layout kept panels as HUD siblings; prefab keeps them under PauseMenuRoot.
+        DestroyChildIfPresent(hud, "PauseMenuPanel");
+        DestroyChildIfPresent(hud, "PauseSettingsPanel");
+
+        var pauseRoot = FindChild(hud, "PauseMenuRoot");
+        if (pauseRoot == null)
+            return;
+
+        var pausePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PauseMenuPrefabPath);
+        if (pausePrefab != null && PrefabUtility.GetCorrespondingObjectFromSource(pauseRoot) == pausePrefab)
+            return;
+
+        Object.DestroyImmediate(pauseRoot);
+    }
+
+    static void DestroyLegacyResultObjects(Transform hud)
+    {
+        DestroyChildIfPresent(hud, "LossPanel");
+        DestroyChildIfPresent(hud, "VictoryPanel");
+
+        var runRoot = FindChild(hud, "RunResultMenuRoot");
+        if (runRoot == null)
+            return;
+
+        var resultPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(RunResultPrefabPath);
+        if (resultPrefab != null && PrefabUtility.GetCorrespondingObjectFromSource(runRoot) == resultPrefab)
+            return;
+
+        Object.DestroyImmediate(runRoot);
+    }
+
+    static void DestroyChildIfPresent(Transform parent, string name)
+    {
+        var child = FindChild(parent, name);
+        if (child == null)
+            return;
+
+        // Keep objects that already live under a menu prefab instance.
+        if (PrefabUtility.IsPartOfPrefabInstance(child)
+            && PrefabUtility.GetNearestPrefabInstanceRoot(child) != child)
+            return;
+
+        Object.DestroyImmediate(child);
+    }
+
+    static void WireSettingsMenu(
+        SettingsMenuUI settingsMenu,
+        Slider masterSlider,
+        Slider musicSlider,
+        Slider sfxSlider,
+        Button backButton)
+    {
         var so = new SerializedObject(settingsMenu);
         so.FindProperty("masterSlider").objectReferenceValue = masterSlider;
         so.FindProperty("musicSlider").objectReferenceValue = musicSlider;
         so.FindProperty("sfxSlider").objectReferenceValue = sfxSlider;
-        so.FindProperty("masterValueLabel").objectReferenceValue = FindChild(masterSlider.transform, "ValueLabel")?.GetComponent<TMP_Text>();
-        so.FindProperty("musicValueLabel").objectReferenceValue = FindChild(musicSlider.transform, "ValueLabel")?.GetComponent<TMP_Text>();
-        so.FindProperty("sfxValueLabel").objectReferenceValue = FindChild(sfxSlider.transform, "ValueLabel")?.GetComponent<TMP_Text>();
+        so.FindProperty("masterValueLabel").objectReferenceValue = FindValueLabel(masterSlider);
+        so.FindProperty("musicValueLabel").objectReferenceValue = FindValueLabel(musicSlider);
+        so.FindProperty("sfxValueLabel").objectReferenceValue = FindValueLabel(sfxSlider);
         so.FindProperty("backButton").objectReferenceValue = backButton;
         so.ApplyModifiedPropertiesWithoutUndo();
-
-        return panel;
     }
 
-    static Slider EnsureVolumeSlider(Transform parent, string name, string label, float anchorY, List<string> checklist)
+    static TMP_Text FindValueLabel(Slider slider)
     {
-        var existing = FindChild(parent, name);
-        GameObject row;
-        if (existing != null)
-        {
-            row = existing;
-        }
-        else
-        {
-            row = new GameObject(name, typeof(RectTransform));
-            row.transform.SetParent(parent, false);
-            checklist.Add(name);
+        if (slider == null || slider.transform.parent == null)
+            return null;
 
-            var rowRect = row.GetComponent<RectTransform>();
-            rowRect.anchorMin = new Vector2(0.5f, anchorY);
-            rowRect.anchorMax = new Vector2(0.5f, anchorY);
-            rowRect.sizeDelta = new Vector2(520f, 48f);
-            rowRect.anchoredPosition = Vector2.zero;
-
-            var labelGo = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI), typeof(TmpFontOnEnable));
-            labelGo.transform.SetParent(row.transform, false);
-            var labelRect = labelGo.GetComponent<RectTransform>();
-            labelRect.anchorMin = new Vector2(0f, 0.5f);
-            labelRect.anchorMax = new Vector2(0f, 0.5f);
-            labelRect.pivot = new Vector2(0f, 0.5f);
-            labelRect.sizeDelta = new Vector2(180f, 40f);
-            labelRect.anchoredPosition = Vector2.zero;
-            var labelTmp = labelGo.GetComponent<TextMeshProUGUI>();
-            labelTmp.text = label;
-            labelTmp.fontSize = 24;
-            labelTmp.alignment = TextAlignmentOptions.MidlineLeft;
-
-            var sliderGo = new GameObject("Slider", typeof(RectTransform), typeof(Slider));
-            sliderGo.transform.SetParent(row.transform, false);
-            var sliderRect = sliderGo.GetComponent<RectTransform>();
-            sliderRect.anchorMin = new Vector2(0f, 0.5f);
-            sliderRect.anchorMax = new Vector2(1f, 0.5f);
-            sliderRect.offsetMin = new Vector2(190f, -12f);
-            sliderRect.offsetMax = new Vector2(-70f, 12f);
-
-            var slider = sliderGo.GetComponent<Slider>();
-            slider.minValue = 0f;
-            slider.maxValue = 1f;
-            slider.value = 1f;
-
-            var bg = new GameObject("Background", typeof(RectTransform), typeof(Image));
-            bg.transform.SetParent(sliderGo.transform, false);
-            Stretch(bg.GetComponent<RectTransform>());
-            bg.GetComponent<Image>().color = new Color(0.15f, 0.16f, 0.2f, 1f);
-
-            var fillArea = new GameObject("Fill Area", typeof(RectTransform));
-            fillArea.transform.SetParent(sliderGo.transform, false);
-            var fillAreaRect = fillArea.GetComponent<RectTransform>();
-            Stretch(fillAreaRect);
-
-            var fill = new GameObject("Fill", typeof(RectTransform), typeof(Image));
-            fill.transform.SetParent(fillArea.transform, false);
-            Stretch(fill.GetComponent<RectTransform>());
-            fill.GetComponent<Image>().color = new Color(0.35f, 0.55f, 0.85f, 1f);
-
-            var handleArea = new GameObject("Handle Slide Area", typeof(RectTransform));
-            handleArea.transform.SetParent(sliderGo.transform, false);
-            Stretch(handleArea.GetComponent<RectTransform>());
-
-            var handle = new GameObject("Handle", typeof(RectTransform), typeof(Image));
-            handle.transform.SetParent(handleArea.transform, false);
-            var handleRect = handle.GetComponent<RectTransform>();
-            handleRect.sizeDelta = new Vector2(20f, 20f);
-            handle.GetComponent<Image>().color = Color.white;
-
-            slider.fillRect = fill.GetComponent<RectTransform>();
-            slider.handleRect = handleRect;
-            slider.targetGraphic = handle.GetComponent<Image>();
-
-            var valueGo = new GameObject("ValueLabel", typeof(RectTransform), typeof(TextMeshProUGUI), typeof(TmpFontOnEnable));
-            valueGo.transform.SetParent(row.transform, false);
-            var valueRect = valueGo.GetComponent<RectTransform>();
-            valueRect.anchorMin = new Vector2(1f, 0.5f);
-            valueRect.anchorMax = new Vector2(1f, 0.5f);
-            valueRect.pivot = new Vector2(1f, 0.5f);
-            valueRect.sizeDelta = new Vector2(60f, 40f);
-            valueRect.anchoredPosition = Vector2.zero;
-            var valueTmp = valueGo.GetComponent<TextMeshProUGUI>();
-            valueTmp.text = "100%";
-            valueTmp.fontSize = 22;
-            valueTmp.alignment = TextAlignmentOptions.MidlineRight;
-        }
-
-        return row.transform.Find("Slider")?.GetComponent<Slider>();
+        return FindChild(slider.transform.parent, "ValueLabel")?.GetComponent<TMP_Text>();
     }
 
-    static GameObject EnsureChildPanel(Transform parent, string name, List<string> checklist)
+    static void WireMainMenuUi(
+        MainMenuUI ui,
+        GameObject mainPanel,
+        GameObject settingsPanel,
+        SettingsMenuUI settingsMenu,
+        Button playButton,
+        Button settingsButton,
+        Button quitButton,
+        List<string> checklist)
     {
-        var panel = FindChild(parent, name);
-        if (panel != null)
-            return panel;
+        var so = new SerializedObject(ui);
+        so.FindProperty("gameplaySceneName").stringValue = "SampleScene";
+        so.FindProperty("mainPanel").objectReferenceValue = mainPanel;
+        so.FindProperty("settingsPanel").objectReferenceValue = settingsPanel;
+        so.FindProperty("playButton").objectReferenceValue = playButton;
+        so.FindProperty("settingsButton").objectReferenceValue = settingsButton;
+        so.FindProperty("quitButton").objectReferenceValue = quitButton;
+        so.FindProperty("settingsMenu").objectReferenceValue = settingsMenu;
+        so.ApplyModifiedPropertiesWithoutUndo();
 
-        panel = new GameObject(name, typeof(RectTransform));
-        panel.transform.SetParent(parent, false);
-        Stretch(panel.GetComponent<RectTransform>());
-        checklist.Add(name);
-        return panel;
+        WireButton(playButton, ui, nameof(MainMenuUI.StartGame), checklist, "MainMenu.Start");
+        WireButton(settingsButton, ui, nameof(MainMenuUI.OpenSettings), checklist, "MainMenu.Settings");
+        WireButton(quitButton, ui, nameof(MainMenuUI.QuitGame), checklist, "MainMenu.Quit");
+    }
+
+    static void WirePauseMenuInternal(
+        PauseMenuUI ui,
+        GameObject pausePanel,
+        GameObject settingsPanel,
+        SettingsMenuUI settingsMenu,
+        Button resumeButton,
+        Button settingsButton,
+        Button mainMenuButton,
+        List<string> checklist)
+    {
+        var so = new SerializedObject(ui);
+        so.FindProperty("pausePanel").objectReferenceValue = pausePanel;
+        so.FindProperty("settingsPanel").objectReferenceValue = settingsPanel;
+        so.FindProperty("resumeButton").objectReferenceValue = resumeButton;
+        so.FindProperty("settingsButton").objectReferenceValue = settingsButton;
+        so.FindProperty("mainMenuButton").objectReferenceValue = mainMenuButton;
+        so.FindProperty("settingsMenu").objectReferenceValue = settingsMenu;
+        so.FindProperty("mainMenuSceneName").stringValue = "MainMenu";
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        WireButton(resumeButton, ui, nameof(PauseMenuUI.Resume), checklist, "Pause.Resume");
+        WireButton(settingsButton, ui, nameof(PauseMenuUI.OpenSettings), checklist, "Pause.Settings");
+        WireButton(mainMenuButton, ui, nameof(PauseMenuUI.ReturnToMainMenu), checklist, "Pause.MainMenu");
+    }
+
+    static void WirePauseMenuSceneRefs(PauseMenuUI ui, GameObject pauseToggle, PlayerInput playerInput)
+    {
+        if (ui == null)
+            return;
+
+        var so = new SerializedObject(ui);
+        so.FindProperty("pauseToggleButton").objectReferenceValue = pauseToggle != null ? pauseToggle.GetComponent<Button>() : null;
+        so.FindProperty("playerInput").objectReferenceValue = playerInput;
+        so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    static void WireRunResultSceneRefs(RunResultMenuUI ui, PlayerInput playerInput)
+    {
+        if (ui == null)
+            return;
+
+        var so = new SerializedObject(ui);
+        so.FindProperty("playerInput").objectReferenceValue = playerInput;
+        so.ApplyModifiedPropertiesWithoutUndo();
     }
 
     static void EnsureAudioManager(Scene scene, List<string> checklist)
@@ -340,73 +612,6 @@ public static class MenuSceneSetup
         var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, scene);
         instance.name = "AudioManager";
         checklist.Add("MainMenu.AudioManager");
-    }
-
-    static void WireMainMenuUi(
-        MainMenuUI ui,
-        GameObject mainPanel,
-        GameObject settingsPanel,
-        SettingsMenuUI settingsMenu,
-        Button playButton,
-        Button settingsButton,
-        Button quitButton,
-        Button backButton,
-        List<string> checklist)
-    {
-        var so = new SerializedObject(ui);
-        so.FindProperty("gameplaySceneName").stringValue = "SampleScene";
-        so.FindProperty("mainPanel").objectReferenceValue = mainPanel;
-        so.FindProperty("settingsPanel").objectReferenceValue = settingsPanel;
-        so.FindProperty("playButton").objectReferenceValue = playButton;
-        so.FindProperty("settingsButton").objectReferenceValue = settingsButton;
-        so.FindProperty("quitButton").objectReferenceValue = quitButton;
-        so.FindProperty("settingsMenu").objectReferenceValue = settingsMenu;
-        so.ApplyModifiedPropertiesWithoutUndo();
-
-        if (playButton != null)
-            WireButton(playButton, ui, nameof(MainMenuUI.StartGame), checklist, "MainMenu.Start");
-
-        if (settingsButton != null)
-            WireButton(settingsButton, ui, nameof(MainMenuUI.OpenSettings), checklist, "MainMenu.Settings");
-
-        if (quitButton != null)
-            WireButton(quitButton, ui, nameof(MainMenuUI.QuitGame), checklist, "MainMenu.Quit");
-
-        if (backButton != null && settingsMenu != null)
-            WireButton(backButton, settingsMenu, nameof(SettingsMenuUI.Close), checklist, "MainMenu.SettingsBack");
-    }
-
-    static void WirePauseMenuUi(
-        PauseMenuUI ui,
-        GameObject pausePanel,
-        GameObject settingsPanel,
-        SettingsMenuUI settingsMenu,
-        GameObject pauseToggle,
-        Button resumeButton,
-        Button settingsButton,
-        Button mainMenuButton,
-        PlayerInput playerInput,
-        List<string> checklist)
-    {
-        var so = new SerializedObject(ui);
-        so.FindProperty("pausePanel").objectReferenceValue = pausePanel;
-        so.FindProperty("settingsPanel").objectReferenceValue = settingsPanel;
-        so.FindProperty("pauseToggleButton").objectReferenceValue = pauseToggle != null ? pauseToggle.GetComponent<Button>() : null;
-        so.FindProperty("resumeButton").objectReferenceValue = resumeButton;
-        so.FindProperty("settingsButton").objectReferenceValue = settingsButton;
-        so.FindProperty("mainMenuButton").objectReferenceValue = mainMenuButton;
-        so.FindProperty("settingsMenu").objectReferenceValue = settingsMenu;
-        so.FindProperty("playerInput").objectReferenceValue = playerInput;
-        so.FindProperty("mainMenuSceneName").stringValue = "MainMenu";
-        so.ApplyModifiedPropertiesWithoutUndo();
-    }
-
-    static void WirePauseToggle(Button button, PauseMenuUI ui, List<string> checklist, string label)
-    {
-        if (button == null)
-            return;
-
-        WireButton(button, ui, nameof(PauseMenuUI.TogglePause), checklist, label + ".PauseToggle");
     }
 
     static void WireButton(Button button, Object target, string methodName, List<string> checklist, string label)
@@ -462,12 +667,8 @@ public static class MenuSceneSetup
         checklist.Add("EventSystem");
     }
 
-    static GameObject EnsureScreenCanvas(string name, List<string> checklist)
+    static GameObject CreateScreenCanvas(string name)
     {
-        var existing = GameObject.Find(name);
-        if (existing != null)
-            return existing;
-
         var canvasGo = new GameObject(name, typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         var canvas = canvasGo.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -475,21 +676,34 @@ public static class MenuSceneSetup
         var scaler = canvasGo.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(800f, 600f);
-
-        checklist.Add(name);
         return canvasGo;
     }
 
     static GameObject CreateOverlayPanel(Transform parent, string name)
     {
         var panel = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        panel.transform.SetParent(parent, false);
+        if (parent != null)
+            panel.transform.SetParent(parent, false);
+
         var rect = panel.GetComponent<RectTransform>();
         Stretch(rect);
 
         var image = panel.GetComponent<Image>();
         image.color = new Color(0.04f, 0.03f, 0.03f, 0.92f);
         image.raycastTarget = true;
+        return panel;
+    }
+
+    static GameObject EnsureChildPanel(Transform parent, string name, List<string> checklist)
+    {
+        var panel = FindChild(parent, name);
+        if (panel != null)
+            return panel;
+
+        panel = new GameObject(name, typeof(RectTransform));
+        panel.transform.SetParent(parent, false);
+        Stretch(panel.GetComponent<RectTransform>());
+        checklist.Add(name);
         return panel;
     }
 
@@ -559,6 +773,113 @@ public static class MenuSceneSetup
         tmp.color = Color.white;
 
         return go.GetComponent<Button>();
+    }
+
+    static Slider EnsureVolumeSlider(Transform parent, string name, string label, float anchorY, List<string> checklist)
+    {
+        var existing = FindChild(parent, name);
+        GameObject row;
+        if (existing != null)
+        {
+            row = existing;
+        }
+        else
+        {
+            row = new GameObject(name, typeof(RectTransform));
+            row.transform.SetParent(parent, false);
+            checklist.Add(name);
+
+            var rowRect = row.GetComponent<RectTransform>();
+            rowRect.anchorMin = new Vector2(0.5f, anchorY);
+            rowRect.anchorMax = new Vector2(0.5f, anchorY);
+            rowRect.sizeDelta = new Vector2(520f, 48f);
+            rowRect.anchoredPosition = Vector2.zero;
+
+            var labelGo = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI), typeof(TmpFontOnEnable));
+            labelGo.transform.SetParent(row.transform, false);
+            var labelRect = labelGo.GetComponent<RectTransform>();
+            labelRect.anchorMin = new Vector2(0f, 0.5f);
+            labelRect.anchorMax = new Vector2(0f, 0.5f);
+            labelRect.pivot = new Vector2(0f, 0.5f);
+            labelRect.sizeDelta = new Vector2(180f, 40f);
+            labelRect.anchoredPosition = Vector2.zero;
+            var labelTmp = labelGo.GetComponent<TextMeshProUGUI>();
+            labelTmp.text = label;
+            labelTmp.fontSize = 24;
+            labelTmp.alignment = TextAlignmentOptions.MidlineLeft;
+
+            var sliderGo = new GameObject("Slider", typeof(RectTransform), typeof(Slider));
+            sliderGo.transform.SetParent(row.transform, false);
+            var sliderRect = sliderGo.GetComponent<RectTransform>();
+            sliderRect.anchorMin = new Vector2(0f, 0.5f);
+            sliderRect.anchorMax = new Vector2(1f, 0.5f);
+            sliderRect.offsetMin = new Vector2(190f, -12f);
+            sliderRect.offsetMax = new Vector2(-70f, 12f);
+
+            var slider = sliderGo.GetComponent<Slider>();
+            slider.minValue = 0f;
+            slider.maxValue = 1f;
+            slider.value = 1f;
+
+            var bg = new GameObject("Background", typeof(RectTransform), typeof(Image));
+            bg.transform.SetParent(sliderGo.transform, false);
+            Stretch(bg.GetComponent<RectTransform>());
+            bg.GetComponent<Image>().color = new Color(0.15f, 0.16f, 0.2f, 1f);
+
+            var fillArea = new GameObject("Fill Area", typeof(RectTransform));
+            fillArea.transform.SetParent(sliderGo.transform, false);
+            Stretch(fillArea.GetComponent<RectTransform>());
+
+            var fill = new GameObject("Fill", typeof(RectTransform), typeof(Image));
+            fill.transform.SetParent(fillArea.transform, false);
+            Stretch(fill.GetComponent<RectTransform>());
+            fill.GetComponent<Image>().color = new Color(0.35f, 0.55f, 0.85f, 1f);
+
+            var handleArea = new GameObject("Handle Slide Area", typeof(RectTransform));
+            handleArea.transform.SetParent(sliderGo.transform, false);
+            Stretch(handleArea.GetComponent<RectTransform>());
+
+            var handle = new GameObject("Handle", typeof(RectTransform), typeof(Image));
+            handle.transform.SetParent(handleArea.transform, false);
+            var handleRect = handle.GetComponent<RectTransform>();
+            handleRect.sizeDelta = new Vector2(20f, 20f);
+            handle.GetComponent<Image>().color = Color.white;
+
+            slider.fillRect = fill.GetComponent<RectTransform>();
+            slider.handleRect = handleRect;
+            slider.targetGraphic = handle.GetComponent<Image>();
+
+            var valueGo = new GameObject("ValueLabel", typeof(RectTransform), typeof(TextMeshProUGUI), typeof(TmpFontOnEnable));
+            valueGo.transform.SetParent(row.transform, false);
+            var valueRect = valueGo.GetComponent<RectTransform>();
+            valueRect.anchorMin = new Vector2(1f, 0.5f);
+            valueRect.anchorMax = new Vector2(1f, 0.5f);
+            valueRect.pivot = new Vector2(1f, 0.5f);
+            valueRect.sizeDelta = new Vector2(60f, 40f);
+            valueRect.anchoredPosition = Vector2.zero;
+            var valueTmp = valueGo.GetComponent<TextMeshProUGUI>();
+            valueTmp.text = "100%";
+            valueTmp.fontSize = 22;
+            valueTmp.alignment = TextAlignmentOptions.MidlineRight;
+        }
+
+        return row.transform.Find("Slider")?.GetComponent<Slider>();
+    }
+
+    static void EnsureFolder(string folderPath)
+    {
+        if (AssetDatabase.IsValidFolder(folderPath))
+            return;
+
+        var parts = folderPath.Split('/');
+        var current = parts[0];
+        for (var i = 1; i < parts.Length; i++)
+        {
+            var next = current + "/" + parts[i];
+            if (!AssetDatabase.IsValidFolder(next))
+                AssetDatabase.CreateFolder(current, parts[i]);
+            current = next;
+        }
     }
 
     static void Stretch(RectTransform rect)

@@ -6,16 +6,16 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class ElementalParticleBootstrap : MonoBehaviour
 {
-    private static readonly Color ElementColorFirePrimary = new(1f, 0.15f, 0.08f);
-    private static readonly Color ElementColorFireSecondary = new(1f, 0.45f, 0.15f);
-    private static readonly Color ElementColorWaterPrimary = new(0.2f, 0.45f, 1f);
-    private static readonly Color ElementColorWaterSecondary = new(0.72f, 0.9f, 1f);
-    private static readonly Color ElementColorWindPrimary = new(0.92f, 0.95f, 1f);
-    private static readonly Color ElementColorWindSecondary = Color.white;
-    private static readonly Color ElementColorEarthPrimary = new(0.35f, 0.28f, 0.2f);
-    private static readonly Color ElementColorEarthSecondary = new(0.55f, 0.45f, 0.32f);
-    private static readonly Color ElementColorLightningPrimary = new(1f, 0.92f, 0.15f);
-    private static readonly Color ElementColorLightningSecondary = new(1f, 0.78f, 0.05f);
+    private static readonly Color ElementColorFirePrimary = ElementStatusPalette.FirePrimary;
+    private static readonly Color ElementColorFireSecondary = new(1f, 0.4f, 0.12f);
+    private static readonly Color ElementColorWaterPrimary = ElementStatusPalette.WaterPrimary;
+    private static readonly Color ElementColorWaterSecondary = ElementStatusPalette.WaterSecondary;
+    private static readonly Color ElementColorWindPrimary = ElementStatusPalette.WindPrimary;
+    private static readonly Color ElementColorWindSecondary = new(0.75f, 1f, 0.7f);
+    private static readonly Color ElementColorEarthPrimary = ElementStatusPalette.EarthPrimary;
+    private static readonly Color ElementColorEarthSecondary = new(0.95f, 0.78f, 0.4f);
+    private static readonly Color ElementColorLightningPrimary = ElementStatusPalette.LightningPrimary;
+    private static readonly Color ElementColorLightningSecondary = ElementStatusPalette.LightningSecondary;
     private static readonly Color BossBlackParticle = new(0.02f, 0.02f, 0.025f);
 
     private const float VisualAreaScale = 2f;
@@ -71,7 +71,11 @@ public class ElementalParticleBootstrap : MonoBehaviour
         ApplyParticleMaterial(ps);
 
         if (kind != PresetKind.BossRisingCone)
+        {
+            // Prewarm so showcase / first frame shows particles immediately.
+            ps.Simulate(0.4f, true, true);
             ps.Play(true);
+        }
     }
 
     private void ApplyParticleMaterial(ParticleSystem ps)
@@ -85,7 +89,12 @@ public class ElementalParticleBootstrap : MonoBehaviour
             return;
         }
 
-        ElementStatusParticleMaterials.ApplyBillboardMaterial(ps, VfxParticleShapeLibrary.GetElementShape(kind));
+        // Sprites/Default multiplies particle startColor reliably for all element tints.
+        // Prefer assigned sprite when present (same white square on all status prefabs).
+        if (particleSprite != null)
+            ElementalVfxParticleMaterials.ApplyBillboardMaterial(ps, particleSprite);
+        else
+            ElementalVfxParticleMaterials.ApplyBillboardMaterial(ps, VfxParticleShapeLibrary.GetElementShape(kind));
     }
 
     private void OnDestroy()

@@ -5,13 +5,13 @@ using UnityEngine;
 /// </summary>
 public static class ElementStatusHailFallUtility
 {
-    public const float VisualSizeScale = 1.05f;
-    public const float EmissionRateScale = 1.55f;
-    public const float MaxParticlesScale = 1.5f;
+    public const float VisualSizeScale = 1.35f;
+    public const float EmissionRateScale = 0.875f;
+    public const float MaxParticlesScale = 0.75f;
     public const float VelocityScale = 1f;
 
-    public const float SizeScale = 1.5f;
-    public const float EmissionScale = 1.35f;
+    public const float SizeScale = 1.05f;
+    public const float EmissionScale = 0.775f;
     public const float FallSpeedScale = 0.55f;
 
     static readonly HailFallZone StatusZone = new(0.74f, 0.74f, 0.46f, 0.064f);

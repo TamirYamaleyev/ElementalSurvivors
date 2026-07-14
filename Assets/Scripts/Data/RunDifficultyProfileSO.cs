@@ -18,8 +18,11 @@ public class RunDifficultyProfileSO : ScriptableObject
     public float tier3StartSeconds = 400f;
 
     [Header("Boss")]
+    [Tooltip("Legacy interval fields; milestone schedule uses tier2/tier3/session times instead.")]
     public float firstBossDelaySeconds = 198f;
     public float bossSpawnIntervalSeconds = 198f;
+    public float miniBossStatMultiplier = 3f;
+    public float miniBossVisualScale = 1.25f;
     public float bossExtraStatMultiplier = 10f;
     public float bossVisualScale = 1.5f;
     [Tooltip("Multiplier for regular spawn rate while a boss is alive (0.5 = half intensity).")]
