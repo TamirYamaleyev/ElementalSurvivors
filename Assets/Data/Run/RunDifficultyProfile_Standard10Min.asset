@@ -17,12 +17,12 @@ MonoBehaviour:
   difficultyTickIntervalSeconds: 60
   difficultyMultiplierPerTick: 1.1
   maxDifficultyTicks: 0
-  tier2StartSeconds: 200
-  tier3StartSeconds: 400
-  firstBossDelaySeconds: 198
-  bossSpawnIntervalSeconds: 198
-  miniBossStatMultiplier: 3
-  miniBossVisualScale: 1.25
+  tier2StartSeconds: 60
+  tier3StartSeconds: 120
+  firstBossDelaySeconds: 30
+  bossSpawnIntervalSeconds: 180
+  miniBossStatMultiplier: 10
+  miniBossVisualScale: 2
   bossExtraStatMultiplier: 10
   bossVisualScale: 1.5
-  bossFightSpawnIntensityMultiplier: 0.5
+  bossFightSpawnIntensityMultiplier: 1

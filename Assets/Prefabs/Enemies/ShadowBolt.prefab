@@ -13,8 +13,9 @@ GameObject:
   - component: {fileID: 7986831083474467266}
   - component: {fileID: 1270097732734394434}
   - component: {fileID: 3847291056382749101}
+  - component: {fileID: 29269659716992986}
   m_Layer: 7
-  m_Name: EnemyDarkFlameProjectile
+  m_Name: ShadowBolt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -85,8 +86,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 97e6bb718f8833641aeec084a4d5f4cf, type: 3}
-  m_Color: {r: 0.08, g: 0.02, b: 0.12, a: 1}
+  m_Sprite: {fileID: 8236890070454901057, guid: 7d98b981a90b83a40b496295093f9310, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -144,7 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyProjectile
   sr: {fileID: 0}
-  artForward: 0
+  artForward: 270
   extraRotationOffset: 0
   overlapHitRadius: 0.22
 --- !u!50 &3847291056382749101
@@ -174,6 +175,27 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
+--- !u!114 &29269659716992986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3469400037781855487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 425700a2bcc367b42a9edd4266c0a601, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimationScr
+  sprites:
+  - {fileID: -1905901871854582748, guid: 7d98b981a90b83a40b496295093f9310, type: 3}
+  - {fileID: -1976455443845915990, guid: 7d98b981a90b83a40b496295093f9310, type: 3}
+  - {fileID: 8236890070454901057, guid: 7d98b981a90b83a40b496295093f9310, type: 3}
+  - {fileID: 377319551007756947, guid: 7d98b981a90b83a40b496295093f9310, type: 3}
+  - {fileID: -695174234533191093, guid: 7d98b981a90b83a40b496295093f9310, type: 3}
+  - {fileID: 5993289828173422482, guid: 7d98b981a90b83a40b496295093f9310, type: 3}
+  animationFPS: 24
+  sr: {fileID: 9106443535076621362}
 --- !u!1 &4954669870159880589
 GameObject:
   m_ObjectHideFlags: 0
@@ -190,7 +212,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7340600658864900641
 Transform:
   m_ObjectHideFlags: 0

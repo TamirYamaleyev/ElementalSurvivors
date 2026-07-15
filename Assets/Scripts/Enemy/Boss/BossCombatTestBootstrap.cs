@@ -68,7 +68,7 @@ public sealed class BossCombatTestBootstrap : MonoBehaviour
         if (decorativeBossRoot != null)
             decorativeBossRoot.SetActive(false);
 
-        EnemyWorldHealthBar.EnsureAttached(activeBoss);
+        //EnemyWorldHealthBar.EnsureAttached(activeBoss);
 
         var health = activeBoss.GetComponent<EnemyHealth>();
         if (health != null)

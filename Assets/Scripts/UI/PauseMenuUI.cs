@@ -7,6 +7,7 @@ public sealed class PauseMenuUI : MonoBehaviour
 {
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject settingsPanel;
+    [SerializeField] private GameObject pauseBGTint;
     [SerializeField] private Button pauseToggleButton;
     [SerializeField] private Button resumeButton;
     [SerializeField] private Button settingsButton;
@@ -65,8 +66,6 @@ public sealed class PauseMenuUI : MonoBehaviour
         if (!GamePauseController.CanOpenPauseMenu)
             return;
 
-        Debug.Log("togglep");
-
         if (isOpen)
             Resume();
         else
@@ -81,6 +80,7 @@ public sealed class PauseMenuUI : MonoBehaviour
         isOpen = true;
         settingsOpen = false;
         pausePanel.SetActive(true);
+        pauseBGTint.SetActive(true);
 
         if (settingsPanel != null)
             settingsPanel.SetActive(false);
@@ -102,6 +102,8 @@ public sealed class PauseMenuUI : MonoBehaviour
 
         if (settingsPanel != null)
             settingsPanel.SetActive(false);
+
+        pauseBGTint.SetActive(false);
 
         GamePauseController.ReleasePause(GamePauseController.PauseReason.PauseMenu);
         SwitchActionMap("Player");
@@ -135,6 +137,13 @@ public sealed class PauseMenuUI : MonoBehaviour
             pausePanel.SetActive(true);
     }
 
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        GamePauseController.ForceResume();
+        SwitchActionMap("Player");
+    }
+
     public void ReturnToMainMenu()
     {
         PlayClick();
@@ -150,6 +159,15 @@ public sealed class PauseMenuUI : MonoBehaviour
         GamePauseController.ForceResume();
         SwitchActionMap("Player");
         SceneManager.LoadScene(mainMenuSceneName);
+    }
+
+    public void QuitToDesktop()
+    {
+        Application.Quit();
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
     }
 
     private void SwitchActionMap(string mapName)

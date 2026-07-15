@@ -378,12 +378,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3148828905880293579}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: ReturnToMainMenu
+        m_TargetAssemblyTypeName: PauseMenuUI, Assembly-CSharp
+        m_MethodName: QuitToDesktop
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -632,10 +632,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1794170136}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -25}
+  m_SizeDelta: {x: 62.24, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &88113253
 MonoBehaviour:
@@ -769,10 +769,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1794170136}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 67.240005, y: -25}
+  m_SizeDelta: {x: 64.42, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &105192641
 MonoBehaviour:
@@ -2373,10 +2373,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1866660061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 90.07, y: -25}
+  m_SizeDelta: {x: 97.68, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &259408843
 MonoBehaviour:
@@ -2641,12 +2641,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3148828905880293579}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: Resume
+        m_TargetAssemblyTypeName: PauseMenuUI, Assembly-CSharp
+        m_MethodName: RestartGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -3610,10 +3610,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 962207590}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 67.240005, y: -25}
+  m_SizeDelta: {x: 29.31, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &436240377
 MonoBehaviour:
@@ -4679,10 +4679,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 962207590}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -25}
+  m_SizeDelta: {x: 62.24, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &596996382
 MonoBehaviour:
@@ -5037,10 +5037,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1866660061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -25}
+  m_SizeDelta: {x: 85.07, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &642558129
 MonoBehaviour:
@@ -5660,10 +5660,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1921005289}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 67.240005, y: -25}
+  m_SizeDelta: {x: 97.68, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &703060111
 MonoBehaviour:
@@ -5994,7 +5994,7 @@ PrefabInstance:
     - target: {fileID: 8285758411429029865, guid: dffb491cc7798447e9af2f480ed0b39f, type: 3}
       propertyPath: defaultBgm
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 8300000, guid: 04d5cd63e6b26754f9f59364bb738cf0, type: 3}
     - target: {fileID: 8285758411429029865, guid: dffb491cc7798447e9af2f480ed0b39f, type: 3}
       propertyPath: uiClickSfx
       value: 
@@ -7686,10 +7686,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 877769858}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 54.96, y: -25}
+  m_SizeDelta: {x: 97.68, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &962915716
 MonoBehaviour:
@@ -7940,7 +7940,7 @@ SpriteRenderer:
   m_Size: {x: 1.4166666, y: 3.08}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1017471717
 Transform:
@@ -8434,10 +8434,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1921005289}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -25}
+  m_SizeDelta: {x: 62.24, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1127723072
 MonoBehaviour:
@@ -9543,7 +9543,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1274920426
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12012,10 +12012,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 774565451}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 90.07, y: -25}
+  m_SizeDelta: {x: 29.31, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1649718411
 MonoBehaviour:
@@ -13925,6 +13925,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PauseMenuUI
   pausePanel: {fileID: 627508957957397802}
   settingsPanel: {fileID: 1915358170473531249}
+  pauseBGTint: {fileID: 1274920425}
   pauseToggleButton: {fileID: 1408691214}
   resumeButton: {fileID: 2867048041902474125}
   settingsButton: {fileID: 3757511320316420822}
@@ -14254,10 +14255,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 877769858}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -25}
+  m_SizeDelta: {x: 49.96, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1959255093
 MonoBehaviour:
@@ -14573,10 +14574,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 774565451}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -25}
+  m_SizeDelta: {x: 85.07, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &2012678031
 MonoBehaviour:
@@ -15378,7 +15379,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &687259795350906698
 GameObject:
   m_ObjectHideFlags: 0
@@ -17048,6 +17049,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PauseMenuUI
   pausePanel: {fileID: 627508957957397802}
   settingsPanel: {fileID: 1915358170473531249}
+  pauseBGTint: {fileID: 1274920425}
   pauseToggleButton: {fileID: 1408691214}
   resumeButton: {fileID: 2867048041902474125}
   settingsButton: {fileID: 3757511320316420822}

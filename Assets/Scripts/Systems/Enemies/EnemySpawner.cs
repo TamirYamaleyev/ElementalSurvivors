@@ -204,7 +204,7 @@ public class EnemySpawner : MonoBehaviour
         if (!trackBossEncounter)
             return true;
 
-        EnemyWorldHealthBar.EnsureAttached(instance);
+        //EnemyWorldHealthBar.EnsureAttached(instance);
         TrackBossEncounter(instance, isFinalBoss);
         return true;
     }

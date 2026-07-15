@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: cf6cacc29c865ba48b0410aedef760f6
+guid: 10e1b9162e1e25a40a5ddd3e781f1147
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1302723820812287101
-    second: Untitled_Artwork_0
+      213: 8824389556528078017
+    second: FinalBoss_0
+  - first:
+      213: -600217316167502388
+    second: FinalBoss_1
+  - first:
+      213: -2113419650931069436
+    second: FinalBoss_2
+  - first:
+      213: 1215443268139205981
+    second: FinalBoss_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,10 +57,10 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 1
   spriteExtrude: 1
-  spriteMeshType: 0
+  spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 600
+  spritePixelsToUnits: 400
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -126,13 +135,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Untitled_Artwork_0
+      name: FinalBoss_0
       rect:
         serializedVersion: 2
-        x: 353
-        y: 424
-        width: 425
-        height: 924
+        x: 0
+        y: 0
+        width: 819
+        height: 1397
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +150,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d7cb4f3b964341210800000000000000
-      internalID: 1302723820812287101
+      spriteID: 1ccd58c4c87867a70800000000000000
+      internalID: 8824389556528078017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FinalBoss_1
+      rect:
+        serializedVersion: 2
+        x: 830
+        y: 765
+        width: 12
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc53cc1f7899ba7f0800000000000000
+      internalID: -600217316167502388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FinalBoss_2
+      rect:
+        serializedVersion: 2
+        x: 902
+        y: 773
+        width: 11
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40e6cec5600aba2e0800000000000000
+      internalID: -2113419650931069436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FinalBoss_3
+      rect:
+        serializedVersion: 2
+        x: 924
+        y: 15
+        width: 812
+        height: 1384
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d55c312763f1ed010800000000000000
+      internalID: 1215443268139205981
       vertices: []
       indices: 
       edges: []
@@ -161,7 +236,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Untitled_Artwork_0: 1302723820812287101
+      FinalBoss_0: 8824389556528078017
+      FinalBoss_1: -600217316167502388
+      FinalBoss_2: -2113419650931069436
+      FinalBoss_3: 1215443268139205981
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
