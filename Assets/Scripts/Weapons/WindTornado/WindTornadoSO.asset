@@ -26,52 +26,72 @@ MonoBehaviour:
   customWeaponPrefab: {fileID: -2187592129383696490, guid: 05d7af66fc49a2e4eaff18e9d003a987, type: 3}
   levels:
   - damage: 5
-    cooldown: 5
+    cooldown: 8
     range: 0
+    knockback: 8
     width: 1
     height: 1
-    lifetime: 5
+    lifetime: 3
     speed: 1
     projectileCount: 2
     statusDuration: 10
-    visualSprite: {fileID: 0}
+    visualSpriteArr:
+    - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
+    - {fileID: -709555396385255776, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
+    - {fileID: 2816347860137905243, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
   - damage: 10
-    cooldown: 4
+    cooldown: 6
     range: 0
+    knockback: 8
     width: 1
     height: 1
-    lifetime: 8
+    lifetime: 3
     speed: 1
     projectileCount: 3
     statusDuration: 10
-    visualSprite: {fileID: 0}
+    visualSpriteArr:
+    - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
+    - {fileID: -709555396385255776, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
+    - {fileID: 2816347860137905243, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
   - damage: 10
-    cooldown: 2
+    cooldown: 6
     range: 0
+    knockback: 8
     width: 1
     height: 1
-    lifetime: 10
+    lifetime: 5
     speed: 2
     projectileCount: 4
     statusDuration: 10
-    visualSprite: {fileID: 0}
+    visualSpriteArr:
+    - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
+    - {fileID: -709555396385255776, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
+    - {fileID: 2816347860137905243, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
   - damage: 20
-    cooldown: 2
+    cooldown: 5
     range: 0
+    knockback: 12
     width: 1.5
     height: 1.5
-    lifetime: 10
+    lifetime: 5
     speed: 2
     projectileCount: 4
     statusDuration: 10
-    visualSprite: {fileID: 0}
+    visualSpriteArr:
+    - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
+    - {fileID: -709555396385255776, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
+    - {fileID: 2816347860137905243, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
   - damage: 35
-    cooldown: 1
+    cooldown: 5
     range: 0
+    knockback: 12
     width: 1.5
     height: 1.5
-    lifetime: 10
+    lifetime: 5
     speed: 4
     projectileCount: 5
     statusDuration: 10
-    visualSprite: {fileID: 0}
+    visualSpriteArr:
+    - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
+    - {fileID: -709555396385255776, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
+    - {fileID: 2816347860137905243, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}

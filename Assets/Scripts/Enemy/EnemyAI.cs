@@ -44,6 +44,8 @@ public class EnemyAI : MonoBehaviour
 
     public bool IsGameplayEnabled => gameplayEnabled;
 
+    [SerializeField] private float knockbackDecay = 3f;
+
     private void Awake()
     {
         if (rb == null)
@@ -57,6 +59,20 @@ public class EnemyAI : MonoBehaviour
         if (obstacleMask == 0)
             obstacleMask = LayerMask.GetMask("Obstacle");
     }
+
+    //public void ApplyKnockback(Vector2 direction, float force)
+    //{
+    //    knockbackVelocity = direction.normalized * force;
+    //}
+
+    //public Vector2 ConsumeKnockback()
+    //{
+    //    Vector2 current = knockbackVelocity;
+
+    //    knockbackVelocity = Vector2.Lerp(knockbackVelocity, Vector2.zero, knockbackDecay * Time.deltaTime);
+
+    //    return current;
+    //}
 
     public void SetPlayerTarget(Transform playerTransform)
     {

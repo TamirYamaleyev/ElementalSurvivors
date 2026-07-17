@@ -28,50 +28,60 @@ MonoBehaviour:
   - damage: 20
     cooldown: 1
     range: 10
+    knockback: 0
     width: 1
     height: 1
     lifetime: 0.2
     speed: 10
     projectileCount: 0
     statusDuration: 1
-    visualSprite: {fileID: 21300000, guid: 9c36941ae5e14234cbd9caf12e9df535, type: 3}
+    visualSpriteArr:
+    - {fileID: 21300000, guid: 9c36941ae5e14234cbd9caf12e9df535, type: 3}
   - damage: 20
     cooldown: 0.8
     range: 10
+    knockback: 0
     width: 1
     height: 1
     lifetime: 0.2
     speed: 10
     projectileCount: 0
     statusDuration: 1
-    visualSprite: {fileID: 21300000, guid: 9c36941ae5e14234cbd9caf12e9df535, type: 3}
+    visualSpriteArr:
+    - {fileID: 21300000, guid: 9c36941ae5e14234cbd9caf12e9df535, type: 3}
   - damage: 35
     cooldown: 0.8
     range: 20
+    knockback: 0
     width: 1.5
     height: 1.5
     lifetime: 0.2
     speed: 10
     projectileCount: 0
     statusDuration: 1
-    visualSprite: {fileID: 21300000, guid: 9c36941ae5e14234cbd9caf12e9df535, type: 3}
+    visualSpriteArr:
+    - {fileID: 21300000, guid: 9c36941ae5e14234cbd9caf12e9df535, type: 3}
   - damage: 35
     cooldown: 0.5
     range: 20
+    knockback: 0
     width: 1.5
     height: 1.5
     lifetime: 0.2
     speed: 10
     projectileCount: 0
     statusDuration: 1
-    visualSprite: {fileID: 21300000, guid: 9c36941ae5e14234cbd9caf12e9df535, type: 3}
+    visualSpriteArr:
+    - {fileID: 21300000, guid: 9c36941ae5e14234cbd9caf12e9df535, type: 3}
   - damage: 50
     cooldown: 0.5
     range: 25
+    knockback: 0
     width: 2
     height: 2
     lifetime: 0.2
     speed: 10
     projectileCount: 0
     statusDuration: 1
-    visualSprite: {fileID: 21300000, guid: 9c36941ae5e14234cbd9caf12e9df535, type: 3}
+    visualSpriteArr:
+    - {fileID: 21300000, guid: 9c36941ae5e14234cbd9caf12e9df535, type: 3}

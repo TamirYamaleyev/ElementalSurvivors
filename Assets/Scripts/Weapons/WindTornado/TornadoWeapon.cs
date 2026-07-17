@@ -13,7 +13,7 @@ public class TornadoWeapon : WeaponBehavior
 
             Tornado tornado = Instantiate(tornadoPrefab, spawnPos, Quaternion.identity);
 
-            tornado.Init(data.damage, data.speed, data.range, data.statusDuration, data.lifetime, definition.appliedStatus, ctx.StatusSystem);
+            tornado.Init(data.damage, data.speed, data.range, data.knockback, data.statusDuration, data.lifetime, definition.appliedStatus, ctx.StatusSystem);
         }
 
         return true;

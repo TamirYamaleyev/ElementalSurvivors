@@ -8,6 +8,15 @@ using UnityEngine;
 /// </summary>
 public static class CombatHitUtility
 {
+    public static void ApplyKnockback(Enemy enemy, Vector2 direction, float force)
+    {
+        if (enemy == null || force <= 0f)
+            return;
+
+        if (enemy.AI != null)
+            enemy.AI.ApplyKnockback(direction, force);
+    }
+
     public static bool IsWeaponHitCollider(Collider2D collider)
     {
         return collider != null && !collider.isTrigger;

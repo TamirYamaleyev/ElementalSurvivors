@@ -6,6 +6,7 @@ public class WeaponLevelData
     public float damage;
     public float cooldown;
     public float range;
+    public float knockback;
     [Tooltip("Multiplier")] public float width;
     [Tooltip("Multiplier")] public float height;
     public float lifetime;

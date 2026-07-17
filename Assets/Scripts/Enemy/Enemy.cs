@@ -132,6 +132,11 @@ public class Enemy : MonoBehaviour
         transform.localScale = defaultLocalScale;
     }
 
+    public void ApplyKnockback(Vector2 direction, float force)
+    {
+
+    }
+
     public void TakeDamage(float amount)
     {
         health.TakeDamage(amount);
