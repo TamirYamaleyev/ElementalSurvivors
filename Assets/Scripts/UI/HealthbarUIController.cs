@@ -5,7 +5,7 @@ public class HealthbarUIController : MonoBehaviour
 {
     [SerializeField] private PlayerHealth healthRef;
     [SerializeField] private Image fillImage;
-    [SerializeField] private Image fillRoses;
+    //[SerializeField] private Image fillRoses;
 
     [SerializeField] private float lerpSpeed = 5f;
 
@@ -29,7 +29,7 @@ public class HealthbarUIController : MonoBehaviour
         );
 
         fillImage.fillAmount = currentFillAmount;
-        fillRoses.fillAmount = currentFillAmount;
+        //fillRoses.fillAmount = currentFillAmount;
     }
 
     public void Bind(PlayerHealth health)

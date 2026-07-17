@@ -4,6 +4,7 @@ public class OrbitingObject : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer sr;
     [SerializeField] private float spinSpeed = 50f;
+    [SerializeField] private AudioClip sfx;
 
     private float angleOffset;
     private float radius;
@@ -83,5 +84,7 @@ public class OrbitingObject : MonoBehaviour
             return;
 
         CombatHitUtility.ApplyStatusThenDamage(enemy, statusSystem, status, statusDuration, damage);
+
+        AudioManager.Instance.PlaySfx(sfx);
     }
 }
