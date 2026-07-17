@@ -159,6 +159,7 @@ MonoBehaviour:
   sr: {fileID: 6310697909115010069}
   artForward: 90
   extraRotationOffset: 0
+  animScr: {fileID: -4422300052652125565}
 --- !u!114 &-4422300052652125565
 MonoBehaviour:
   m_ObjectHideFlags: 0

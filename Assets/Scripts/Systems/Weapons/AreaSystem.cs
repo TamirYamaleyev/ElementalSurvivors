@@ -12,7 +12,7 @@ public class AreaSystem : MonoBehaviour
         StatusType status,
         float statusDuration,
         StatusSystem statusSystem,
-        Sprite sprite = null)
+        Sprite[] sprites = null)
     {
         if (prefab == null)
         {
@@ -37,7 +37,7 @@ public class AreaSystem : MonoBehaviour
             status,
             statusDuration,
             statusSystem,
-            sprite
+            sprites
         );
     }
 }

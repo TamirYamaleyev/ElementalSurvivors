@@ -12,7 +12,7 @@ public class OrbitSystem : MonoBehaviour
         StatusType status,
         float statusDuration,
         StatusSystem statusSystem,
-        Sprite sprite)
+        Sprite[] sprites)
     {
         if (prefab == null)
         {
@@ -49,7 +49,7 @@ public class OrbitSystem : MonoBehaviour
                 statusDuration,
                 statusSystem,
                 center,
-                sprite);
+                sprites);
         }
     }
 }

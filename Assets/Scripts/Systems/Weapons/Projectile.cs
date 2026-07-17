@@ -8,6 +8,7 @@ public class Projectile : MonoBehaviour
     [SerializeField] private SpriteRenderer sr;
     [SerializeField] private DirectionFacing2D.ArtForward artForward = DirectionFacing2D.ArtForward.Right;
     [SerializeField] private float extraRotationOffset;
+    [SerializeField] private AnimationScr animScr;
 
     private Vector2 direction;
     private float damage;
@@ -17,6 +18,11 @@ public class Projectile : MonoBehaviour
     private float statusDuration;
     private StatusSystem statusSystem;
 
+    public void SwapSpriteSheet(Sprite[] newSprites)
+    {
+        animScr.SwapSprites(newSprites);
+    }
+
     private void Awake()
     {
         if (sr == null)
@@ -25,7 +31,7 @@ public class Projectile : MonoBehaviour
         AudioManager.Instance.PlaySfx(sfx);
     }
 
-    public void Init(Vector2 direction, float damage, float speed, StatusType status, float statusDuration, StatusSystem statusSystem, Sprite visualSprite, float lifetime = 5f)
+    public void Init(Vector2 direction, float damage, float speed, StatusType status, float statusDuration, StatusSystem statusSystem, Sprite[] visualSprites, float lifetime = 5f)
     {
         if (sr == null)
             sr = GetComponent<SpriteRenderer>();
@@ -38,8 +44,8 @@ public class Projectile : MonoBehaviour
         this.statusDuration = statusDuration;
         this.statusSystem = statusSystem;
 
-        if (sr != null && visualSprite != null)
-            sr.sprite = visualSprite;
+        if (sr != null && visualSprites != null)
+            sr.sprite = visualSprites[0];
 
         DirectionFacing2D.Apply(transform, this.direction, artForward, extraRotationOffset);
 

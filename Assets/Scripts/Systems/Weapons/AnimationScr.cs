@@ -9,6 +9,11 @@ public class AnimationScr : MonoBehaviour
     private float animationTimer;
     private int currentFrame;
 
+    public void SwapSprites(Sprite[] newSprites)
+    {
+        sprites = newSprites;
+    }
+
     void Update()
     {
         Animate();

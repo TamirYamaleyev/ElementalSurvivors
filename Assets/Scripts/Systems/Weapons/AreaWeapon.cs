@@ -29,7 +29,7 @@ public class AreaWeapon : MonoBehaviour
         StatusType status,
         float statusDuration,
         StatusSystem statusSystem,
-        Sprite visualSprite
+        Sprite[] visualSprite
         )
     {
         this.position = position;
@@ -46,8 +46,8 @@ public class AreaWeapon : MonoBehaviour
         if (sr == null)
             sr = GetComponent<SpriteRenderer>();
 
-        if (sr != null && visualSprite != null)
-            sr.sprite = visualSprite;
+        //if (sr != null && visualSprite != null)
+        //    sr.sprite = visualSprite;
     }
 
     private void OnTriggerEnter2D(Collider2D other)

@@ -13,6 +13,11 @@ public class ChaingLightningVisual : MonoBehaviour
 
     private float frameTimer;
 
+    public void SwapSpriteSheet(Sprite[] newSprites)
+    {
+        frames = newSprites;
+    }
+
     private void Awake()
     {
         if (sr == null)

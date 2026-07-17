@@ -6,7 +6,7 @@ public class LightSword : MonoBehaviour
 {
     [SerializeField] private float rotationDuration = 0.5f;
     [SerializeField] private float rotAngle = 90f;
-    //[SerializeField] private SpriteRenderer sr;
+    [SerializeField] private SpriteRenderer sr;
     [SerializeField] private Transform visualsRoot;
 
     private float damage;
@@ -33,7 +33,7 @@ public class LightSword : MonoBehaviour
         StatusType status,
         float statusDuration,
         StatusSystem statusSystem,
-        Sprite visualSprite,
+        Sprite[] visualSprites,
         Vector2 slashDirection)
     {
         this.damage = damage;
@@ -42,8 +42,8 @@ public class LightSword : MonoBehaviour
         this.statusDuration = statusDuration;
         this.statusSystem = statusSystem;
 
-        //if (sr != null && visualSprite != null)
-        //    sr.sprite = visualSprite;
+        if (sr != null && visualSprites != null)
+            sr.sprite = visualSprites[0];
 
         // BASE ROTATION
         float angle = Mathf.Atan2(slashDirection.y, slashDirection.x) * Mathf.Rad2Deg;

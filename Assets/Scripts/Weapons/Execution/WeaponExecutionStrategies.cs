@@ -38,7 +38,7 @@ internal sealed class ProjectileWeaponExecution : IWeaponExecutionStrategy
             definition.appliedStatus,
             data.statusDuration,
             ctx.StatusSystem,
-            data.visualSprite);
+            data.visualSpriteArr);
 
         return true;
     }
@@ -65,7 +65,7 @@ internal sealed class AreaWeaponExecution : IWeaponExecutionStrategy
             definition.appliedStatus,
             data.statusDuration,
             ctx.StatusSystem,
-            data.visualSprite);
+            data.visualSpriteArr);
 
         return true;
     }
@@ -92,7 +92,7 @@ internal sealed class OrbitWeaponExecution : IWeaponExecutionStrategy
             definition.appliedStatus,
             data.statusDuration,
             ctx.StatusSystem,
-            data.visualSprite);
+            data.visualSpriteArr);
 
         return true;
     }

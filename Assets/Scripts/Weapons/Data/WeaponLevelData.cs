@@ -13,5 +13,5 @@ public class WeaponLevelData
     public int projectileCount;
     public float statusDuration;
 
-    public Sprite visualSprite;
+    public Sprite[] visualSpriteArr;
 }

@@ -35,7 +35,14 @@ MonoBehaviour:
     speed: 0
     projectileCount: 3
     statusDuration: 10
-    visualSprite: {fileID: -2868435901282387113, guid: 2786c44fdf661f44888869a0e8a4066a, type: 3}
+    visualSpriteArr:
+    - {fileID: -4114174937293446624, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+    - {fileID: 4057405359317951072, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+    - {fileID: 4963325702554027815, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+    - {fileID: 8630144970736267205, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+    - {fileID: -3181664903957042246, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+    - {fileID: -8768431306118528910, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+    - {fileID: -3165510750537712351, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
   - damage: 20
     cooldown: 3
     range: 5
@@ -45,7 +52,14 @@ MonoBehaviour:
     speed: 0
     projectileCount: 4
     statusDuration: 10
-    visualSprite: {fileID: -2868435901282387113, guid: 2786c44fdf661f44888869a0e8a4066a, type: 3}
+    visualSpriteArr:
+    - {fileID: -4114174937293446624, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+    - {fileID: 4057405359317951072, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+    - {fileID: 4963325702554027815, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+    - {fileID: 8630144970736267205, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+    - {fileID: -3181664903957042246, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+    - {fileID: -8768431306118528910, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+    - {fileID: -3165510750537712351, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
   - damage: 30
     cooldown: 2
     range: 5
@@ -55,9 +69,16 @@ MonoBehaviour:
     speed: 0
     projectileCount: 5
     statusDuration: 10
-    visualSprite: {fileID: -2868435901282387113, guid: 2786c44fdf661f44888869a0e8a4066a, type: 3}
+    visualSpriteArr:
+    - {fileID: 5739539005101524476, guid: dfcbda46bb272b94ca5e4449c5e1c75e, type: 3}
+    - {fileID: 6743349684307136263, guid: dfcbda46bb272b94ca5e4449c5e1c75e, type: 3}
+    - {fileID: 1652563003741978703, guid: dfcbda46bb272b94ca5e4449c5e1c75e, type: 3}
+    - {fileID: 7113022293486117287, guid: dfcbda46bb272b94ca5e4449c5e1c75e, type: 3}
+    - {fileID: 142801442893051983, guid: dfcbda46bb272b94ca5e4449c5e1c75e, type: 3}
+    - {fileID: 7737598144978228666, guid: dfcbda46bb272b94ca5e4449c5e1c75e, type: 3}
+    - {fileID: 1842404651609103673, guid: dfcbda46bb272b94ca5e4449c5e1c75e, type: 3}
   - damage: 30
-    cooldown: 1
+    cooldown: 2
     range: 10
     width: 1
     height: 1
@@ -65,9 +86,16 @@ MonoBehaviour:
     speed: 0
     projectileCount: 5
     statusDuration: 10
-    visualSprite: {fileID: 0}
+    visualSpriteArr:
+    - {fileID: 5739539005101524476, guid: dfcbda46bb272b94ca5e4449c5e1c75e, type: 3}
+    - {fileID: 6743349684307136263, guid: dfcbda46bb272b94ca5e4449c5e1c75e, type: 3}
+    - {fileID: 1652563003741978703, guid: dfcbda46bb272b94ca5e4449c5e1c75e, type: 3}
+    - {fileID: 7113022293486117287, guid: dfcbda46bb272b94ca5e4449c5e1c75e, type: 3}
+    - {fileID: 142801442893051983, guid: dfcbda46bb272b94ca5e4449c5e1c75e, type: 3}
+    - {fileID: 7737598144978228666, guid: dfcbda46bb272b94ca5e4449c5e1c75e, type: 3}
+    - {fileID: 1842404651609103673, guid: dfcbda46bb272b94ca5e4449c5e1c75e, type: 3}
   - damage: 50
-    cooldown: 0.8
+    cooldown: 1.5
     range: 15
     width: 1
     height: 1
@@ -75,4 +103,11 @@ MonoBehaviour:
     speed: 0
     projectileCount: 8
     statusDuration: 10
-    visualSprite: {fileID: 0}
+    visualSpriteArr:
+    - {fileID: 2462406378565223134, guid: 3bf5031369633af439dfe9f355a9ade9, type: 3}
+    - {fileID: 7584823874262114324, guid: 3bf5031369633af439dfe9f355a9ade9, type: 3}
+    - {fileID: 4919245924866575654, guid: 3bf5031369633af439dfe9f355a9ade9, type: 3}
+    - {fileID: 5883707804356360938, guid: 3bf5031369633af439dfe9f355a9ade9, type: 3}
+    - {fileID: -1140656939092297015, guid: 3bf5031369633af439dfe9f355a9ade9, type: 3}
+    - {fileID: 2445800971672290258, guid: 3bf5031369633af439dfe9f355a9ade9, type: 3}
+    - {fileID: -5770292544996728688, guid: 3bf5031369633af439dfe9f355a9ade9, type: 3}

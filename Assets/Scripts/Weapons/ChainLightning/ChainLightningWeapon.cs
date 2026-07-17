@@ -7,6 +7,8 @@ public class ChainLightningWeapon : WeaponBehavior
 
     public override bool TryExecute(Enemy target, WeaponLevelData data, WeaponSystemContext ctx, WeaponDefinition definition)
     {
+        visualPrefab.SwapSpriteSheet(data.visualSpriteArr);
+
         Vector2 origin = ctx.ProjectileSpawnPoint.position;
 
         var targets = ctx.Targeting.GetChainTargets(origin, data.projectileCount, data.range);
@@ -29,7 +31,7 @@ public class ChainLightningWeapon : WeaponBehavior
 
             var visual = Instantiate(visualPrefab);
 
-            visual.Initialize(previousPoint, hitPoint, data.visualSprite, visualLifetime);
+            visual.Initialize(previousPoint, hitPoint, data.visualSpriteArr[0], visualLifetime);
 
             CombatHitUtility.ApplyStatusThenDamage(
                 enemy,

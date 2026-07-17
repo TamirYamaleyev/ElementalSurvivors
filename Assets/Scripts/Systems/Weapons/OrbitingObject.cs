@@ -33,7 +33,7 @@ public class OrbitingObject : MonoBehaviour
         float statusDuration,
         StatusSystem statusSystem,
         Transform center,
-        Sprite visualSprite
+        Sprite[] visualSprites
         )
 
     {
@@ -52,8 +52,8 @@ public class OrbitingObject : MonoBehaviour
         if (sr == null)
             sr = GetComponent<SpriteRenderer>();
 
-        if (sr != null && visualSprite != null)
-            sr.sprite = visualSprite;
+        if (sr != null && visualSprites != null)
+            sr.sprite = visualSprites[0];
     }
 
     void Update()

@@ -11,10 +11,11 @@ public class ProjectileSystem : MonoBehaviour
         StatusType status,
         float statusDuration,
         StatusSystem statusSystem,
-        Sprite sprite)
+        Sprite[] sprites)
     {
         Projectile proj = Instantiate(prefab, position, Quaternion.identity);
-        proj.Init(direction, damage, speed, status, statusDuration, statusSystem, sprite);
+        proj.Init(direction, damage, speed, status, statusDuration, statusSystem, sprites);
+        proj.SwapSpriteSheet(sprites);
         return proj;
     }
 }

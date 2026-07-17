@@ -34,7 +34,7 @@ public class LightSwordBehavior : WeaponBehavior
             definition.appliedStatus,
             data.statusDuration,
             ctx.StatusSystem,
-            data.visualSprite,
+            data.visualSpriteArr,
             slashDir
         );
 
