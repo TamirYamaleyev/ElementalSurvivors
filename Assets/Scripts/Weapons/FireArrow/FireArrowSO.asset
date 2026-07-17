@@ -26,13 +26,34 @@ MonoBehaviour:
   customWeaponPrefab: {fileID: 0}
   levels:
   - damage: 20
-    cooldown: 1.8
+    cooldown: 2
     range: 100
+    knockback: 0
     width: 1
     height: 1
     lifetime: 5
     speed: 10
     projectileCount: 1
+    spreadAngle: 0
+    volleySpacing: 0
+    statusDuration: 10
+    visualSpriteArr:
+    - {fileID: 32601713878340476, guid: a086621664801af4383c3755e79ddc49, type: 3}
+    - {fileID: -5350353268336977582, guid: a086621664801af4383c3755e79ddc49, type: 3}
+    - {fileID: 7507721775238963328, guid: a086621664801af4383c3755e79ddc49, type: 3}
+    - {fileID: 7217918844734804829, guid: a086621664801af4383c3755e79ddc49, type: 3}
+    - {fileID: -6698028640178880273, guid: a086621664801af4383c3755e79ddc49, type: 3}
+  - damage: 35
+    cooldown: 2
+    range: 100
+    knockback: 0
+    width: 1
+    height: 1
+    lifetime: 5
+    speed: 10
+    projectileCount: 2
+    spreadAngle: 0
+    volleySpacing: 0.3
     statusDuration: 10
     visualSpriteArr:
     - {fileID: 32601713878340476, guid: a086621664801af4383c3755e79ddc49, type: 3}
@@ -43,26 +64,14 @@ MonoBehaviour:
   - damage: 35
     cooldown: 1.5
     range: 100
-    width: 1
-    height: 1
-    lifetime: 5
-    speed: 10
-    projectileCount: 2
-    statusDuration: 10
-    visualSpriteArr:
-    - {fileID: 32601713878340476, guid: a086621664801af4383c3755e79ddc49, type: 3}
-    - {fileID: -5350353268336977582, guid: a086621664801af4383c3755e79ddc49, type: 3}
-    - {fileID: 7507721775238963328, guid: a086621664801af4383c3755e79ddc49, type: 3}
-    - {fileID: 7217918844734804829, guid: a086621664801af4383c3755e79ddc49, type: 3}
-    - {fileID: -6698028640178880273, guid: a086621664801af4383c3755e79ddc49, type: 3}
-  - damage: 35
-    cooldown: 1
-    range: 100
+    knockback: 0
     width: 1
     height: 1
     lifetime: 5
     speed: 10
     projectileCount: 3
+    spreadAngle: 20
+    volleySpacing: 0
     statusDuration: 0
     visualSpriteArr:
     - {fileID: 2173011316737109762, guid: fdce42d036c958547ac93a7f5bbc385b, type: 3}
@@ -74,11 +83,14 @@ MonoBehaviour:
   - damage: 35
     cooldown: 1
     range: 100
+    knockback: 0
     width: 1
     height: 1
     lifetime: 5
     speed: 10
-    projectileCount: 5
+    projectileCount: 3
+    spreadAngle: 20
+    volleySpacing: 0
     statusDuration: 10
     visualSpriteArr:
     - {fileID: 2173011316737109762, guid: fdce42d036c958547ac93a7f5bbc385b, type: 3}
@@ -90,11 +102,14 @@ MonoBehaviour:
   - damage: 50
     cooldown: 0.8
     range: 100
+    knockback: 0
     width: 1
     height: 1
     lifetime: 5
     speed: 15
-    projectileCount: 10
+    projectileCount: 5
+    spreadAngle: 45
+    volleySpacing: 0
     statusDuration: 10
     visualSpriteArr:
     - {fileID: 5334442366285909243, guid: 655c282a44660414a8850088a8ed4797, type: 3}

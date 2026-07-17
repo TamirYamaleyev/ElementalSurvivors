@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public static class WeaponExecutionStrategies
 {
@@ -27,18 +28,34 @@ internal sealed class ProjectileWeaponExecution : IWeaponExecutionStrategy
         Vector2 spawnPos)
     {
         spawnPos = ctx.ProjectileSpawnPoint.position;
-        Vector2 dir = WeaponExecutionUtility.ResolveDirection(target, spawnPos, ctx);
 
-        ctx.ProjectileSystem.Fire(
-            definition.projectilePrefab,
-            spawnPos,
-            dir,
-            damage,
-            speed,
-            definition.appliedStatus,
-            data.statusDuration,
-            ctx.StatusSystem,
-            data.visualSpriteArr);
+        Vector2 playerPos = ctx.PlayerTransformPoint.position;
+        Vector2 mousePos = ctx.AimDirection.MouseWorldPosition;
+
+        Vector2 delta = mousePos - playerPos;
+
+        Vector2 dir = delta.sqrMagnitude < 0.0001f ? Vector2.right : delta.normalized;
+
+        //Vector2 dir = WeaponExecutionUtility.ResolveDirection(target, spawnPos, ctx);
+
+        var directions = WeaponExecutionUtility.GenerateSpreadDirections(dir, data.projectileCount, data.spreadAngle);
+
+        for (int i = 0; i < directions.Count; i++)
+        {
+            Vector2 offset = Vector2.Perpendicular(dir) * ((i - (directions.Count - 1) / 2f) * data.volleySpacing);
+
+            ctx.ProjectileSystem.Fire(
+                definition.projectilePrefab,
+                spawnPos + offset,
+                directions[i],
+                damage,
+                speed,
+                definition.appliedStatus,
+                data.statusDuration,
+                ctx.StatusSystem,
+                data.visualSpriteArr
+            );
+        }
 
         return true;
     }
@@ -118,6 +135,31 @@ internal sealed class CustomWeaponExecution : IWeaponExecutionStrategy
 
 internal static class WeaponExecutionUtility
 {
+    public static List<Vector2> GenerateSpreadDirections(Vector2 baseDirection, int count, float spreadAngle)
+    {
+        List<Vector2> directions = new();
+
+        if (count <= 1)
+        {
+            directions.Add(baseDirection.normalized);
+            return directions;
+        }
+
+        float startAngle = -spreadAngle / 2f;
+        float step = spreadAngle / (count - 1);
+
+        float baseAngle = Mathf.Atan2(baseDirection.y, baseDirection.x) * Mathf.Rad2Deg;
+
+        for (int i = 0; i < count; i++)
+        {
+            float angle = baseAngle + startAngle + step * i;
+
+            directions.Add(Quaternion.Euler(0, 0, angle) * Vector2.right);
+        }
+
+        return directions;
+    }
+
     public static Vector2 ResolveSpawnFallback(WeaponSystemContext ctx)
     {
         if (ctx.PlayerTransformPoint != null)

@@ -12,6 +12,8 @@ public class WeaponLevelData
     public float lifetime;
     public float speed;
     public int projectileCount;
+    public float spreadAngle;
+    public float volleySpacing;
     public float statusDuration;
 
     public Sprite[] visualSpriteArr;
