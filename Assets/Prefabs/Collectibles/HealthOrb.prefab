@@ -141,5 +141,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c06855fd5b60405d9d059b5da5a31bde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthCollectible
-  sfx: {fileID: 8300000, guid: 9320d32a01102454a82579ce226e38ed, type: 3}
+  sfx: {fileID: 8300000, guid: 8f86e9472fe455a4e8a09b5f531abe62, type: 3}
   healAmount: 20

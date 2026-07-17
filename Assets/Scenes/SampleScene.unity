@@ -5991,6 +5991,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8196648931602633945, guid: dffb491cc7798447e9af2f480ed0b39f, type: 3}
+      propertyPath: baseVolume
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8285758411429029865, guid: dffb491cc7798447e9af2f480ed0b39f, type: 3}
       propertyPath: defaultBgm
       value: 
