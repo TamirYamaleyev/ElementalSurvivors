@@ -1,7 +1,20 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class OrbitSystem : MonoBehaviour
 {
+    private List<OrbitingObject> orbitObjects = new();
+
+    public void ClearOrbitObjects()
+    {
+        foreach (var orbitObj in orbitObjects)
+        {
+            Destroy(orbitObj.gameObject);
+        }
+
+        orbitObjects.Clear();
+    }
+
     public void Spawn(
         OrbitingObject prefab,
         Transform center,
@@ -50,6 +63,9 @@ public class OrbitSystem : MonoBehaviour
                 statusSystem,
                 center,
                 sprites);
+
+            orbitObjects.Add(obj);
         }
+
     }
 }

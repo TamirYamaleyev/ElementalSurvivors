@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class WeaponInstance
@@ -30,6 +29,8 @@ public class WeaponInstance
             return;
 
         level++;
+
+        cooldownTimer = definition.behaviorType == WeaponBehaviorType.Orbit ? 0f : Mathf.Min(cooldownTimer, Current.cooldown);
 
         OnLevelUp?.Invoke();
     }

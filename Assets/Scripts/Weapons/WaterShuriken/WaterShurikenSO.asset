@@ -34,7 +34,8 @@ MonoBehaviour:
     speed: 2
     projectileCount: 2
     statusDuration: 10
-    visualSprite: {fileID: -357020787402876534, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
+    visualSpriteArr:
+    - {fileID: -357020787402876534, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
   - damage: 10
     cooldown: 999999
     range: 2
@@ -44,7 +45,8 @@ MonoBehaviour:
     speed: 2
     projectileCount: 3
     statusDuration: 10
-    visualSprite: {fileID: -357020787402876534, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
+    visualSpriteArr:
+    - {fileID: -357020787402876534, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
   - damage: 20
     cooldown: 999999
     range: 2
@@ -54,7 +56,8 @@ MonoBehaviour:
     speed: 5
     projectileCount: 4
     statusDuration: 10
-    visualSprite: {fileID: -7389123610392925496, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
+    visualSpriteArr:
+    - {fileID: -7389123610392925496, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
   - damage: 30
     cooldown: 999999
     range: 2
@@ -64,7 +67,8 @@ MonoBehaviour:
     speed: 2
     projectileCount: 5
     statusDuration: 10
-    visualSprite: {fileID: -7389123610392925496, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
+    visualSpriteArr:
+    - {fileID: -7389123610392925496, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
   - damage: 50
     cooldown: 999999
     range: 2
@@ -74,4 +78,5 @@ MonoBehaviour:
     speed: 3
     projectileCount: 6
     statusDuration: 10
-    visualSprite: {fileID: -1165734940388465037, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
+    visualSpriteArr:
+    - {fileID: -1165734940388465037, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}

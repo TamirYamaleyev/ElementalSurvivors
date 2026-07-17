@@ -21,6 +21,17 @@ public class WeaponSystem : MonoBehaviour
     public IReadOnlyList<WeaponInstance> Weapons => runtimeWeapons;
     public IReadOnlyList<WeaponLoadoutEntry> AvailableWeapons => weapons;
 
+    private void BindWeaponEvents(WeaponInstance weapon)
+    {
+        weapon.OnLevelUp += () =>
+        {
+            if (weapon.definition.behaviorType == WeaponBehaviorType.Orbit)
+            {
+                context.OrbitSystem.ClearOrbitObjects();
+            }
+        };
+    }
+
     public bool CanAddWeapon()
     {
         return runtimeWeapons.Count < maxWeapons;
@@ -53,7 +64,10 @@ public class WeaponSystem : MonoBehaviour
             if (entry.definition == null || entry.level == 0)
                 continue;
 
-            runtimeWeapons.Add(new WeaponInstance(entry.definition, entry.level));
+            var weapon = new WeaponInstance(entry.definition, entry.level);
+
+            BindWeaponEvents(weapon);
+            runtimeWeapons.Add(weapon);
         }
     }
 
@@ -67,6 +81,7 @@ public class WeaponSystem : MonoBehaviour
 
         var weapon = new WeaponInstance(definition, 1);
 
+        BindWeaponEvents(weapon);
         runtimeWeapons.Add(weapon);
 
         return weapon;
