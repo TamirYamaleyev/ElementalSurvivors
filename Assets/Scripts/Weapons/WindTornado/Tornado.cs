@@ -5,6 +5,8 @@ using UnityEngine.Tilemaps;
 
 public class Tornado : MonoBehaviour
 {
+    [SerializeField] private AudioSource tornadoAudio;
+
     [SerializeField] AudioClip sfx;
 
     [Header("Animation")]
@@ -37,7 +39,12 @@ public class Tornado : MonoBehaviour
 
     void Awake()
     {
-        AudioManager.Instance.PlaySfx(sfx, 0.15f);    
+        tornadoAudio.clip = sfx;
+        tornadoAudio.volume = 0.15f;
+        tornadoAudio.loop = true;
+        tornadoAudio.Play();
+
+        //AudioManager.Instance.PlaySfx(sfx, 0.15f);    
     }
 
     public void Init(
