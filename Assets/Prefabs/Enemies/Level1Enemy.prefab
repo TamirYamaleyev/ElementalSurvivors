@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 748d8e95bccaa504aa8734c3dd38b51e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  hitSound: {fileID: 8300000, guid: 0d0356bd22a895d4890300d5add8fbce, type: 3}
+  hitSound: {fileID: 0}
   deathSound: {fileID: 0}
   ai: {fileID: 805279636442495647}
   status: {fileID: 1111111111111111103}
@@ -187,6 +187,7 @@ MonoBehaviour:
   - 70
   - -110
   - 110
+  knockbackDecay: 3
 --- !u!114 &1111111111111111102
 MonoBehaviour:
   m_ObjectHideFlags: 0
