@@ -7,6 +7,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     [Header("Settings")]
     [SerializeField] private float iFrameDuration = .5f;
     [SerializeField] private MonoBehaviour statsProviderBehaviour;
+    [SerializeField] private PlayerHitSound hitSound;
 
     public event Action<float, float> OnHealthChanged;
     public event Action OnDied;
@@ -76,7 +77,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         currentHealth -= amount;
         NotifyHealthChanged();
-
+        hitSound.PlayHitSound();
         iFrameTimer = iFrameDuration;
 
         if (currentHealth <= 0f)
