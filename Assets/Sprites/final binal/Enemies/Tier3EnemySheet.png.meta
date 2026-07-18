@@ -1,25 +1,22 @@
 fileFormatVersion: 2
-guid: 39efbe52fee49aa45b5c343f7d8eb493
+guid: 35dc3b806bf1c2642a9fabfda7af8d05
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3150210618821369936
-    second: IMG_0652 (1)_0
+      213: 107778137197953801
+    second: Tier3EnemySheet_0
   - first:
-      213: -577452558777899179
-    second: IMG_0652 (1)_1
+      213: 8460285060872488722
+    second: Tier3EnemySheet_1
   - first:
-      213: 2665439998629669191
-    second: IMG_0652 (1)_2
+      213: -1629025009793247490
+    second: Tier3EnemySheet_2
   - first:
-      213: 475899109327461948
-    second: IMG_0652 (1)_3
+      213: -817390561986976082
+    second: Tier3EnemySheet_3
   - first:
-      213: 8953221131547633625
-    second: IMG_0652 (1)_4
-  - first:
-      213: -2549554683586103006
-    second: IMG_0652 (1)_5
+      213: 9146934187062614627
+    second: Tier3EnemySheet_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -63,10 +60,10 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 900
+  spritePixelsToUnits: 2500
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -87,7 +84,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 16384
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -141,133 +138,111 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: IMG_0652 (1)_0
+      name: Tier3EnemySheet_0
       rect:
         serializedVersion: 2
-        x: 511
-        y: 1817
-        width: 1063
-        height: 179
+        x: 0
+        y: 3774
+        width: 2936
+        height: 3774
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0bf1d79f1243844d0800000000000000
-      internalID: -3150210618821369936
+      spriteID: 903cc3e05a7ee7100800000000000000
+      internalID: 107778137197953801
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: IMG_0652 (1)_1
+      name: Tier3EnemySheet_1
       rect:
         serializedVersion: 2
-        x: 493
-        y: 1491
-        width: 1063
-        height: 177
+        x: 2936
+        y: 3774
+        width: 2936
+        height: 3774
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 557276f05f97cf7f0800000000000000
-      internalID: -577452558777899179
+      spriteID: d3e8caf70504bb8419f9d6f4a90ffe15
+      internalID: 8460285060872488722
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: IMG_0652 (1)_2
+      name: Tier3EnemySheet_2
       rect:
         serializedVersion: 2
-        x: 290
-        y: 612
-        width: 619
-        height: 795
+        x: 5872
+        y: 3774
+        width: 2936
+        height: 3774
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 74960708e8b8df420800000000000000
-      internalID: 2665439998629669191
+      spriteID: 900d8b05595302d4d96f6e1b74e71d3b
+      internalID: -1629025009793247490
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: IMG_0652 (1)_3
+      name: Tier3EnemySheet_3
       rect:
         serializedVersion: 2
-        x: 865
-        y: 1170
-        width: 7
-        height: 7
+        x: 8808
+        y: 3774
+        width: 2936
+        height: 3774
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c3e5360f7bbba9600800000000000000
-      internalID: 475899109327461948
+      spriteID: d386983d20b9d814bae73fbe27cf88e6
+      internalID: -817390561986976082
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: IMG_0652 (1)_4
+      name: Tier3EnemySheet_4
       rect:
         serializedVersion: 2
-        x: 1048
-        y: 609
-        width: 696
-        height: 795
+        x: 0
+        y: 0
+        width: 2936
+        height: 3774
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 9d7ea65de2b304c70800000000000000
-      internalID: 8953221131547633625
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: IMG_0652 (1)_5
-      rect:
-        serializedVersion: 2
-        x: 1700
-        y: 1167
-        width: 7
-        height: 7
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 229ba6df5892e9cd0800000000000000
-      internalID: -2549554683586103006
+      spriteID: 28ef11ba2ccf6044d84595988c985bfb
+      internalID: 9146934187062614627
       vertices: []
       indices: 
       edges: []
@@ -276,7 +251,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 516c8395d7fc52449919bc024c33134a
     internalID: 0
     vertices: []
     indices: 
@@ -284,14 +259,15 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":2.0},"gridSpriteSize":{"x":2936.0,"y":3774.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      IMG_0652 (1)_0: -3150210618821369936
-      IMG_0652 (1)_1: -577452558777899179
-      IMG_0652 (1)_2: 2665439998629669191
-      IMG_0652 (1)_3: 475899109327461948
-      IMG_0652 (1)_4: 8953221131547633625
-      IMG_0652 (1)_5: -2549554683586103006
+      Tier3EnemySheet_0: 107778137197953801
+      Tier3EnemySheet_1: 8460285060872488722
+      Tier3EnemySheet_2: -1629025009793247490
+      Tier3EnemySheet_3: -817390561986976082
+      Tier3EnemySheet_4: 9146934187062614627
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

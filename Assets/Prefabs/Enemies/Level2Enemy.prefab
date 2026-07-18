@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &755532533220534334
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3670339944982115610}
+  m_Layer: 9
+  m_Name: Firepoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3670339944982115610
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 755532533220534334}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.23, y: 0.21, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7250192618332092065}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1109223400288963279
 GameObject:
   m_ObjectHideFlags: 0
@@ -133,6 +164,7 @@ GameObject:
   - component: {fileID: 1111111111111111103}
   - component: {fileID: 3333333333333333301}
   - component: {fileID: 1261734657132243896}
+  - component: {fileID: -1330839428201792881}
   m_Layer: 9
   m_Name: Level2Enemy
   m_TagString: Enemy
@@ -154,6 +186,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4316168763072513840}
+  - {fileID: 3670339944982115610}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &7393697305678196746
@@ -369,6 +402,27 @@ MonoBehaviour:
   flipDeadzone: 0.02
   attackAnimCooldown: 0.45
   invertFacingFlip: 1
+--- !u!114 &-1330839428201792881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3651129979494247448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef25224513a824053af5acb286395c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyRangedAttack
+  preferredDistance: 5
+  distanceTolerance: 0.75
+  windUpDuration: 1.2
+  postFireCooldown: 0.8
+  firePoint: {fileID: 3670339944982115610}
+  projectilePrefab: {fileID: 1270097732734394434, guid: c67dd0def03bbb349bb0a589cb0e2699, type: 3}
+  projectileSpeed: 9
+  projectileDamage: 8
+  projectileLifetime: 4
 --- !u!1001 &1021797608762818983
 PrefabInstance:
   m_ObjectHideFlags: 0
