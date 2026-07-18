@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [RequireComponent(typeof(PlayerStats))]
 public class PlayerHealth : MonoBehaviour, IDamageable
@@ -7,6 +9,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     [Header("Settings")]
     [SerializeField] private float iFrameDuration = .5f;
     [SerializeField] private MonoBehaviour statsProviderBehaviour;
+    [SerializeField] private HitFlash hitFlash;
+    [SerializeField] private PlayerHitSound hitSound;
 
     public event Action<float, float> OnHealthChanged;
     public event Action OnDied;
@@ -76,6 +80,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         currentHealth -= amount;
         NotifyHealthChanged();
+        hitSound.PlayHitSound();
+        //hitFlash.Play();
 
         iFrameTimer = iFrameDuration;
 
