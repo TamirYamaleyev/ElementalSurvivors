@@ -31,9 +31,11 @@ MonoBehaviour:
     knockback: 8
     width: 1
     height: 1
-    lifetime: 3
+    lifetime: 5
     speed: 1
     projectileCount: 2
+    spreadAngle: 0
+    volleySpacing: 0
     statusDuration: 10
     visualSpriteArr:
     - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
@@ -47,7 +49,9 @@ MonoBehaviour:
     height: 1
     lifetime: 3
     speed: 1
-    projectileCount: 3
+    projectileCount: 5
+    spreadAngle: 0
+    volleySpacing: 0
     statusDuration: 10
     visualSpriteArr:
     - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
@@ -59,9 +63,11 @@ MonoBehaviour:
     knockback: 8
     width: 1
     height: 1
-    lifetime: 5
+    lifetime: 8
     speed: 2
     projectileCount: 4
+    spreadAngle: 0
+    volleySpacing: 0
     statusDuration: 10
     visualSpriteArr:
     - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
@@ -73,9 +79,11 @@ MonoBehaviour:
     knockback: 12
     width: 1.5
     height: 1.5
-    lifetime: 5
+    lifetime: 8
     speed: 2
     projectileCount: 4
+    spreadAngle: 0
+    volleySpacing: 0
     statusDuration: 10
     visualSpriteArr:
     - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
@@ -87,9 +95,11 @@ MonoBehaviour:
     knockback: 12
     width: 1.5
     height: 1.5
-    lifetime: 5
+    lifetime: 8
     speed: 4
     projectileCount: 5
+    spreadAngle: 0
+    volleySpacing: 0
     statusDuration: 10
     visualSpriteArr:
     - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}

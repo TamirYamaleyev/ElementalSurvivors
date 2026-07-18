@@ -83,9 +83,9 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 2665439998629669191, guid: 39efbe52fee49aa45b5c343f7d8eb493, type: 3}
+  m_Sprite: {fileID: 1185703815699122718, guid: 028b2561a89c95544b564b45d2357ebe, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 1}
@@ -302,6 +302,7 @@ MonoBehaviour:
   - 70
   - -110
   - 110
+  knockbackDecay: 3
 --- !u!114 &1111111111111111102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -367,7 +368,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 1213951530068374170}
   flipDeadzone: 0.02
   attackAnimCooldown: 0.45
-  invertFacingFlip: 0
+  invertFacingFlip: 1
 --- !u!1001 &1021797608762818983
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -382,7 +383,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3673866483808027523, guid: 86cf877ea0810ce4298cbd09f83b5a30, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.75
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 3673866483808027523, guid: 86cf877ea0810ce4298cbd09f83b5a30, type: 3}
       propertyPath: m_LocalScale.y
@@ -390,11 +391,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3673866483808027523, guid: 86cf877ea0810ce4298cbd09f83b5a30, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.1
+      value: 0.23
       objectReference: {fileID: 0}
     - target: {fileID: 3673866483808027523, guid: 86cf877ea0810ce4298cbd09f83b5a30, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.52
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 3673866483808027523, guid: 86cf877ea0810ce4298cbd09f83b5a30, type: 3}
       propertyPath: m_LocalPosition.z

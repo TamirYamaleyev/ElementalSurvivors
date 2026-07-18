@@ -47,17 +47,16 @@ public class LightSword : MonoBehaviour
 
         // BASE ROTATION
         float angle = Mathf.Atan2(slashDirection.y, slashDirection.x) * Mathf.Rad2Deg;
-        baseRotation = Quaternion.Euler(0f, 0f, angle + 90f);
+        baseRotation = Quaternion.Euler(0f, 0f, angle + 0f);
         transform.rotation = baseRotation;
 
         // VISUAL FLIP
-        float side = Mathf.Sign(slashDirection.x);
+        float side = 1f; /*Mathf.Sign(slashDirection.x);*/
 
         if (visualsRoot != null)
             visualsRoot.localRotation = Quaternion.Euler(0f, side < 0 ? 0f : 180f, 0f);
 
         // SWING
-
         StartCoroutine(RotateRoutine(-rotAngle * side));
 
         Destroy(gameObject, lifetime);

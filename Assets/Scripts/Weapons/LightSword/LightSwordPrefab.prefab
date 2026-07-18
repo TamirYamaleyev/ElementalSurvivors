@@ -154,6 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   rotationDuration: 0.1
   rotAngle: 170
+  sr: {fileID: 0}
   visualsRoot: {fileID: 7506452112055753633}
 --- !u!1 &3609233769098871935
 GameObject:
@@ -384,4 +385,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   sr: {fileID: 1777772827307961276}
-  fadeDuration: 0.1
+  fadeDuration: 0.2

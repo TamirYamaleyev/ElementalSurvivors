@@ -14,6 +14,9 @@ public sealed class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip defaultBgm;
     [SerializeField] private AudioClip[] bgmTracks = System.Array.Empty<AudioClip>();
 
+    [SerializeField] private float minPitch = 0.95f;
+    [SerializeField] private float maxPitch = 1.05f;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -69,7 +72,9 @@ public sealed class AudioManager : MonoBehaviour
         if (sfxPlayer == null)
             return;
 
+        sfxAudioSrc.pitch = Random.Range(minPitch, maxPitch);
         sfxPlayer.PlayOneShot(clip, volume);
+        sfxAudioSrc.pitch = 1f;
     }
 
     public void PlayBgm(AudioClip clip)

@@ -187,6 +187,7 @@ MonoBehaviour:
   - 70
   - -110
   - 110
+  knockbackDecay: 3
 --- !u!114 &1111111111111111102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -382,7 +383,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3673866483808027523, guid: 86cf877ea0810ce4298cbd09f83b5a30, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.85
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3673866483808027523, guid: 86cf877ea0810ce4298cbd09f83b5a30, type: 3}
       propertyPath: m_LocalScale.y
