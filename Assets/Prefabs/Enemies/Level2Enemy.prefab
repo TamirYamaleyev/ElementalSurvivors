@@ -301,7 +301,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 748d8e95bccaa504aa8734c3dd38b51e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  hitSound: {fileID: 8300000, guid: d4d6143c0c54c4b4cb52f5642c8aca2e, type: 3}
+  hitSound: {fileID: 0}
   deathSound: {fileID: 0}
   ai: {fileID: 805279636442495647}
   status: {fileID: 1111111111111111103}
