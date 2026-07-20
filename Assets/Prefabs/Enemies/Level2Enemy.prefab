@@ -182,7 +182,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -6.6, y: 2.86, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4316168763072513840}
@@ -420,7 +420,7 @@ MonoBehaviour:
   postFireCooldown: 0.8
   firePoint: {fileID: 3670339944982115610}
   projectilePrefab: {fileID: 1270097732734394434, guid: c67dd0def03bbb349bb0a589cb0e2699, type: 3}
-  projectileSpeed: 9
+  projectileSpeed: 7
   projectileDamage: 8
   projectileLifetime: 4
 --- !u!1001 &1021797608762818983

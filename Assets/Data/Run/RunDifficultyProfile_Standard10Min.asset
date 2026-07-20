@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8e7d6c5b4a39281706f5e4d3c2b1a0f, type: 3}
   m_Name: RunDifficultyProfile_Standard10Min
   m_EditorClassIdentifier: 
-  sessionDurationSeconds: 600
-  stopSpawningWhenSessionEnds: 1
+  sessionDurationSeconds: 180
+  stopSpawningWhenSessionEnds: 0
   difficultyTickIntervalSeconds: 60
   difficultyMultiplierPerTick: 1.1
   maxDifficultyTicks: 0
-  tier2StartSeconds: 5
-  tier3StartSeconds: 10
-  firstBossDelaySeconds: 30
-  bossSpawnIntervalSeconds: 180
-  miniBossStatMultiplier: 10
-  miniBossVisualScale: 2
+  tier2StartSeconds: 60
+  tier3StartSeconds: 120
+  firstBossDelaySeconds: -1
+  bossSpawnIntervalSeconds: -1
+  miniBossStatMultiplier: 5
+  miniBossVisualScale: 1.75
   bossExtraStatMultiplier: 10
-  bossVisualScale: 1.5
-  bossFightSpawnIntensityMultiplier: 1
+  bossVisualScale: 1
+  bossFightSpawnIntensityMultiplier: 0.5

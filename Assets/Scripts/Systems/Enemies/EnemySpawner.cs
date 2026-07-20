@@ -10,6 +10,9 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private StatusSystem statusSystem;
     [SerializeField] private EnemyRegistry enemyRegistry;
 
+    [SerializeField, Range(0, 1)] private float tier2Chance = 0.25f;
+    [SerializeField, Range(0, 1)] private float tier3Chance = 0.15f;
+
     [Header("Settings")]
     [SerializeField] private float spawnInterval = 1f;
     [Tooltip("Deprecated: on-screen disk spawn removed. Kept for scene YAML compatibility.")]
@@ -89,10 +92,27 @@ public class EnemySpawner : MonoBehaviour
 
         if (timer <= 0f)
         {
-            int tierIndex = RunDifficultyEvaluator.GetPrefabIndex(runProfile, elapsedTime);
-            SpawnRegularEnemy(tierIndex);
+            SpawnRegularEnemy(GetTierToSpawn());
+            //int tierIndex = RunDifficultyEvaluator.GetPrefabIndex(runProfile, elapsedTime);
+            //SpawnRegularEnemy(tierIndex);
             timer = spawnInterval;
         }
+    }
+
+    private int GetTierToSpawn()
+    {
+        float roll = UnityEngine.Random.value;
+
+        bool tier2Unlocked = elapsedTime >= runProfile.tier2StartSeconds;
+        bool tier3Unlocked = elapsedTime >= runProfile.tier3StartSeconds;
+
+        if (tier3Unlocked && roll < tier3Chance)
+            return 2;
+
+        if (tier2Unlocked && roll < tier2Chance + (tier3Unlocked ? tier3Chance : 0f))
+            return 1;
+
+        return 0;
     }
 
     private void TrySpawnBossMilestones()
