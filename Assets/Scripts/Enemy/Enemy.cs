@@ -21,6 +21,9 @@ public class Enemy : MonoBehaviour
     private bool isInitialized;
     private bool subscribedToDeath;
 
+    //private float maxHealth;
+    //private float contactDamage;
+
     private StatusSystem statusSystem;
     private EnemyRegistry registry;
     private Transform playerTransform;
