@@ -9,6 +9,10 @@ public class Enemy : MonoBehaviour
     [SerializeField] AudioClip hitSound;
     [SerializeField] AudioClip deathSound;
 
+    [SerializeField] private float tierWeight;
+    [SerializeField] private float healthWeight;
+    [SerializeField] private float damageWeight;
+
     [Header("Components")]
     [SerializeField] private EnemyAI ai;
     [SerializeField] private EnemyStatusController status;
@@ -21,8 +25,8 @@ public class Enemy : MonoBehaviour
     private bool isInitialized;
     private bool subscribedToDeath;
 
-    //private float maxHealth;
-    //private float contactDamage;
+    public float MaxHealth => health.MaxHealth;
+    public float ContactDamage => health.ContactDamage;
 
     private StatusSystem statusSystem;
     private EnemyRegistry registry;
@@ -35,6 +39,19 @@ public class Enemy : MonoBehaviour
     public float LastDamageReceived => health.LastDamageReceived;
     public EnemyAI AI => ai;
     public Transform PlayerTransform => playerTransform;
+
+    public int ExpReward
+    {
+        get
+        {
+            float exp =
+                (PoolTierIndex + 1) * tierWeight +
+                MaxHealth * healthWeight +
+                ContactDamage * damageWeight;
+
+            return Mathf.RoundToInt(exp);
+        }
+    }
 
     private void Awake()
     {
@@ -192,7 +209,7 @@ public class Enemy : MonoBehaviour
     {
         UnsubscribeFromDeath();
         registry?.Unregister(this);
-        health.SpawnDeathLoot();
+        health.SpawnDeathLoot(this);
 
         if (poolRelease != null)
             poolRelease(this);

@@ -62,10 +62,10 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             OnDied?.Invoke();
     }
 
-    public void SpawnDeathLoot()
+    public void SpawnDeathLoot(Enemy enemy)
     {
         if (lootProfile != null)
-            lootProfile.SpawnLoot(transform.position);
+            lootProfile.SpawnLoot(transform.position, enemy);
     }
 
     public void ResetState()

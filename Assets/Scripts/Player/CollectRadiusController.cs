@@ -55,6 +55,12 @@ public class CollectRadiusController : MonoBehaviour
 
         if (other.TryGetComponent<ICollectible>(out var collectible))
         {
+            if (other.TryGetComponent<EXPOrb>(out var exp))
+            {
+                exp.StartVacuum(transform.parent, pickupFacade);
+                return;
+            }
+
             collectible.Collect(pickupFacade);
             Destroy(other.gameObject);
         }

@@ -303,6 +303,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   hitSound: {fileID: 0}
   deathSound: {fileID: 0}
+  tierWeight: 5
+  healthWeight: 0.05
+  damageWeight: 0.1
   ai: {fileID: 805279636442495647}
   status: {fileID: 1111111111111111103}
   health: {fileID: 1111111111111111102}
@@ -321,7 +324,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
   rb: {fileID: 7393697305678196746}
   characterAnimation: {fileID: 1261734657132243896}
-  moveSpeed: 2
+  moveSpeed: 1
   obstacleMask:
     serializedVersion: 2
     m_Bits: 0
@@ -420,7 +423,7 @@ MonoBehaviour:
   postFireCooldown: 0.8
   firePoint: {fileID: 3670339944982115610}
   projectilePrefab: {fileID: 1270097732734394434, guid: c67dd0def03bbb349bb0a589cb0e2699, type: 3}
-  projectileSpeed: 7
+  projectileSpeed: 6
   projectileDamage: 8
   projectileLifetime: 4
 --- !u!1001 &1021797608762818983

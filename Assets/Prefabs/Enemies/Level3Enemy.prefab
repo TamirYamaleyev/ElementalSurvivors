@@ -155,6 +155,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   hitSound: {fileID: 0}
   deathSound: {fileID: 0}
+  tierWeight: 5
+  healthWeight: 0.05
+  damageWeight: 0.1
   ai: {fileID: 805279636442495647}
   status: {fileID: 1111111111111111103}
   health: {fileID: 1111111111111111102}

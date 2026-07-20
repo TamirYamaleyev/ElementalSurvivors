@@ -15,11 +15,14 @@ public class EnemyLootProfileSO : ScriptableObject
     [Tooltip("Horizontal offset for the health orb when both EXP and health spawn, so they do not overlap.")]
     [SerializeField] private float bonusHealthOrbOffset = 0.35f;
 
-    public void SpawnLoot(Vector3 position)
+    public void SpawnLoot(Vector3 position, Enemy enemy)
     {
         bool spawnedExp = expOrbPrefab != null;
         if (spawnedExp)
-            Instantiate(expOrbPrefab, position, Quaternion.identity);
+        {
+            EXPOrb orb = Instantiate(expOrbPrefab, position, Quaternion.identity).GetComponent<EXPOrb>();
+            orb.expToGive = enemy.ExpReward;
+        }
 
         if (healthOrbPrefab != null && Random.value < healthOrbChance)
         {
