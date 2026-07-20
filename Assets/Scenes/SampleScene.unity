@@ -985,7 +985,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07770763f6b243341b2ed07cb473111d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHitSound
-  hitSfx: {fileID: 8300000, guid: d4d6143c0c54c4b4cb52f5642c8aca2e, type: 3}
+  hitSfx: {fileID: 8300000, guid: 86119457130232047a4cb66bb584b797, type: 3}
   cooldown: 0.6
 --- !u!1 &191866787
 GameObject:

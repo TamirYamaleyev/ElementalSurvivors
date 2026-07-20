@@ -104,15 +104,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43c85d55408c60942bfb255463e5d812, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChaingLightningVisual
-  sfx: {fileID: 8300000, guid: 707311f219d52fa4eb4306c1df85a962, type: 3}
+  sfx: {fileID: 8300000, guid: 4b6a7270b3afc7a45a3816f656c78e3c, type: 3}
   frames:
-  - {fileID: 2462406378565223134, guid: 3bf5031369633af439dfe9f355a9ade9, type: 3}
-  - {fileID: 7584823874262114324, guid: 3bf5031369633af439dfe9f355a9ade9, type: 3}
-  - {fileID: 4919245924866575654, guid: 3bf5031369633af439dfe9f355a9ade9, type: 3}
-  - {fileID: 5883707804356360938, guid: 3bf5031369633af439dfe9f355a9ade9, type: 3}
-  - {fileID: -1140656939092297015, guid: 3bf5031369633af439dfe9f355a9ade9, type: 3}
-  - {fileID: 2445800971672290258, guid: 3bf5031369633af439dfe9f355a9ade9, type: 3}
-  - {fileID: -5770292544996728688, guid: 3bf5031369633af439dfe9f355a9ade9, type: 3}
+  - {fileID: -4114174937293446624, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+  - {fileID: 4057405359317951072, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+  - {fileID: 4963325702554027815, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+  - {fileID: 8630144970736267205, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+  - {fileID: -3181664903957042246, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+  - {fileID: -8768431306118528910, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
+  - {fileID: -3165510750537712351, guid: 0d61675fc60d07a4fb50554834a376ec, type: 3}
   sr: {fileID: 2974912281853799423}
   offset: 0
   thickness: 0.5

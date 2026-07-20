@@ -153,4 +153,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OrbitingObject
   sr: {fileID: 6823907168155030958}
   spinSpeed: 720
-  sfx: {fileID: 8300000, guid: a43c6ed46490ce6499d66ff88a1ebc99, type: 3}
+  sfx: {fileID: 8300000, guid: 222b1f47b220d20428b6cf56290eb154, type: 3}
