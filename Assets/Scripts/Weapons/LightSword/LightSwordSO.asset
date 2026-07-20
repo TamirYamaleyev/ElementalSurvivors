@@ -17,7 +17,7 @@ MonoBehaviour:
   element:
     name: None
     color: {r: 0, g: 0, b: 0, a: 0}
-  description: A Sword made of Light, slashing large groups of enemies at a time.
+  description: 
   behaviorType: 3
   appliedStatus: 5
   projectilePrefab: {fileID: 0}
@@ -37,6 +37,10 @@ MonoBehaviour:
     spreadAngle: 0
     volleySpacing: 0
     statusDuration: 1
+    levelupDescription: A Sword made of Light, slashing large groups of enemies at
+      a time.
+    fireSFX: {fileID: 8300000, guid: 20296d9e5617cbc4c8e407f8d1998e2a, type: 3}
+    sfxVolume: 0.5
     visualSpriteArr:
     - {fileID: 21300000, guid: 9c36941ae5e14234cbd9caf12e9df535, type: 3}
   - damage: 35
@@ -51,6 +55,9 @@ MonoBehaviour:
     spreadAngle: 0
     volleySpacing: 0
     statusDuration: 1
+    levelupDescription: 
+    fireSFX: {fileID: 8300000, guid: 20296d9e5617cbc4c8e407f8d1998e2a, type: 3}
+    sfxVolume: 0.5
     visualSpriteArr:
     - {fileID: 21300000, guid: 9c36941ae5e14234cbd9caf12e9df535, type: 3}
   - damage: 35
@@ -65,6 +72,9 @@ MonoBehaviour:
     spreadAngle: 0
     volleySpacing: 0
     statusDuration: 1
+    levelupDescription: 
+    fireSFX: {fileID: 8300000, guid: 20296d9e5617cbc4c8e407f8d1998e2a, type: 3}
+    sfxVolume: 0.5
     visualSpriteArr:
     - {fileID: 21300000, guid: 9c36941ae5e14234cbd9caf12e9df535, type: 3}
   - damage: 35
@@ -79,6 +89,9 @@ MonoBehaviour:
     spreadAngle: 0
     volleySpacing: 0
     statusDuration: 1
+    levelupDescription: 
+    fireSFX: {fileID: 8300000, guid: 20296d9e5617cbc4c8e407f8d1998e2a, type: 3}
+    sfxVolume: 0.5
     visualSpriteArr:
     - {fileID: 21300000, guid: 9c36941ae5e14234cbd9caf12e9df535, type: 3}
   - damage: 50
@@ -93,5 +106,8 @@ MonoBehaviour:
     spreadAngle: 0
     volleySpacing: 0
     statusDuration: 1
+    levelupDescription: 
+    fireSFX: {fileID: 8300000, guid: 20296d9e5617cbc4c8e407f8d1998e2a, type: 3}
+    sfxVolume: 0.5
     visualSpriteArr:
     - {fileID: 21300000, guid: 9c36941ae5e14234cbd9caf12e9df535, type: 3}

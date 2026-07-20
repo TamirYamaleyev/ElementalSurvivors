@@ -16,5 +16,10 @@ public class WeaponLevelData
     public float volleySpacing;
     public float statusDuration;
 
+    public string levelupDescription;
+
+    public AudioClip fireSFX;
+    [Range(0f, 1f)] public float sfxVolume = 1f;
+
     public Sprite[] visualSpriteArr;
 }

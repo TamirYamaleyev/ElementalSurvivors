@@ -37,13 +37,14 @@ public sealed class BgmPlayer : MonoBehaviour
             Play(defaultClip);
     }
 
-    public void Play(AudioClip clip)
+    public void Play(AudioClip clip, float volume = 1f)
     {
         if (clip == null || _source == null)
             return;
 
         _source.clip = clip;
         RefreshSourceVolume();
+        _source.volume = volume;
         _source.Play();
     }
 

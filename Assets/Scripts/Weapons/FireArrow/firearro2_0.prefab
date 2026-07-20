@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a01297cf39924024d9f377774f67b5af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
-  sfx: {fileID: 8300000, guid: f0dc12b125e5c0549a83ec051b0a285a, type: 3}
+  sfx: {fileID: 0}
   enemyLayer:
     serializedVersion: 2
     m_Bits: 512

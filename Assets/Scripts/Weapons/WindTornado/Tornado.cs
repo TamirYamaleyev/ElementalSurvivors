@@ -8,6 +8,10 @@ public class Tornado : MonoBehaviour
     [SerializeField] private AudioSource tornadoAudio;
 
     [SerializeField] AudioClip sfx;
+    [SerializeField, Range(0f, 1f)] private float sfxVolume;
+
+    [SerializeField] private float audioFadeInDuration = 0.5f;
+    [SerializeField] private float audioFadeOutDuration = 0.5f;
 
     [Header("Animation")]
     [SerializeField] private Sprite[] sprites;
@@ -40,11 +44,27 @@ public class Tornado : MonoBehaviour
     void Awake()
     {
         tornadoAudio.clip = sfx;
-        tornadoAudio.volume = 0.15f;
+        tornadoAudio.volume = 0f;
         tornadoAudio.loop = true;
         tornadoAudio.Play();
 
-        //AudioManager.Instance.PlaySfx(sfx, 0.15f);    
+        StartCoroutine(FadeAudioIn());
+    }
+
+    private IEnumerator FadeAudioIn()
+    {
+        float timer = 0f;
+
+        while (timer < audioFadeInDuration)
+        {
+            timer += Time.deltaTime;
+
+            tornadoAudio.volume = Mathf.Lerp(0f, sfxVolume, timer / audioFadeInDuration);
+
+            yield return null;
+        }
+
+        tornadoAudio.volume = sfxVolume;
     }
 
     public void Init(
@@ -104,18 +124,23 @@ public class Tornado : MonoBehaviour
         float timer = 0f;
 
         Color color = sr.color;
+        float startVolume = tornadoAudio.volume;
 
         while (timer < fadeDuration)
         {
             timer += Time.deltaTime;
 
-            color.a = Mathf.Lerp(1f, 0f, timer / fadeDuration);
+            float t = timer / fadeDuration;
 
+            color.a = Mathf.Lerp(1f, 0f, t);
             sr.color = color;
+
+            tornadoAudio.volume = Mathf.Lerp(startVolume, 0f, t);
 
             yield return null;
         }
 
+        tornadoAudio.Stop();
         Destroy(gameObject);
     }
 

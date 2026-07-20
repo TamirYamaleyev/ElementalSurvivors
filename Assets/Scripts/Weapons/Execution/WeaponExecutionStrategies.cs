@@ -40,6 +40,8 @@ internal sealed class ProjectileWeaponExecution : IWeaponExecutionStrategy
 
         var directions = WeaponExecutionUtility.GenerateSpreadDirections(dir, data.projectileCount, data.spreadAngle);
 
+        AudioManager.Instance.PlaySfx(data.fireSFX, data.sfxVolume);
+
         for (int i = 0; i < directions.Count; i++)
         {
             Vector2 offset = Vector2.Perpendicular(dir) * ((i - (directions.Count - 1) / 2f) * data.volleySpacing);
@@ -72,6 +74,9 @@ internal sealed class AreaWeaponExecution : IWeaponExecutionStrategy
         float speed,
         Vector2 spawnPos)
     {
+
+        AudioManager.Instance.PlaySfx(data.fireSFX, data.sfxVolume);
+
         ctx.AreaSystem.Cast(
             definition.areaPrefab,
             ctx.AreaSpawnPoint,
@@ -129,7 +134,13 @@ internal sealed class CustomWeaponExecution : IWeaponExecutionStrategy
         if (definition.customWeaponPrefab == null)
             return false;
 
-        return definition.customWeaponPrefab.TryExecute(target, data, ctx, definition);
+        if (definition.customWeaponPrefab.TryExecute(target, data, ctx, definition))
+        {
+            AudioManager.Instance.PlaySfx(data.fireSFX, data.sfxVolume);
+            return true;
+        }
+
+        return false;
     }
 }
 

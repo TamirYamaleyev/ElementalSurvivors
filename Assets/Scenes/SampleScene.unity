@@ -3673,9 +3673,13 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8285758411429029865, guid: dffb491cc7798447e9af2f480ed0b39f, type: 3}
+      propertyPath: bgmVolume
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 8285758411429029865, guid: dffb491cc7798447e9af2f480ed0b39f, type: 3}
       propertyPath: defaultBgm
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 8300000, guid: 04d5cd63e6b26754f9f59364bb738cf0, type: 3}
     - target: {fileID: 8285758411429029865, guid: dffb491cc7798447e9af2f480ed0b39f, type: 3}
       propertyPath: uiClickSfx
       value: 

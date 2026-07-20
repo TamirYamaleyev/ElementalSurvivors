@@ -12,6 +12,7 @@ public sealed class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource bgmAudioSrc;
 
     [SerializeField] private AudioClip defaultBgm;
+    [SerializeField, Range(0f, 1f)] private float bgmVolume = 1f;
     [SerializeField] private AudioClip[] bgmTracks = System.Array.Empty<AudioClip>();
 
     [SerializeField] private float minPitch = 0.95f;
@@ -82,7 +83,7 @@ public sealed class AudioManager : MonoBehaviour
         if (bgmPlayer == null)
             return;
 
-        bgmPlayer.Play(clip);
+        bgmPlayer.Play(clip, bgmVolume);
     }
 
     public void PlayBgm(int trackIndex)

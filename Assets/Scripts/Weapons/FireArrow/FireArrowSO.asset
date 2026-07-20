@@ -17,7 +17,7 @@ MonoBehaviour:
   element:
     name: Fire
     color: {r: 1, g: 0.34757438, b: 0, a: 0}
-  description: Fire an arrow towards the closest enemy.
+  description: 
   behaviorType: 0
   appliedStatus: 0
   projectilePrefab: {fileID: 1676254222318013671, guid: dfc62e36d537a7e4b94c76fdd717fec5, type: 3}
@@ -37,6 +37,9 @@ MonoBehaviour:
     spreadAngle: 0
     volleySpacing: 0
     statusDuration: 10
+    levelupDescription: Fire an arrow towards the closest enemy.
+    fireSFX: {fileID: 8300000, guid: 16b6e3a47dd8dde43ac5ca6f896340e5, type: 3}
+    sfxVolume: 1
     visualSpriteArr:
     - {fileID: 32601713878340476, guid: a086621664801af4383c3755e79ddc49, type: 3}
     - {fileID: -5350353268336977582, guid: a086621664801af4383c3755e79ddc49, type: 3}
@@ -55,6 +58,9 @@ MonoBehaviour:
     spreadAngle: 0
     volleySpacing: 0.3
     statusDuration: 10
+    levelupDescription: Level 2
+    fireSFX: {fileID: 8300000, guid: 16b6e3a47dd8dde43ac5ca6f896340e5, type: 3}
+    sfxVolume: 1
     visualSpriteArr:
     - {fileID: 32601713878340476, guid: a086621664801af4383c3755e79ddc49, type: 3}
     - {fileID: -5350353268336977582, guid: a086621664801af4383c3755e79ddc49, type: 3}
@@ -73,6 +79,9 @@ MonoBehaviour:
     spreadAngle: 20
     volleySpacing: 0
     statusDuration: 0
+    levelupDescription: 
+    fireSFX: {fileID: 8300000, guid: 16b6e3a47dd8dde43ac5ca6f896340e5, type: 3}
+    sfxVolume: 1
     visualSpriteArr:
     - {fileID: 2173011316737109762, guid: fdce42d036c958547ac93a7f5bbc385b, type: 3}
     - {fileID: 2910725331657004639, guid: fdce42d036c958547ac93a7f5bbc385b, type: 3}
@@ -92,6 +101,9 @@ MonoBehaviour:
     spreadAngle: 20
     volleySpacing: 0
     statusDuration: 10
+    levelupDescription: 
+    fireSFX: {fileID: 8300000, guid: 16b6e3a47dd8dde43ac5ca6f896340e5, type: 3}
+    sfxVolume: 1
     visualSpriteArr:
     - {fileID: 2173011316737109762, guid: fdce42d036c958547ac93a7f5bbc385b, type: 3}
     - {fileID: 2910725331657004639, guid: fdce42d036c958547ac93a7f5bbc385b, type: 3}
@@ -111,6 +123,9 @@ MonoBehaviour:
     spreadAngle: 45
     volleySpacing: 0
     statusDuration: 10
+    levelupDescription: 
+    fireSFX: {fileID: 8300000, guid: 16b6e3a47dd8dde43ac5ca6f896340e5, type: 3}
+    sfxVolume: 1
     visualSpriteArr:
     - {fileID: 5334442366285909243, guid: 655c282a44660414a8850088a8ed4797, type: 3}
     - {fileID: -8028706201379305005, guid: 655c282a44660414a8850088a8ed4797, type: 3}

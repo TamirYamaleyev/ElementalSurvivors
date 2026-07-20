@@ -142,4 +142,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthCollectible
   sfx: {fileID: 8300000, guid: 8f86e9472fe455a4e8a09b5f531abe62, type: 3}
+  sfxVolume: 0.5
   healAmount: 20

@@ -145,6 +145,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Tornado
   tornadoAudio: {fileID: 7076864354244105030}
   sfx: {fileID: 8300000, guid: 521012495645c254ab0c20a0c4a9ffe4, type: 3}
+  sfxVolume: 0.1
+  audioFadeInDuration: 0.5
+  audioFadeOutDuration: 0.5
   sprites:
   - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
   - {fileID: -709555396385255776, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}

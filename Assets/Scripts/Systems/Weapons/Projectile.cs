@@ -28,7 +28,8 @@ public class Projectile : MonoBehaviour
         if (sr == null)
             sr = GetComponent<SpriteRenderer>();
 
-        AudioManager.Instance.PlaySfx(sfx);
+        if (sfx != null)
+            AudioManager.Instance.PlaySfx(sfx);
     }
 
     public void Init(Vector2 direction, float damage, float speed, StatusType status, float statusDuration, StatusSystem statusSystem, Sprite[] visualSprites, float lifetime = 5f)
