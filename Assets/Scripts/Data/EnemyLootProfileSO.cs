@@ -21,7 +21,7 @@ public class EnemyLootProfileSO : ScriptableObject
         if (spawnedExp)
         {
             EXPOrb orb = Instantiate(expOrbPrefab, position, Quaternion.identity).GetComponent<EXPOrb>();
-            orb.expToGive = enemy.ExpReward;
+            orb.SetExpAmount(enemy.ExpReward);
         }
 
         if (healthOrbPrefab != null && Random.value < healthOrbChance)

@@ -82,7 +82,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7897768195213780799, guid: da030290df1a13d4c9f7a4c80cac568b, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -90,7 +90,7 @@ SpriteRenderer:
   m_Size: {x: 2.26, y: 3.84}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
 --- !u!114 &6665082964444436807
 MonoBehaviour:
@@ -264,6 +264,18 @@ MonoBehaviour:
   closeRangeMultiplier: 1
   collectDistance: 0.15
   sfx: {fileID: 8300000, guid: 7eb98452ddcb8fc408ad2370bfd99aad, type: 3}
+  sr: {fileID: 2950160990248664447}
+  expSprites:
+  - expAmount: 0
+    sprite: {fileID: 3793417686556777753, guid: 587c37f073e76954c8ce72c7910b71b4, type: 3}
+  - expAmount: 50
+    sprite: {fileID: 8450739732141010018, guid: 587c37f073e76954c8ce72c7910b71b4, type: 3}
+  - expAmount: 100
+    sprite: {fileID: -7787622976490332879, guid: 587c37f073e76954c8ce72c7910b71b4, type: 3}
+  - expAmount: 250
+    sprite: {fileID: 5660285115890169063, guid: 587c37f073e76954c8ce72c7910b71b4, type: 3}
+  - expAmount: 500
+    sprite: {fileID: 4874896633046561287, guid: 587c37f073e76954c8ce72c7910b71b4, type: 3}
   expToGive: 50
 --- !u!1001 &4496678881715175718
 PrefabInstance:

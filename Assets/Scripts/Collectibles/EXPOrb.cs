@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EXPOrb : MonoBehaviour, ICollectible
@@ -14,7 +15,53 @@ public class EXPOrb : MonoBehaviour, ICollectible
 
     [SerializeField] AudioClip sfx;
 
+    [Header("Exp Settings")]
+    [SerializeField] private SpriteRenderer sr;
+
+    [System.Serializable]
+    private class ExpSpriteEntry
+    {
+        public float expAmount;
+        public Sprite sprite;
+    }
+
+    [SerializeField] private ExpSpriteEntry[] expSprites;
+
     public float expToGive;
+
+    private SortedDictionary<float, Sprite> spriteDictionary;
+
+    void Awake()
+    {
+        spriteDictionary = new SortedDictionary<float, Sprite>();
+
+        foreach (var entry in expSprites)
+            spriteDictionary.Add(entry.expAmount, entry.sprite);
+
+        UpdateSprite();
+    }
+
+    public void SetExpAmount(float amount)
+    {
+        expToGive = amount;
+        UpdateSprite();
+    }
+
+    private void UpdateSprite()
+    {
+        Sprite selectedSprite = null;
+
+        foreach (var entry in spriteDictionary)
+        {
+            if (expToGive >= entry.Key)
+                selectedSprite = entry.Value;
+            else
+                break;
+        }
+
+        if (selectedSprite != null)
+            sr.sprite = selectedSprite;
+    }
 
     public void StartVacuum(Transform player, PlayerPickupFacade pickupFacade)
     {
