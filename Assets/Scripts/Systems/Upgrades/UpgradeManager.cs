@@ -46,23 +46,24 @@ public class UpgradeManager : MonoBehaviour
         List<UpgradeOption> candidates = new();
 
         // Unowned weapons
-        if (weaponSystem.CanAddWeapon()) { 
-        }
-        foreach (var entry in weaponSystem.AvailableWeapons)
+        if (weaponSystem.CanAddWeapon())
         {
-            if (entry.definition == null)
-                continue;
+            foreach (var entry in weaponSystem.AvailableWeapons)
+            {
+                if (entry.definition == null)
+                    continue;
 
-            if (weaponSystem.HasWeapon(entry.definition))
-                continue;
+                if (weaponSystem.HasWeapon(entry.definition))
+                    continue;
 
-            candidates.Add(new WeaponUpgradeOption(entry.definition, weaponSystem));
+                candidates.Add(new WeaponUpgradeOption(entry.definition, weaponSystem));
+            }
         }
 
         // Existing weapons
         foreach (var weapon in weaponSystem.Weapons)
         {
-            if (weapon.level >= weapon.definition.levels.Length)
+            if (!weapon.CanLevelUp)
                 continue;
 
             candidates.Add(new WeaponUpgradeOption(weapon));

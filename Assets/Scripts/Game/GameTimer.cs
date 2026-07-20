@@ -19,6 +19,11 @@ public class GameTimer : MonoBehaviour
         Instance = this;
     }
 
+    public void AddTime(float amount)
+    {
+        TimeAlive += amount;
+    }
+
     void Update()
     {
         if (!running)

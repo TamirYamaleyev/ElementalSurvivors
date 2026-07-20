@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class EnemySpawner : MonoBehaviour
 {
@@ -67,6 +68,16 @@ public class EnemySpawner : MonoBehaviour
 
     private void Update()
     {
+        if (Keyboard.current.oKey.wasPressedThisFrame)
+        {
+            elapsedTime += 60f;
+
+            if (GameTimer.Instance != null)
+                GameTimer.Instance.AddTime(60f);
+
+            Debug.Log("Dev: Skipped forward 1 minute");
+        }
+
         if (runProfile == null || enemyPool == null || tierSet == null || player == null)
             return;
 
