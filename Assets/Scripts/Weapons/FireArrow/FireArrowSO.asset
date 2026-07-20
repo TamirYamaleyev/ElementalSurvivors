@@ -17,7 +17,7 @@ MonoBehaviour:
   element:
     name: Fire
     color: {r: 1, g: 0.34757438, b: 0, a: 0}
-  description: 
+  description: Fire an arrow towards the closest enemy.
   behaviorType: 0
   appliedStatus: 0
   projectilePrefab: {fileID: 1676254222318013671, guid: dfc62e36d537a7e4b94c76fdd717fec5, type: 3}

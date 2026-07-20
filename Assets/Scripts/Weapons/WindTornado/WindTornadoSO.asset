@@ -37,6 +37,9 @@ MonoBehaviour:
     spreadAngle: 0
     volleySpacing: 0
     statusDuration: 10
+    levelupDescription: Summons Tornados around you that damage and knock back enemies.
+    fireSFX: {fileID: 0}
+    sfxVolume: 1
     visualSpriteArr:
     - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
     - {fileID: -709555396385255776, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
@@ -53,6 +56,9 @@ MonoBehaviour:
     spreadAngle: 0
     volleySpacing: 0
     statusDuration: 10
+    levelupDescription: 
+    fireSFX: {fileID: 0}
+    sfxVolume: 1
     visualSpriteArr:
     - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
     - {fileID: -709555396385255776, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
@@ -69,6 +75,9 @@ MonoBehaviour:
     spreadAngle: 0
     volleySpacing: 0
     statusDuration: 10
+    levelupDescription: 
+    fireSFX: {fileID: 0}
+    sfxVolume: 1
     visualSpriteArr:
     - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
     - {fileID: -709555396385255776, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
@@ -85,6 +94,9 @@ MonoBehaviour:
     spreadAngle: 0
     volleySpacing: 0
     statusDuration: 10
+    levelupDescription: 
+    fireSFX: {fileID: 0}
+    sfxVolume: 1
     visualSpriteArr:
     - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
     - {fileID: -709555396385255776, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
@@ -101,6 +113,9 @@ MonoBehaviour:
     spreadAngle: 0
     volleySpacing: 0
     statusDuration: 10
+    levelupDescription: 
+    fireSFX: {fileID: 0}
+    sfxVolume: 1
     visualSpriteArr:
     - {fileID: 7023692441551077145, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}
     - {fileID: -709555396385255776, guid: 2aedc96f074d0214baa7700ef8a29142, type: 3}

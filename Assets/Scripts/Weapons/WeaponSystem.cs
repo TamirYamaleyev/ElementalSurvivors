@@ -18,8 +18,15 @@ public class WeaponSystem : MonoBehaviour
     private readonly List<WeaponInstance> runtimeWeapons = new();
     private WeaponSystemContext context;
 
+    public event Action OnWeaponsChanged;
+
     public IReadOnlyList<WeaponInstance> Weapons => runtimeWeapons;
     public IReadOnlyList<WeaponLoadoutEntry> AvailableWeapons => weapons;
+
+    private void NotifyWeaponsChanged()
+    {
+        OnWeaponsChanged?.Invoke();
+    }
 
     private void BindWeaponEvents(WeaponInstance weapon)
     {
@@ -29,6 +36,8 @@ public class WeaponSystem : MonoBehaviour
             {
                 context.OrbitSystem.ClearOrbitObjects();
             }
+
+            NotifyWeaponsChanged();
         };
     }
 
@@ -83,6 +92,8 @@ public class WeaponSystem : MonoBehaviour
 
         BindWeaponEvents(weapon);
         runtimeWeapons.Add(weapon);
+
+        NotifyWeaponsChanged();
 
         return weapon;
     }

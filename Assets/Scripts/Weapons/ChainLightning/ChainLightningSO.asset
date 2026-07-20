@@ -17,7 +17,8 @@ MonoBehaviour:
   element:
     name: Lightning
     color: {r: 0, g: 0, b: 0.9433962, a: 0}
-  description: 
+  description: Unleashes a bolt of Lightning that strikes an enemy and arcs between
+    nearby foes.
   behaviorType: 3
   appliedStatus: 4
   projectilePrefab: {fileID: 0}

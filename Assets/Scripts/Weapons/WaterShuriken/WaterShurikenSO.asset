@@ -28,55 +28,85 @@ MonoBehaviour:
   - damage: 5
     cooldown: 999999
     range: 2
+    knockback: 0
     width: 1
     height: 1
     lifetime: 999999
     speed: 2
     projectileCount: 2
+    spreadAngle: 0
+    volleySpacing: 0
     statusDuration: 10
+    levelupDescription: A Shuriken orbits around you and deals damage to enemies.
+    fireSFX: {fileID: 0}
+    sfxVolume: 1
     visualSpriteArr:
     - {fileID: -357020787402876534, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
   - damage: 10
     cooldown: 999999
     range: 2
+    knockback: 0
     width: 1
     height: 1
     lifetime: 999999
     speed: 2
     projectileCount: 3
+    spreadAngle: 0
+    volleySpacing: 0
     statusDuration: 10
+    levelupDescription: 
+    fireSFX: {fileID: 0}
+    sfxVolume: 1
     visualSpriteArr:
     - {fileID: -357020787402876534, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
   - damage: 20
     cooldown: 999999
     range: 2
+    knockback: 0
     width: 1
     height: 1
     lifetime: 999999
     speed: 5
     projectileCount: 4
+    spreadAngle: 0
+    volleySpacing: 0
     statusDuration: 10
+    levelupDescription: 
+    fireSFX: {fileID: 0}
+    sfxVolume: 1
     visualSpriteArr:
     - {fileID: -7389123610392925496, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
   - damage: 30
     cooldown: 999999
     range: 2
+    knockback: 0
     width: 1
     height: 1
     lifetime: 999999
     speed: 2
     projectileCount: 5
+    spreadAngle: 0
+    volleySpacing: 0
     statusDuration: 10
+    levelupDescription: 
+    fireSFX: {fileID: 0}
+    sfxVolume: 1
     visualSpriteArr:
     - {fileID: -7389123610392925496, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
   - damage: 50
     cooldown: 999999
     range: 2
+    knockback: 0
     width: 1
     height: 1
     lifetime: 999999
     speed: 3
     projectileCount: 6
+    spreadAngle: 0
+    volleySpacing: 0
     statusDuration: 10
+    levelupDescription: 
+    fireSFX: {fileID: 0}
+    sfxVolume: 1
     visualSpriteArr:
     - {fileID: -1165734940388465037, guid: 2f113a865789f2b4097b418afa71fa98, type: 3}
